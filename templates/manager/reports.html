@@ -1,0 +1,120 @@
+{% extends 'manager/base.html' %}
+
+{% block title %}Report and Analytics | DristiSewa{% endblock %}
+
+{% block content %}
+<div class="analytics-container">
+
+    <div class="analytics-title">Reports &amp; Analytics Dashboard</div>
+
+    <div class="metrics-grid">
+        <div class="metric-card">
+            <div class="metric-card-header">
+                <span class="metric-card-title">Visa Success Rate</span>
+                <div class="metric-card-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+            </div>
+            <div class="metric-card-value">{{ visa_success_rate }}%</div>
+            <div class="metric-card-trend trend-up"><i class="fa-solid fa-circle-check"></i> Out of {{ decided_count }} decided case{{ decided_count|pluralize }}</div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-card-header">
+                <span class="metric-card-title">New Applications</span>
+                <div class="metric-card-icon"><i class="fa-solid fa-file-circle-plus"></i></div>
+            </div>
+            <div class="metric-card-value">{{ new_apps_this_month }}</div>
+            <div class="metric-card-trend {% if new_apps_delta >= 0 %}trend-up{% else %}trend-down{% endif %}">
+                <i class="fa-solid {% if new_apps_delta >= 0 %}fa-arrow-trend-up{% else %}fa-arrow-trend-down{% endif %}"></i>
+                {% if new_apps_delta > 0 %}+{{ new_apps_delta }}{% else %}{{ new_apps_delta }}{% endif %} vs last month
+            </div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-card-header">
+                <span class="metric-card-title">COEs Received</span>
+                <div class="metric-card-icon"><i class="fa-solid fa-passport"></i></div>
+            </div>
+            <div class="metric-card-value">{{ coes_received_count }}</div>
+            <div class="metric-card-trend trend-up"><i class="fa-solid fa-circle-check"></i> Across this branch</div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-card-header">
+                <span class="metric-card-title">Dropped Files</span>
+                <div class="metric-card-icon"><i class="fa-solid fa-folder-minus"></i></div>
+            </div>
+            <div class="metric-card-value">{{ rejected_count }}</div>
+            <div class="metric-card-trend trend-down"><i class="fa-solid fa-arrow-trend-down"></i> {{ dropped_share }}% of all applications</div>
+        </div>
+    </div>
+
+    <div class="visualization-row">
+        <div class="chart-box">
+            <div class="section-heading"><i class="fa-solid fa-chart-simple"></i> Monthly Student Intake Registrations</div>
+            <div class="bar-chart-mock">
+                {% for m in intake_data %}
+                <div class="bar-column">
+                    <div class="bar-fill" style="height: {{ m.height_px }}px;" title="{{ m.count }} student{{ m.count|pluralize }}"></div>
+                    <span class="bar-label">{{ m.label }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="breakdown-box">
+            <div class="section-heading"><i class="fa-solid fa-globe"></i> Top Destination Shares</div>
+            <ul class="rank-list">
+                {% for dest in top_destinations %}
+                <li class="rank-item">
+                    <span class="rank-name">{{ dest.preferred_country }}</span>
+                    <span class="rank-badge">{{ dest.total }} Student{{ dest.total|pluralize }}</span>
+                </li>
+                {% empty %}
+                <li class="rank-item">
+                    <span class="rank-name" style="color:#94a3b8;font-style:italic;">No destination data yet.</span>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <div class="table-card">
+        <div class="section-heading"><i class="fa-solid fa-id-card-clip"></i> Front-Desk Executive Performance Index</div>
+        <table class="report-table rpt-fix">
+            <colgroup>
+                <col class="rpt-c1">
+                <col class="rpt-c2">
+                <col class="rpt-c3">
+                <col class="rpt-c4">
+                <col class="rpt-c5">
+                <col class="rpt-c6">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>Counselor Name</th>
+                    <th>Assigned Cases</th>
+                    <th>Offers Secured</th>
+                    <th>COE Issued</th>
+                    <th>Visas Granted</th>
+                    <th>Conversion %</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for staff in staff_performance %}
+                <tr>
+                    <td><strong>{{ staff.name }}</strong></td>
+                    <td>{{ staff.assigned_cases }}</td>
+                    <td>{{ staff.offers_secured }}</td>
+                    <td>{{ staff.coe_issued }}</td>
+                    <td>{{ staff.visas_granted }}</td>
+                    <td><span class="conversion-percentage">{{ staff.conversion }}%</span></td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6" style="text-align:center;color:#9ca3af;padding:20px;">No front desk staff assigned to this branch yet.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}My Profile - DristiSewa{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <div class="luxury-glass-card rounded-3xl p-8">
+        <form method="POST" enctype="multipart/form-data" class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            {% csrf_token %}
+
+            <div class="flex items-center gap-4 mb-2 sm:col-span-2">
+                <div class="relative w-20 h-20 shrink-0">
+                    <label for="{{ form.profile_pic.id_for_label }}" class="block w-20 h-20 rounded-full overflow-hidden border-2 border-blue-500/50 bg-slate-900 flex items-center justify-center cursor-pointer group">
+                        <img id="profile-pic-preview"
+                             src="{% if student.profile_pic %}{{ student.profile_pic.url }}{% endif %}"
+                             class="w-full h-full object-cover {% if not student.profile_pic %}hidden{% endif %}"
+                             onerror="this.classList.add('hidden'); document.getElementById('profile-pic-placeholder').classList.remove('flex');">
+                        <i id="profile-pic-placeholder" class="fa-solid fa-circle-user text-4xl text-slate-400 {% if student.profile_pic %}hidden{% else %}flex{% endif %}"></i>
+                        <div class="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 transition rounded-full">
+                            <i class="fa-solid fa-camera text-white text-lg"></i>
+                        </div>
+                    </label>
+                    {{ form.profile_pic }}
+                </div>
+                <div>
+                    <h1 class="text-xl font-black text-white">{{ request.user.get_full_name|default:request.user.email }}</h1>
+                    <p class="text-sm text-slate-400">{{ request.user.email }}</p>
+                    {% if student.profile_pic %}
+                        <a href="{{ student.profile_pic.url }}" target="_blank" class="text-xs font-bold text-blue-400 hover:underline uppercase tracking-wide">View Photo</a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold text-blue-400 uppercase tracking-wide">{{ form.date_of_birth.label }}</label>
+                {{ form.date_of_birth }}
+            </div>
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold text-blue-400 uppercase tracking-wide">{{ form.college.label }}</label>
+                {{ form.college }}
+            </div>
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold text-blue-400 uppercase tracking-wide">{{ form.passed_year.label }}</label>
+                {{ form.passed_year }}
+            </div>
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold text-blue-400 uppercase tracking-wide">{{ form.gpa.label }}</label>
+                {{ form.gpa }}
+            </div>
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold text-blue-400 uppercase tracking-wide">{{ form.test_type.label }}</label>
+                {{ form.test_type }}
+            </div>
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold text-blue-400 uppercase tracking-wide">{{ form.test_score.label }}</label>
+                {{ form.test_score }}
+            </div>
+            <div class="space-y-1.5 sm:col-span-2">
+                <label class="text-xs font-bold text-blue-400 uppercase tracking-wide">{{ form.preferred_country.label }}</label>
+                {{ form.preferred_country }}
+            </div>
+            <div class="sm:col-span-2 flex justify-between items-center pt-2">
+                <a href="{% url 'accounts:dashboard' %}" class="text-xs font-bold text-slate-400 hover:text-slate-200 uppercase tracking-wide">
+                    <i class="fa-solid fa-arrow-left mr-1"></i> Back to Dashboard
+                </a>
+                <button type="submit" class="btn-primary">Save Profile <i class="fa-solid fa-floppy-disk"></i></button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.getElementById("{{ form.profile_pic.id_for_label }}").addEventListener("change", function (e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function (ev) {
+            const img = document.getElementById("profile-pic-preview");
+            const placeholder = document.getElementById("profile-pic-placeholder");
+            img.src = ev.target.result;
+            img.classList.remove("hidden");
+            if (placeholder) {
+                placeholder.classList.add("hidden");
+                placeholder.classList.remove("flex");
+            }
+        };
+        reader.readAsDataURL(file);
+    });
+</script>
+{% endblock %}

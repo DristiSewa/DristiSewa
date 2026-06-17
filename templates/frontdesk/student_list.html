@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Front Desk - Students - DristiSewa{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto">
+    <div class="luxury-glass-card rounded-3xl p-8">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+            <h1 class="text-xl font-black text-white uppercase tracking-wide">Front Desk - Students</h1>
+            <a href="{% url 'students:student_create' %}" class="btn-primary"><i class="fa-solid fa-user-plus"></i> Add Student</a>
+        </div>
+
+        <form method="GET" class="flex flex-wrap gap-2 mb-6">
+            <input type="text" name="q" value="{{ query }}" placeholder="Search by name, email, phone or student ID"
+                   class="form-input !w-72">
+            <select name="status" class="form-input !w-56">
+                <option value="">All Statuses</option>
+                {% for value, label in statuses %}
+                    <option value="{{ value }}" {% if status_filter == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+            <input type="text" name="country" value="{{ country_filter }}" placeholder="Preferred country"
+                   class="form-input !w-56">
+            <button type="submit" class="btn-primary">Search <i class="fa-solid fa-magnifying-glass"></i></button>
+            <a href="{% url 'frontdesk:student_list' %}" class="text-xs font-bold text-slate-400 hover:text-slate-200 uppercase tracking-wide self-center">Clear</a>
+        </form>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left">
+                <thead>
+                    <tr class="text-xs font-black uppercase tracking-widest text-slate-400 border-b border-slate-800">
+                        <th class="py-2 pr-4">Student ID</th>
+                        <th class="py-2 pr-4">Name</th>
+                        <th class="py-2 pr-4">Email</th>
+                        <th class="py-2 pr-4">Phone</th>
+                        <th class="py-2 pr-4">Branch</th>
+                        <th class="py-2 pr-4">Preferred Country</th>
+                        <th class="py-2 pr-4">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in students %}
+                    <tr class="border-b border-slate-900">
+                        <td class="py-2 pr-4 text-slate-400">#{{ student.id }}</td>
+                        <td class="py-2 pr-4 font-semibold text-white">{{ student.user.get_full_name|default:student.user.email }}</td>
+                        <td class="py-2 pr-4 text-slate-400">{{ student.user.email }}</td>
+                        <td class="py-2 pr-4 text-slate-400">{{ student.user.phone|default:"—" }}</td>
+                        <td class="py-2 pr-4 text-slate-400">{{ student.user.branch|default:"—" }}</td>
+                        <td class="py-2 pr-4 text-slate-400">{{ student.preferred_country|default:"—" }}</td>
+                        <td class="py-2 pr-4 flex gap-3">
+                            <a href="{% url 'frontdesk:student_detail' student.id %}" class="text-xs font-bold text-blue-400 hover:text-blue-300 uppercase">View</a>
+                            <a href="{% url 'frontdesk:student_edit' student.id %}" class="text-xs font-bold text-blue-400 hover:text-blue-300 uppercase">Edit</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="7" class="py-4 text-center text-slate-500">No students found.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if page_obj.paginator.num_pages > 1 %}
+        <div class="flex justify-center gap-3 mt-6">
+            {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}&q={{ query }}&status={{ status_filter }}&country={{ country_filter }}"
+                   class="text-xs font-bold text-blue-400 hover:text-blue-300 uppercase">&laquo; Prev</a>
+            {% endif %}
+            <span class="text-xs font-bold text-slate-400 uppercase">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}&q={{ query }}&status={{ status_filter }}&country={{ country_filter }}"
+                   class="text-xs font-bold text-blue-400 hover:text-blue-300 uppercase">Next &raquo;</a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

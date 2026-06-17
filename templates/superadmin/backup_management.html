@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backup Management - SuperAdmin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background-color: #f5f7fa; font-family: 'Inter', sans-serif; }
+        .sidebar { background: white; border-right: 1px solid #e0e0e0; position: fixed; width: 250px; height: 100vh; overflow-y: auto; padding: 24px 0; }
+        .sidebar a { display: flex; align-items: center; gap: 12px; padding: 12px 24px; color: #666; text-decoration: none; font-size: 14px; transition: all 0.2s; }
+        .sidebar a:hover, .sidebar a.active { background: #f5f7fa; color: #667eea; border-left: 3px solid #667eea; padding-left: 21px; }
+        .main-content { margin-left: 250px; padding: 32px; }
+        .header { margin-bottom: 32px; }
+        .header h1 { font-size: 28px; font-weight: 700; color: #1a1a1a; margin: 0 0 8px 0; }
+        .card { background: white; border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-bottom: 24px; }
+        .btn { padding: 10px 16px; border-radius: 6px; font-weight: 600; font-size: 14px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; border: none; transition: all 0.2s; }
+        .btn-primary { background: #667eea; color: white; }
+        .btn-primary:hover { background: #5568d3; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-success:hover { background: #218838; }
+        .backup-item { background: white; padding: 16px; border-radius: 8px; border-left: 4px solid #667eea; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .badge-verified { background: #d4edda; color: #155724; }
+        .badge-unverified { background: #fff3cd; color: #856404; }
+        table { width: 100%; border-collapse: collapse; }
+        thead { background: #f5f7fa; border-bottom: 2px solid #e0e0e0; }
+        th { padding: 16px; text-align: left; font-weight: 600; color: #333; font-size: 13px; }
+        td { padding: 12px 16px; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
+        tbody tr:hover { background: #f9f9f9; }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div style="padding: 0 24px 24px; border-bottom: 1px solid #e0e0e0; margin-bottom: 24px;">
+            <h2 style="font-size: 18px; font-weight: 700; color: #667eea; margin: 0;">
+                <i class="fas fa-lock"></i> SuperAdmin
+            </h2>
+        </div>
+        <div style="padding: 0;">
+            <a href="{% url 'superadmin:dashboard' %}"><i class="fas fa-chart-line"></i> Dashboard</a>
+            <a href="{% url 'superadmin:database_management' %}"><i class="fas fa-database"></i> Database</a>
+            <a href="{% url 'superadmin:backups' %}" class="active"><i class="fas fa-save"></i> Backups</a>
+            <a href="{% url 'superadmin:exports' %}"><i class="fas fa-download"></i> Exports</a>
+            <a href="{% url 'superadmin:imports' %}"><i class="fas fa-upload"></i> Imports</a>
+            <a href="{% url 'superadmin:statistics' %}"><i class="fas fa-chart-bar"></i> Statistics</a>
+            <a href="{% url 'superadmin:audit_log' %}"><i class="fas fa-scroll"></i> Audit Log</a>
+            <a href="/admin/" style="margin-top: auto; border-top: 1px solid #e0e0e0; padding-top: 24px;"><i class="fas fa-cog"></i> Django Admin</a>
+            <a href="{% url 'superadmin:logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header">
+            <h1><i class="fas fa-save"></i> Backup Management</h1>
+            <p style="color: #666; margin: 8px 0 0 0;">Create, manage, and restore database backups</p>
+        </div>
+
+        <!-- Create Backup Card -->
+        <div class="card">
+            <h2 style="margin: 0 0 16px 0; font-size: 18px; font-weight: 700;">Create New Backup</h2>
+            <form method="POST" style="display: grid; gap: 12px;">
+                {% csrf_token %}
+                <div>
+                    <label style="display: block; font-weight: 600; margin-bottom: 8px;">Backup Type</label>
+                    <select name="backup_type" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                        <option value="FULL">Full Database Backup</option>
+                        <option value="PARTIAL">Partial Backup (Selected Tables)</option>
+                        <option value="ANALYTICS">Analytics Only</option>
+                        <option value="AUDIT_LOG">Audit Log Only</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 600; margin-bottom: 8px;">Description (Optional)</label>
+                    <textarea name="description" placeholder="Add notes about this backup..." style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; resize: none; height: 80px;"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: fit-content;">
+                    <i class="fas fa-plus"></i> Create Backup Now
+                </button>
+            </form>
+        </div>
+
+        <!-- Backups List -->
+        <div class="card">
+            <h2 style="margin: 0 0 20px 0; font-size: 18px; font-weight: 700;">Recent Backups ({{ total_backups }})</h2>
+
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th><i class="fas fa-database"></i> Backup Type</th>
+                            <th><i class="fas fa-database"></i> Records</th>
+                            <th><i class="fas fa-hdd"></i> File Size</th>
+                            <th><i class="fas fa-calendar"></i> Created</th>
+                            <th><i class="fas fa-check"></i> Status</th>
+                            <th style="text-align: center;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for backup in backups %}
+                        <tr>
+                            <td><i class="fas fa-save"></i> {{ backup.get_backup_type_display }}</td>
+                            <td>{{ backup.record_count }}</td>
+                            <td>{{ backup.file_size_mb|floatformat:2 }} MB</td>
+                            <td>{{ backup.created_at|date:"M d, Y H:i" }}</td>
+                            <td>
+                                <span class="badge {% if backup.is_verified %}badge-verified{% else %}badge-unverified{% endif %}">
+                                    {% if backup.is_verified %}<i class="fas fa-check"></i> Verified{% else %}<i class="fas fa-times"></i> Unverified{% endif %}
+                                </span>
+                            </td>
+                            <td style="text-align: center;">
+                                <a href="{{ backup.backup_file.url }}" class="btn btn-success" style="padding: 6px 12px;">
+                                    <i class="fas fa-download"></i> Download
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: 40px 16px; color: #999;">
+                                <i class="fas fa-inbox" style="font-size: 32px; margin-bottom: 12px; display: block;"></i>
+                                No backups yet. Create one now!
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            {% if backups.paginator.num_pages > 1 %}
+            <div style="display: flex; justify-content: center; gap: 8px; margin-top: 20px; padding-top: 20px; border-top: 1px solid #e0e0e0;">
+                {% if backups.has_previous %}
+                    <a href="?page=1" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; text-decoration: none; color: #667eea;">First</a>
+                    <a href="?page={{ backups.previous_page_number }}" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; text-decoration: none; color: #667eea;">← Previous</a>
+                {% endif %}
+
+                <span style="padding: 8px 12px;">Page {{ current_page }} of {{ total_pages }}</span>
+
+                {% if backups.has_next %}
+                    <a href="?page={{ backups.next_page_number }}" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; text-decoration: none; color: #667eea;">Next →</a>
+                    <a href="?page={{ total_pages }}" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; text-decoration: none; color: #667eea;">Last</a>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Backup Info Card -->
+        <div class="card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+            <h3 style="margin: 0 0 12px 0; font-size: 16px;"><i class="fas fa-lightbulb"></i> Backup Best Practices</h3>
+            <ul style="margin: 0; padding-left: 20px; line-height: 1.8;">
+                <li>Create daily backups for disaster recovery</li>
+                <li>Test restores periodically to ensure integrity</li>
+                <li>Store backups in a secure, separate location</li>
+                <li>Keep at least 30 days of backups</li>
+                <li>Document all backup operations</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

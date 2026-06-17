@@ -1,0 +1,165 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DristiSewa Login</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+        background-color: #f0f7ff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        padding: 15px;
+    }
+
+    .login-container {
+        background-color: white;
+        padding: 30px 35px;
+        border-radius: 15px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        border: 2px solid #3b82f6;
+        width: 100%;
+        max-width: 380px;
+        text-align: center;
+    }
+
+    .logo-section h2 {
+        color: #444;
+        margin: 10px 0;
+        font-size: 22px;
+    }
+
+    .divider {
+        display: flex;
+        align-items: center;
+        text-align: center;
+        color: #6366f1;
+        margin: 15px 0;
+    }
+
+    .divider::before,
+    .divider::after {
+        content: '';
+        flex: 1;
+        border-bottom: 1px solid #cbd5e1;
+    }
+
+    .divider span {
+        padding: 0 12px;
+        font-weight: bold;
+        font-size: 16px;
+    }
+
+    .form-group {
+        text-align: left;
+        margin-bottom: 12px;
+    }
+
+    .form-group label {
+        display: block;
+        color: #6366f1;
+        font-weight: 600;
+        margin-bottom: 5px;
+        font-size: 14px;
+    }
+
+    input, select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        font-size: 14px;
+        outline: none;
+    }
+
+    input:focus, select:focus {
+        border-color: #6366f1;
+    }
+
+    .login-btn {
+        background-color: #6366f1;
+        color: white;
+        border: none;
+        padding: 12px;
+        width: 100%;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 8px;
+    }
+
+    .login-btn:hover {
+        background-color: #4f46e5;
+    }
+
+    .error {
+        color: red;
+        font-size: 13px;
+        margin-bottom: 10px;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="login-container">
+
+    <div class="logo-section">
+        <img src="{% static 'images/logo.png' %}" alt="Logo" style="width:180px;">
+        <h2>DristiSewa</h2>
+    </div>
+
+    <div class="divider">
+        <span>Login</span>
+    </div>
+
+    <form method="POST" action="{% url 'accounts:staff_login' %}">
+        {% csrf_token %}
+
+        {% if error %}
+            <div class="error">{{ error }}</div>
+        {% endif %}
+
+        <!-- ROLE -->
+        <div class="form-group">
+            <label>Role:</label>
+            <select name="role" required>
+                <option value="" disabled selected>Select Role</option>
+
+                <!-- 🔥 FIXED VALUES (backend match हुने गरी) -->
+                <option value="admin">Admin</option>
+                <option value="manager">Manager</option>
+                <option value="front desk">Front Desk</option>
+            </select>
+        </div>
+
+        <!-- EMAIL -->
+        <div class="form-group">
+            <label>Email:</label>
+            <input type="email" name="email" placeholder="Enter email" required>
+        </div>
+
+        <!-- PASSWORD -->
+        <div class="form-group">
+            <label>Password:</label>
+            <input type="password" name="password" placeholder="Enter password" required>
+        </div>
+
+        <button type="submit" class="login-btn">Login</button>
+    </form>
+
+</div>
+
+</body>
+</html>

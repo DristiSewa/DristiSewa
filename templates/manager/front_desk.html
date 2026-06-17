@@ -1,0 +1,119 @@
+{% extends 'manager/base.html' %}
+
+{% block title %}Manage Front Desk Staff | DristiSewa{% endblock %}
+
+{% block content %}
+<div class="frontdesk-container">
+
+    <div class="page-header-box">
+        <div class="header-info">
+            <h1>Front-Desk Users</h1>
+            <p>Create staff accounts, change credentials, or remove operational user sessions.</p>
+            <p style="margin-top:4px;">
+                <i class="fa-solid fa-building"></i>
+                Branch: <strong>{% if user_branch %}{{ user_branch.name }}{% else %}Not assigned{% endif %}</strong>
+            </p>
+        </div>
+        <button class="add-staff-btn" id="openCreateStaffModalBtn">
+            <i class="fa-solid fa-user-plus"></i> Create Front Desk Staff
+        </button>
+    </div>
+
+    <div class="staff-cards-grid">
+        {% for staff in front_desk_staff %}
+        <div class="staff-profile-card">
+            <div class="card-top-identity">
+                <div class="large-avatar">
+                    {% if staff.profile_pic %}
+                        <img src="{{ staff.profile_pic.url }}" alt="{{ staff.get_full_name }}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
+                    {% else %}
+                        {{ staff.first_name|slice:":1"|upper }}{{ staff.last_name|slice:":1"|upper }}
+                    {% endif %}
+                </div>
+                <div class="identity-text">
+                    <h3>{{ staff.get_full_name|default:staff.email }}</h3>
+                    <span>Email: {{ staff.email }}</span>
+                    <div class="created-at-date">
+                        <i class="fa-regular fa-calendar-days"></i> Created: {{ staff.date_joined|date:"M d, Y" }}
+                    </div>
+                </div>
+            </div>
+            <div class="card-actions-panel">
+                <button class="btn-action-edit" data-staff-id="{{ staff.id }}" data-staff-name="{{ staff.get_full_name }}" data-staff-email="{{ staff.email }}">
+                    <i class="fa-solid fa-user-pen"></i> Edit
+                </button>
+                <button class="btn-action-delete" data-staff-id="{{ staff.id }}" data-staff-name="{{ staff.get_full_name }}">
+                    <i class="fa-solid fa-trash-can"></i> Delete
+                </button>
+            </div>
+        </div>
+        {% empty %}
+        <p style="color:#94a3b8;font-style:italic;padding:20px 0;">No front desk staff created yet.</p>
+        {% endfor %}
+    </div>
+
+</div>
+
+<!-- Create / Edit Modal -->
+<div class="modal-overlay" id="staffFormModal">
+    <div class="modal-sheet-box">
+        <div class="modal-header">
+            <h2 id="modalTitle">Create Front Desk Staff</h2>
+            <button class="close-modal-btn" id="closeStaffModalBtn"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <form method="POST" action="{% url 'accounts:front_desk' %}">
+            {% csrf_token %}
+            <input type="hidden" id="form_action" name="form_action" value="create">
+            <input type="hidden" id="staff_id" name="staff_id" value="">
+            <div class="modal-body-form">
+                <p style="color:#64748b;font-size:13px;margin:0 0 12px;">
+                    <i class="fa-solid fa-circle-info"></i>
+                    This account will be created for branch
+                    <strong>{% if user_branch %}{{ user_branch.name }}{% else %}your branch{% endif %}</strong>.
+                </p>
+                <div class="form-input-group">
+                    <label for="staff_name">Staff Full Name</label>
+                    <input type="text" id="staff_name" name="name" placeholder="e.g. Sujata Thapa" required>
+                </div>
+                <div class="form-input-group">
+                    <label for="staff_email">Email Address</label>
+                    <input type="email" id="staff_email" name="email" placeholder="e.g. sujata@dristisewa.com" required>
+                </div>
+                <div class="form-input-group">
+                    <label for="staff_password" id="passwordLabel">Account Password</label>
+                    <input type="password" id="staff_password" name="password" placeholder="••••••••" required>
+                </div>
+            </div>
+            <div class="modal-footer-actions">
+                <button type="button" class="btn-cancel" id="cancelStaffModalBtn">Cancel</button>
+                <button type="submit" class="add-staff-btn" id="modalSubmitBtn">Save Staff Account</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Delete Confirm Modal -->
+<div class="modal-overlay" id="deleteConfirmModal">
+    <div class="modal-sheet-box">
+        <div class="modal-header" style="background-color:#fff5f5;border-bottom-color:#fee2e2;">
+            <h2 style="color:#c53030;"><i class="fa-solid fa-triangle-exclamation"></i> Confirm Deletion</h2>
+            <button class="close-modal-btn" id="closeDeleteModalBtn"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body-form">
+            <p style="color:#334155;font-size:14px;line-height:1.6;">
+                Are you sure you want to permanently remove <strong id="deleteTargetName">this staff member</strong> from the system?
+                This action will immediately terminate their active profile sessions and cannot be undone.
+            </p>
+        </div>
+        <form method="POST" action="{% url 'accounts:front_desk' %}" id="deleteStaffForm">
+            {% csrf_token %}
+            <input type="hidden" name="form_action" value="delete">
+            <input type="hidden" id="delete_staff_id" name="staff_id" value="">
+            <div class="modal-footer-actions">
+                <button type="button" class="btn-cancel" id="cancelDeleteModalBtn">Cancel</button>
+                <button type="submit" class="btn-danger-confirm" id="confirmDeleteSubmitBtn">Delete Account</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

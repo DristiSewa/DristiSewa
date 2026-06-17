@@ -1,0 +1,221 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f4f7fe; }
+        .nav-link { color: rgba(255,255,255,0.75); border-left: 3px solid transparent; }
+        .nav-link:hover { background-color: rgba(255,255,255,0.08); color: #fff; }
+        .sidebar-active { background-color: rgba(255,255,255,0.14) !important; color: #fff; border-left-color: #fff; font-weight: 600; }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+
+    <div class="flex min-h-screen">
+        <div class="w-64 bg-[#3f39c5] text-white flex flex-col justify-between shrink-0">
+            <div>
+                <div class="p-6 flex items-center gap-3 border-b border-white/10">
+                    <div class="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center shrink-0">
+                        <img src="{% static 'images/home.png' %}" alt="Logo" class="w-5 h-5 object-contain">
+                    </div>
+                    <span class="font-bold text-lg tracking-wide">Dashboard</span>
+                </div>
+                <nav class="mt-4">
+                    <a href="{% url 'accounts:frontdesk_dashboard' %}" class="nav-link flex items-center px-4 py-3 mx-3 my-0.5 rounded-lg transition-all">
+                        <i class="fas fa-user-graduate mr-3 w-5"></i> Student Management
+                    </a>
+                    <a href="{% url 'followups:followup_list' %}" class="nav-link flex items-center px-4 py-3 mx-3 my-0.5 rounded-lg transition-all">
+                        <i class="fas fa-tasks mr-3 w-5"></i> Followup Management
+                    </a>
+                    <a href="{% url 'students:archived_students' %}" class="nav-link sidebar-active flex items-center px-4 py-3 mx-3 my-0.5 rounded-lg transition-all">
+                        <i class="fas fa-archive mr-3 w-5"></i> Archived Students
+                    </a>
+                </nav>
+            </div>
+            <a href="{% url 'accounts:logout' %}" class="block">
+                <div class="m-3 rounded-lg bg-white/10 p-3 flex items-center justify-center gap-3 cursor-pointer font-semibold hover:bg-orange-500 transition-all text-white text-sm">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </div>
+            </a>
+        </div>
+
+        <div class="flex-1 p-8">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                <div class="flex flex-wrap gap-4 flex-1">
+                    <div class="bg-[#bfdbfe]/60 p-4 rounded-2xl flex items-center min-w-[220px] border border-[#bfdbfe]">
+                        <div class="bg-white p-4 rounded-xl mr-4 text-[#2563eb] flex items-center justify-center shadow-sm w-14 h-14">
+                            <i class="fas fa-users text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-semibold text-gray-800">Total Students</p>
+                            <p class="text-2xl font-black text-black">{{ summary.total_students }}</p>
+                        </div>
+                    </div>
+                    <div class="bg-[#fef08a]/70 p-4 rounded-2xl flex items-center min-w-[220px] border border-[#fef08a]">
+                        <div class="bg-white p-4 rounded-xl mr-4 text-[#ea580c] flex items-center justify-center shadow-sm w-14 h-14">
+                            <i class="fas fa-list-ul text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-semibold text-gray-800">Pending Forms</p>
+                            <p class="text-2xl font-black text-black">{{ summary.pending_documents }}</p>
+                        </div>
+                    </div>
+                    <div class="bg-[#fbcfe8]/60 p-4 rounded-2xl flex items-center min-w-[220px] border border-[#fbcfe8]">
+                        <div class="bg-white p-4 rounded-xl mr-4 text-[#db2777] flex items-center justify-center shadow-sm w-14 h-14">
+                            <i class="fas fa-archive text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-semibold text-gray-800">Archived</p>
+                            <p class="text-2xl font-black text-black">{{ students|length }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3 px-4 py-2">
+                    <div class="text-right">
+                        <p class="font-bold text-[#0f172a] text-base leading-tight">{{ request.user.get_full_name|default:request.user.email }}</p>
+                        <p class="text-xs text-gray-400 font-medium">Front desk</p>
+                    </div>
+                    <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 border border-gray-300 shadow-sm">
+                        <i class="fas fa-user text-lg"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="p-4 flex justify-between items-center border-b border-gray-100">
+                    <h3 class="font-bold text-gray-700">Archived Students</h3>
+                    <form method="get" action="{% url 'students:archived_students' %}" class="flex gap-2">
+                        <input type="text" name="q" value="{{ query }}" placeholder="Search students..." class="border border-gray-300 rounded-lg px-4 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 w-64">
+                        <button type="submit" class="bg-indigo-800 text-white px-6 py-1.5 rounded-lg text-sm hover:bg-indigo-900 transition-all"><i class="fas fa-search mr-2"></i>Search</button>
+                    </form>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead class="bg-gray-50 text-xs uppercase text-gray-500 tracking-wider border-b">
+                            <tr>
+                                <th class="px-6 py-4">Name</th>
+                                <th class="px-6 py-4">Email</th>
+                                <th class="px-6 py-4">Phone</th>
+                                <th class="px-6 py-4">Country</th>
+                                <th class="px-6 py-4 text-center">Unarchive</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm text-gray-700">
+                            {% for student in students %}
+                            <tr class="hover:bg-gray-50 border-b border-gray-100">
+                                <td class="px-6 py-4 font-semibold">
+                                    <button type="button" onclick="openProfile('{{ student.user.get_full_name|default:student.user.email|escapejs }}', '{{ student.user.email|escapejs }}', '{{ student.user.phone|default:"-"|escapejs }}', '{{ student.preferred_country|default:"-"|escapejs }}')" class="text-blue-600 hover:text-blue-800 hover:underline text-left font-semibold">
+                                        {{ student.user.get_full_name|default:student.user.email }}
+                                    </button>
+                                </td>
+                                <td class="px-6 py-4">{{ student.user.email }}</td>
+                                <td class="px-6 py-4 font-mono">{{ student.user.phone|default:"-" }}</td>
+                                <td class="px-6 py-4">{{ student.preferred_country|default:"-" }}</td>
+                                <td class="px-6 py-4 text-center">
+                                    <form method="post" action="{% url 'students:student_unarchive' student.pk %}" class="inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="text-gray-700 hover:text-blue-600 border border-gray-300 rounded p-1.5 inline-flex items-center justify-center hover:bg-blue-50 transition-all">
+                                            <i class="fas fa-box-open text-base"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="px-6 py-8 text-center text-gray-400">No archived students.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="p-4 flex justify-between items-center text-xs text-gray-400 border-t bg-gray-50">
+                    <span>Showing {{ students|length }} of {{ students|length }} entries</span>
+                    <div class="flex gap-1">
+                        <button class="px-3 py-1 bg-white border border-gray-200 rounded hover:bg-gray-100">1</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="profileModal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50 p-4 transition-all duration-300">
+        <div class="bg-white w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden transform scale-95 transition-transform duration-300">
+            <div class="bg-indigo-600 px-6 py-4 flex justify-between items-center text-white">
+                <div class="flex items-center gap-3">
+                    <i class="fas fa-id-card text-xl"></i>
+                    <h3 class="font-bold text-lg">Student Profile</h3>
+                </div>
+                <button onclick="closeProfile()" class="text-white/80 hover:text-white text-xl focus:outline-none">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="p-6 space-y-6">
+                <div class="flex items-center gap-4 border-b pb-4">
+                    <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 text-2xl font-bold" id="modalInitials">
+                        ST
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-800" id="modalName">-</h2>
+                        <p class="text-sm text-gray-500" id="modalCountry">-</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-gray-50 p-3 rounded-lg border">
+                        <p class="text-xs text-gray-400 uppercase font-bold">Email Address</p>
+                        <p class="text-sm font-medium text-gray-800 mt-1 break-all" id="modalEmail">-</p>
+                    </div>
+                    <div class="bg-gray-50 p-3 rounded-lg border">
+                        <p class="text-xs text-gray-400 uppercase font-bold">Phone Number</p>
+                        <p class="text-sm font-medium text-gray-800 mt-1 font-mono" id="modalPhone">-</p>
+                    </div>
+                </div>
+
+                <div class="border border-dashed border-gray-300 rounded-xl p-4 bg-indigo-50/30 text-center">
+                    <p class="text-xs text-indigo-600 font-semibold"><i class="fas fa-info-circle mr-1"></i> Academic Documents & Registration Data</p>
+                </div>
+            </div>
+
+            <div class="bg-gray-50 px-6 py-4 flex justify-end gap-2 border-t">
+                <button onclick="closeProfile()" class="px-4 py-2 border rounded-lg text-sm font-semibold text-gray-600 hover:bg-gray-100 transition-all">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openProfile(name, email, phone, country) {
+            document.getElementById('modalName').innerText = name;
+            document.getElementById('modalEmail').innerText = email;
+            document.getElementById('modalPhone').innerText = phone;
+            document.getElementById('modalCountry').innerText = country;
+
+            const initials = name.split(' ').map(n => n[0]).join('').toUpperCase();
+            document.getElementById('modalInitials').innerText = initials;
+
+            const modal = document.getElementById('profileModal');
+            modal.classList.remove('hidden');
+        }
+
+        function closeProfile() {
+            document.getElementById('profileModal').classList.add('hidden');
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('profileModal');
+            if (event.target == modal) {
+                closeProfile();
+            }
+        }
+    </script>
+</body>
+</html>

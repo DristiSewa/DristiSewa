@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Student Management - DristiSewa{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto">
+    <div class="luxury-glass-card rounded-3xl p-8">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+            <h1 class="text-xl font-black text-white uppercase tracking-wide">Student Management</h1>
+            <div class="flex flex-col sm:flex-row gap-2">
+                <form method="GET" class="flex gap-2">
+                    <input type="text" name="q" value="{{ query }}" placeholder="Search by name or email"
+                           class="form-input !w-64">
+                    <button type="submit" class="btn-primary">Search <i class="fa-solid fa-magnifying-glass"></i></button>
+                </form>
+                <a href="{% url 'students:student_create' %}" class="btn-primary"><i class="fa-solid fa-user-plus"></i> Add Student</a>
+            </div>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left">
+                <thead>
+                    <tr class="text-xs font-black uppercase tracking-widest text-slate-400 border-b border-slate-800">
+                        <th class="py-2 pr-4">Name</th>
+                        <th class="py-2 pr-4">Email</th>
+                        <th class="py-2 pr-4">Branch</th>
+                        <th class="py-2 pr-4">Preferred Country</th>
+                        <th class="py-2 pr-4">Test</th>
+                        <th class="py-2 pr-4">Score</th>
+                        <th class="py-2 pr-4">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in students %}
+                    <tr class="border-b border-slate-900">
+                        <td class="py-2 pr-4 font-semibold text-white">{{ student.user.get_full_name|default:student.user.email }}</td>
+                        <td class="py-2 pr-4 text-slate-400">{{ student.user.email }}</td>
+                        <td class="py-2 pr-4 text-slate-400">{{ student.user.branch|default:"—" }}</td>
+                        <td class="py-2 pr-4 text-slate-400">{{ student.preferred_country|default:"—" }}</td>
+                        <td class="py-2 pr-4 text-slate-400">{{ student.test_type|default:"—" }}</td>
+                        <td class="py-2 pr-4 text-slate-400">{{ student.test_score|default:"—" }}</td>
+                        <td class="py-2 pr-4 flex gap-3">
+                            <a href="{% url 'students:student_edit' student.id %}" class="text-xs font-bold text-blue-400 hover:text-blue-300 uppercase">Edit</a>
+                            <form method="post" action="{% url 'students:student_archive' student.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="text-xs font-bold text-amber-400 hover:text-amber-300 uppercase">Archive</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="7" class="py-4 text-center text-slate-500">No students found.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

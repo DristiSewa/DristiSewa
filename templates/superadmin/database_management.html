@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Management - SuperAdmin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f5f7fa;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .sidebar {
+            background: white;
+            border-right: 1px solid #e0e0e0;
+            min-height: 100vh;
+            padding: 24px 0;
+            position: fixed;
+            width: 250px;
+            left: 0;
+            top: 0;
+        }
+
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 24px;
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .sidebar a:hover,
+        .sidebar a.active {
+            background: #f5f7fa;
+            color: #667eea;
+            border-left: 3px solid #667eea;
+            padding-left: 21px;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 32px;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            overflow-x: auto;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #f5f7fa;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        th {
+            padding: 16px;
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+        }
+
+        tbody tr:hover {
+            background: #f9f9f9;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #c82333;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .badge-verified {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .filter-section {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .filter-group {
+            display: inline-block;
+            margin-right: 20px;
+        }
+
+        .filter-group label {
+            font-weight: 600;
+            color: #333;
+            margin-right: 8px;
+            font-size: 14px;
+        }
+
+        .filter-group select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .pagination a,
+        .pagination span {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #667eea;
+            font-size: 14px;
+        }
+
+        .pagination a:hover {
+            background: #f5f7fa;
+        }
+
+        .pagination .current {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .header {
+            margin-bottom: 32px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin: 0 0 8px 0;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 14px;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div style="padding: 0 24px 24px; border-bottom: 1px solid #e0e0e0; margin-bottom: 24px;">
+            <h2 style="font-size: 18px; font-weight: 700; color: #667eea; margin: 0;">
+                <i class="fas fa-lock"></i> SuperAdmin
+            </h2>
+        </div>
+
+        <div style="padding: 0;">
+            <a href="{% url 'superadmin:dashboard' %}"><i class="fas fa-chart-line"></i> Dashboard</a>
+            <a href="{% url 'superadmin:database_management' %}" class="active"><i class="fas fa-database"></i> Database</a>
+            <a href="{% url 'superadmin:backups' %}"><i class="fas fa-save"></i> Backups</a>
+            <a href="{% url 'superadmin:exports' %}"><i class="fas fa-download"></i> Exports</a>
+            <a href="{% url 'superadmin:imports' %}"><i class="fas fa-upload"></i> Imports</a>
+            <a href="{% url 'superadmin:statistics' %}"><i class="fas fa-chart-bar"></i> Statistics</a>
+            <a href="{% url 'superadmin:audit_log' %}"><i class="fas fa-scroll"></i> Audit Log</a>
+            <a href="/admin/" style="margin-top: 24px; border-top: 1px solid #e0e0e0; padding-top: 24px;"><i class="fas fa-cog"></i> Django Admin</a>
+            <a href="{% url 'superadmin:logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header">
+            <h1><i class="fas fa-database"></i> Database Management</h1>
+            <p>View and manage all database records across {{ total_users }} users, {{ total_students }} students, and {{ total_applications }} applications</p>
+        </div>
+
+        <!-- Table Selector -->
+        <div class="filter-section">
+            <form method="GET" style="display: flex; align-items: center; gap: 16px;">
+                <div class="filter-group">
+                    <label for="table">Select Table:</label>
+                    <select name="table" id="table" onchange="this.form.submit();">
+                        {% for table_name, count in tables.items %}
+                            <option value="{{ table_name }}" {% if table_name == selected_table %}selected{% endif %}>
+                                {{ table_name }} ({{ count }})
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </form>
+        </div>
+
+        <!-- Records Table -->
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        {% for col in columns %}
+                        <th>{{ col }}</th>
+                        {% endfor %}
+                        <th style="text-align: center;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in records %}
+                    <tr>
+                        {% if selected_table == 'Users' %}
+                            <td>{{ record.email }}</td>
+                            <td>{{ record.get_full_name }}</td>
+                            <td>{{ record.get_role_display }}</td>
+                            <td>{{ record.branch.name|default:"—" }}</td>
+                            <td><span class="badge {% if record.is_active %}badge-active{% else %}badge-inactive{% endif %}">{% if record.is_active %}Active{% else %}Inactive{% endif %}</span></td>
+                            <td>{{ record.date_joined|date:"M d, Y" }}</td>
+                        {% elif selected_table == 'Students' %}
+                            <td>{{ record.user.get_full_name }}</td>
+                            <td>{{ record.user.email }}</td>
+                            <td>{{ record.user.branch.name|default:"—" }}</td>
+                            <td>{{ record.preferred_country|default:"—" }}</td>
+                            <td><span class="badge {% if record.is_verified %}badge-verified{% else %}badge-pending{% endif %}">{% if record.is_verified %}Verified{% else %}Pending{% endif %}</span></td>
+                            <td>{{ record.created_at|date:"M d, Y" }}</td>
+                        {% elif selected_table == 'Branches' %}
+                            <td>{{ record.name }}</td>
+                            <td>{{ record.location|default:"—" }}</td>
+                            <td><span class="badge {% if record.is_active %}badge-active{% else %}badge-inactive{% endif %}">{% if record.is_active %}Active{% else %}Inactive{% endif %}</span></td>
+                            <td>{{ record.created_at|date:"M d, Y" }}</td>
+                        {% elif selected_table == 'Applications' %}
+                            <td>{{ record.student.user.get_full_name }}</td>
+                            <td>{{ record.get_status_display }}</td>
+                            <td>{{ record.student.preferred_country|default:"—" }}</td>
+                            <td>{{ record.created_at|date:"M d, Y" }}</td>
+                            <td>{{ record.updated_at|date:"M d, Y" }}</td>
+                        {% elif selected_table == 'Documents' %}
+                            <td>{{ record.student.user.get_full_name }}</td>
+                            <td>{{ record.get_doc_type_display }}</td>
+                            <td><span class="badge {% if record.status == 'APPROVED' %}badge-verified{% else %}badge-pending{% endif %}">{{ record.get_status_display }}</span></td>
+                            <td>{{ record.created_at|date:"M d, Y" }}</td>
+                        {% elif selected_table == 'Follow-ups' %}
+                            <td>{{ record.student.user.get_full_name }}</td>
+                            <td>{% if record.is_done %}Done{% else %}Pending{% endif %}</td>
+                            <td>{{ record.scheduled_date|date:"M d, Y"|default:"—" }}</td>
+                            <td>{{ record.created_at|date:"M d, Y" }}</td>
+                        {% endif %}
+                        <td style="text-align: center;">
+                            <button class="btn-small btn-delete" onclick="deleteRecord('{{ record.id }}', '{{ selected_table|lower }}')">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="10" style="text-align: center; padding: 40px 16px; color: #999;">
+                            <i class="fas fa-folder-open" style="font-size: 32px; margin-bottom: 12px; display: block;"></i>
+                            No records found
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        {% if records.paginator.num_pages > 1 %}
+        <div class="pagination">
+            {% if records.has_previous %}
+                <a href="?table={{ selected_table }}&page=1">First</a>
+                <a href="?table={{ selected_table }}&page={{ records.previous_page_number }}">← Previous</a>
+            {% endif %}
+
+            <span>Page {{ current_page }} of {{ total_pages }}</span>
+
+            {% if records.has_next %}
+                <a href="?table={{ selected_table }}&page={{ records.next_page_number }}">Next →</a>
+                <a href="?table={{ selected_table }}&page={{ total_pages }}">Last</a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        function deleteRecord(recordId, recordType) {
+            if (confirm(`Are you sure you want to delete this ${recordType}? This action cannot be undone.`)) {
+                const form = new FormData();
+                form.append('id', recordId);
+                form.append('type', recordType);
+                form.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+                fetch('{% url "superadmin:delete_record" %}', {
+                    method: 'POST',
+                    body: form
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                        location.reload();
+                    } else {
+                        alert('Error: ' + data.error);
+                    }
+                });
+            }
+        }
+    </script>
+</body>
+</html>

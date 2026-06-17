@@ -1,0 +1,224 @@
+{% extends 'manager/base.html' %}
+
+{% block title %}Branch Monitoring Hub | DristiSewa{% endblock %}
+
+{% block content %}
+<style>
+    /* Stack the Branch Student Tracker and Front Desk Performance Overview
+       full-width, one above the other, instead of the default side-by-side grid. */
+    .bm-grid-reversed { grid-template-columns: 1fr; }
+</style>
+<div class="monitoring-container">
+
+    <div class="header-panel"
+     style="display:flex;justify-content:space-between;align-items:center;background:#fff;padding:18px 24px;border-radius:16px;box-shadow:0 2px 10px rgba(0,0,0,.05);margin-bottom:25px;">
+
+    <div style="display:flex;gap:18px;flex-wrap:wrap;">
+
+        <!-- Total Students -->
+        <div style="background:#dbeafe;border:1px solid #bfdbfe;border-radius:16px;padding:16px 20px;display:flex;align-items:center;gap:15px;min-width:220px;">
+
+            <div style="width:55px;height:55px;background:white;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#2563eb;font-size:20px;">
+                <i class="fas fa-users"></i>
+            </div>
+
+            <div>
+                <p style="margin:0;font-size:14px;font-weight:600;color:#374151;">
+                    Total Students
+                </p>
+
+                <p style="margin:4px 0 0;font-size:28px;font-weight:800;color:#111827;">
+                    {{ total_branch_students }}
+                </p>
+            </div>
+
+        </div>
+
+        <!-- Pending -->
+        <a href="{% url 'accounts:pending_followups' %}"
+           style="background:#fef3c7;border:1px solid #fde68a;border-radius:16px;padding:16px 20px;display:flex;align-items:center;gap:15px;min-width:220px;text-decoration:none;">
+
+            <div style="width:55px;height:55px;background:white;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#d97706;font-size:20px;">
+                <i class="fas fa-list-ul"></i>
+            </div>
+
+            <div>
+                <p style="margin:0;font-size:14px;font-weight:600;color:#374151;">
+                    Pending Followups
+                </p>
+
+                <p style="margin:4px 0 0;font-size:28px;font-weight:800;color:#111827;">
+                    {{ pending_trackers }}
+                </p>
+            </div>
+
+        </a>
+
+        <!-- Completed -->
+        <a href="{% url 'accounts:complete_followups' %}"
+           style="background:#fce7f3;border:1px solid #fbcfe8;border-radius:16px;padding:16px 20px;display:flex;align-items:center;gap:15px;min-width:220px;text-decoration:none;">
+
+            <div style="width:55px;height:55px;background:white;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#db2777;font-size:20px;">
+                <i class="fas fa-file-alt"></i>
+            </div>
+
+            <div>
+                <p style="margin:0;font-size:14px;font-weight:600;color:#374151;">
+                    Completed Followups
+                </p>
+
+                <p style="margin:4px 0 0;font-size:28px;font-weight:800;color:#111827;">
+                    {{ completed_trackers }}
+                </p>
+            </div>
+
+        </a>
+
+        <!-- Unassigned -->
+        <div style="background:#ede9fe;border:1px solid #ddd6fe;border-radius:16px;padding:16px 20px;display:flex;align-items:center;gap:15px;min-width:220px;">
+
+            <div style="width:55px;height:55px;background:white;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#7c3aed;font-size:20px;">
+                <i class="fas fa-user-clock"></i>
+            </div>
+
+            <div>
+                <p style="margin:0;font-size:14px;font-weight:600;color:#374151;">
+                    Unassigned Students
+                </p>
+
+                <p style="margin:4px 0 0;font-size:28px;font-weight:800;color:#111827;">
+                    {{ unassigned_students_count }}
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+</div>
+
+    <div class="monitoring-workspace-grid bm-grid-reversed">
+
+        <div class="monitor-panel-box">
+            <div class="panel-header">
+                <h3 class="panel-title">Branch Student Tracker</h3>
+                <span class="branch-pill">{{ active_branch }} Hub</span>
+            </div>
+            <div class="responsive-table-holder">
+                <table class="ledger-matrix-table bst-fix">
+                    <colgroup>
+                        <col class="bst-c1">
+                        <col class="bst-c2">
+                        <col class="bst-c3">
+                        <col class="bst-c2">
+                        <col class="bst-c4">
+                        <col class="bst-c5">
+                        <col class="bst-c4">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Phone</th>
+                            <th>Email</th>
+                            <th>Assigned By</th>
+                            <th>Country</th>
+                            <th>Document</th>
+                            <th>Tracking</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in branch_students %}
+                        <tr>
+                            <td><a href="{% url 'accounts:student_document' student.id %}" class="student-link">{{ student.name }}</a></td>
+                            <td>{{ student.phone }}</td>
+                            <td>{{ student.email }}</td>
+                            <td>{{ student.assigned_by }}</td>
+                            <td>{{ student.country }}</td>
+                            <td>{{ student.document_label }}</td>
+                            <td><span class="state-pill {% if student.tracking == 'completed' %}state-completed{% else %}state-pending{% endif %}">{{ student.tracking|title }}</span></td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="7" style="text-align:center;color:#9ca3af;padding:20px;">No students assigned by Front Desk yet.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="monitor-panel-box">
+    <div class="panel-header">
+        <h3 class="panel-title">Front Desk Performance Overview</h3>
+    </div>
+
+    <div class="responsive-table-holder">
+        <table class="ledger-matrix-table">
+            <thead>
+                <tr>
+                    <th>Staff</th>
+                    <th>Students</th>
+                    <th>Verified</th>
+                    <th>Pending</th>
+                    <th>Completed</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for staff in front_desk_staff %}
+                <tr>
+                    <td>
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <div style="width:32px;height:32px;border-radius:50%;overflow:hidden;background:#e0e7ff;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                {% if staff.profile_pic %}
+                                    <img src="{{ staff.profile_pic }}" alt="{{ staff.name }}" style="width:100%;height:100%;object-fit:cover;">
+                                {% else %}
+                                    <i class="fas fa-user" style="color:#6366f1;font-size:14px;"></i>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <strong>{{ staff.name }}</strong>
+                                <div style="font-size:11px;color:#9ca3af;">{{ staff.email }}</div>
+                            </div>
+                        </div>
+                    </td>
+
+                    <td>{{ staff.students }}</td>
+
+                    <td>
+                        <span class="state-pill state-completed">
+                            {{ staff.verified }}
+                        </span>
+                    </td>
+
+                    <td>
+                        <span class="state-pill state-pending">
+                            {{ staff.pending }}
+                        </span>
+                    </td>
+
+                    <td>
+                        <span class="state-pill state-completed">
+                            {{ staff.completed }}
+                        </span>
+                    </td>
+
+                    <td>
+                        <span class="badge-staff-status {% if staff.status == 'Active' %}badge-staff-online{% else %}badge-staff-offline{% endif %}">
+                            <i class="fas fa-circle" style="font-size:8px;margin-right:6px;"></i>{{ staff.status }}
+                        </span>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6" style="text-align:center;color:#9ca3af;padding:20px;">No front desk staff assigned to this branch yet.</td></tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
+    </div>
+</div>
+
+    </div>
+</div>
+{% endblock %}

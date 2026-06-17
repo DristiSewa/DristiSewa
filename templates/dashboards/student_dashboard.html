@@ -1,0 +1,395 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - DristiSewa</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0f172a;
+        }
+        .sidebar-glow {
+            box-shadow: 10px 0 30px -10px rgba(0, 0, 0, 0.3);
+        }
+        .main-card {
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.3);
+        }
+        .input-glow:focus {
+            box-shadow: 0 0 15px rgba(37, 99, 235, 0.15);
+            border-color: #2563eb;
+        }
+        .selectable-card {
+            border: 2px solid #f1f5f9;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .selectable-card.active {
+            border-color: #2563eb;
+            background-color: #eff6ff;
+            transform: scale(1.02);
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            75% { transform: translateX(6px); }
+        }
+        .shake-element {
+            animation: shake 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body class="h-screen flex overflow-hidden antialiased text-slate-100 relative">
+
+    <div class="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-blue-600/10 rounded-full filter blur-[120px] pointer-events-none z-0"></div>
+    <div class="absolute bottom-[-10%] left-[20%] w-[500px] h-[500px] bg-indigo-500/10 rounded-full filter blur-[120px] pointer-events-none z-0"></div>
+
+    <div class="w-72 bg-slate-950 flex flex-col justify-between border-r border-slate-900 sidebar-glow relative z-10">
+        <div>
+            <div class="p-8 text-center border-b border-slate-900 bg-slate-900/40">
+                <a href="{% url 'students:profile' %}" class="group block text-center">
+                    <div class="w-20 h-20 rounded-full mx-auto overflow-hidden border-2 border-blue-500/50 group-hover:border-blue-400 transition mb-3 bg-slate-900 flex items-center justify-center cursor-pointer">
+                        {% if request.user.student.profile_pic and request.user.student.profile_pic.url != '/media/default.png' %}
+                            <img src="{{ request.user.student.profile_pic.url }}" class="w-full h-full object-cover">
+                        {% else %}
+                            <i class="fa-solid fa-circle-user text-5xl text-slate-400"></i>
+                        {% endif %}
+                    </div>
+                    <p class="font-extrabold text-sm text-slate-200 group-hover:text-blue-400 transition tracking-wide uppercase">Student Portal</p>
+                    <p class="text-[10px] text-blue-400 font-bold tracking-widest mt-0.5">DristiSewa Systems</p>
+                </a>
+            </div>
+
+            <div class="p-4 space-y-1.5 mt-4">
+                <a href="{% url 'accounts:dashboard' %}" class="flex items-center gap-3.5 px-4 py-3.5 bg-blue-600 text-white text-xs font-black uppercase tracking-wider rounded-xl transition shadow-lg shadow-blue-600/20">
+                    <i class="fa-solid fa-house text-sm"></i> Home
+                </a>
+
+                <a href="{% url 'documents:upload_docs' %}" class="flex items-center gap-3.5 px-4 py-3.5 text-slate-400 hover:text-slate-200 hover:bg-slate-900/60 text-xs font-black uppercase tracking-wider rounded-xl transition">
+                    <i class="fa-solid fa-cloud-arrow-up text-sm"></i> Upload Docs
+                </a>
+
+                <a href="{% url 'applications:app_status' %}" class="flex items-center gap-3.5 px-4 py-3.5 text-slate-400 hover:text-slate-200 hover:bg-slate-900/60 text-xs font-black uppercase tracking-wider rounded-xl transition">
+                    <i class="fa-solid fa-clock text-sm"></i> Status Tracker
+                </a>
+            </div>
+        </div>
+
+        <div class="p-4">
+            <a href="{% url 'accounts:logout' %}" class="flex items-center justify-center gap-2 w-full py-3.5 bg-slate-900 hover:bg-rose-950/40 text-slate-400 hover:text-rose-400 border border-slate-800 hover:border-rose-900/50 text-xs font-black uppercase tracking-wider rounded-xl transition">
+                <i class="fa-solid fa-power-off"></i> Logout Terminal
+            </a>
+        </div>
+    </div>
+
+    <div class="flex-grow flex flex-col overflow-hidden relative z-10">
+
+        <header class="bg-white px-8 lg:px-12 py-4 flex justify-between items-center border-b border-blue-50 shadow-sm">
+            <div>
+                <h1 class="text-xs font-black uppercase tracking-widest text-slate-400">Dashboard</h1>
+                <p class="text-sm font-extrabold text-slate-800">Personal Details</p>
+            </div>
+            <div class="flex items-center gap-3 border-l border-slate-100 pl-4">
+                <div class="text-right">
+                    <strong class="text-sm text-slate-900 block leading-tight font-extrabold">Hi, {{ request.user.first_name }}!</strong>
+                    <small class="text-xs text-slate-400 font-medium">{{ request.user.email }}</small>
+                </div>
+            </div>
+        </header>
+
+        <div class="flex-grow overflow-y-auto p-6 lg:p-10">
+            <div class="max-w-4xl mx-auto main-card rounded-3xl p-8 lg:p-12 text-slate-900 border border-blue-50 relative">
+
+                <div class="grid grid-cols-3 gap-4 mb-10 border-b border-slate-100 pb-8">
+                    <div id="stepMeter1" class="flex items-center gap-3 border-b-4 border-blue-600 pb-3 transition-all">
+                        <span class="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center text-xs font-black">01</span>
+                        <div>
+                            <p class="text-xs font-black uppercase tracking-wider text-slate-800">Personal</p>
+                            <p class="text-[10px] text-slate-400 font-semibold hidden sm:block">Core Profile Data</p>
+                        </div>
+                    </div>
+                    <div id="stepMeter2" class="flex items-center gap-3 border-b-4 border-slate-200 pb-3 transition-all">
+                        <span class="w-8 h-8 rounded-xl bg-slate-200 text-slate-600 flex items-center justify-center text-xs font-black">02</span>
+                        <div>
+                            <p class="text-xs font-black uppercase tracking-wider text-slate-400">Academic</p>
+                            <p class="text-[10px] text-slate-400 font-semibold hidden sm:block">Institutions & Scores</p>
+                        </div>
+                    </div>
+                    <div id="stepMeter3" class="flex items-center gap-3 border-b-4 border-slate-200 pb-3 transition-all">
+                        <span class="w-8 h-8 rounded-xl bg-slate-200 text-slate-600 flex items-center justify-center text-xs font-black">03</span>
+                        <div>
+                            <p class="text-xs font-black uppercase tracking-wider text-slate-400">Assessment</p>
+                            <p class="text-[10px] text-slate-400 font-semibold hidden sm:block">English & Country</p>
+                        </div>
+                    </div>
+                </div>
+
+                <form id="appForm" method="POST" class="space-y-8">
+                    {% csrf_token %}
+
+                    <input type="hidden" id="testType" name="test_type" value="{{ student.test_type|default:'' }}">
+                    <input type="hidden" id="preferredCountry" name="preferred_country" value="{{ student.preferred_country|default:'United Kingdom' }}">
+
+                    <div id="formSection1" class="space-y-6 transition-all duration-300">
+                        <div class="flex items-center gap-2 text-blue-600 font-extrabold text-xs uppercase tracking-widest">
+                            <i class="fa-solid fa-user-gear"></i> Verify Personal Parameters
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-slate-600 uppercase tracking-wide">First Name</label>
+                                <div class="relative flex items-center">
+                                    <input type="text" value="{{ request.user.first_name }}" readonly class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-500 text-sm font-semibold outline-none cursor-not-allowed">
+                                    <i class="fa-solid fa-lock absolute left-4 text-slate-400 text-xs"></i>
+                                </div>
+                            </div>
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-slate-600 uppercase tracking-wide">Last Name</label>
+                                <div class="relative flex items-center">
+                                    <input type="text" value="{{ request.user.last_name }}" readonly class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-500 text-sm font-semibold outline-none cursor-not-allowed">
+                                    <i class="fa-solid fa-lock absolute left-4 text-slate-400 text-xs"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-slate-600 uppercase tracking-wide">Registered Email</label>
+                                <div class="relative flex items-center">
+                                    <input type="text" value="{{ request.user.email }}" readonly class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-500 text-sm font-semibold outline-none cursor-not-allowed">
+                                    <i class="fa-solid fa-lock absolute left-4 text-slate-400 text-xs"></i>
+                                </div>
+                            </div>
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-slate-700 uppercase tracking-wide">Date of Birth</label>
+                                <input type="date" id="dob" name="date_of_birth" value="{{ student.date_of_birth|date:'Y-m-d'|default:'' }}" class="w-full px-4 py-3 bg-slate-50/50 border border-slate-200 rounded-xl text-slate-900 text-sm font-medium outline-none transition input-glow">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="formSection2" class="space-y-6 hidden transition-all duration-300">
+                        <div class="flex items-center gap-2 text-blue-600 font-extrabold text-xs uppercase tracking-widest">
+                            <i class="fa-solid fa-graduation-cap"></i> High School / College Metrics
+                        </div>
+
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-bold text-slate-700 uppercase tracking-wide">Institution / College Name</label>
+                            <input type="text" id="college" name="college" value="{{ student.college|default:'' }}" placeholder="Enter your last attended institution" class="w-full px-4 py-3 bg-slate-50/50 border border-slate-200 rounded-xl text-slate-900 text-sm font-medium outline-none transition input-glow">
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-slate-700 uppercase tracking-wide">Passed Year (1990-2027)</label>
+                                <input type="number" id="year" name="passed_year" value="{{ student.passed_year|default:'' }}" min="1990" max="2027" placeholder="e.g., 2024" class="w-full px-4 py-3 bg-slate-50/50 border border-slate-200 rounded-xl text-slate-900 text-sm font-medium outline-none transition input-glow">
+                            </div>
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-slate-700 uppercase tracking-wide">Acquired GPA (0.0 - 4.0)</label>
+                                <input type="number" id="gpa" name="gpa" value="{{ student.gpa|default:'' }}" step="0.01" min="0" max="4" placeholder="e.g., 3.65" class="w-full px-4 py-3 bg-slate-50/50 border border-slate-200 rounded-xl text-slate-900 text-sm font-medium outline-none transition input-glow">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="formSection3" class="space-y-6 hidden transition-all duration-300">
+
+                        <div class="space-y-3">
+                            <label class="text-xs font-black text-blue-600 uppercase tracking-widest block">Select English Proficiency Test</label>
+                            <div class="grid grid-cols-3 gap-4">
+                                <div onclick="selectTest('IELTS')" id="card_IELTS" class="selectable-card p-4 rounded-2xl text-center cursor-pointer hover:shadow-md bg-white">
+                                    <p class="font-extrabold text-base text-slate-900">IELTS</p>
+                                    <p class="text-[10px] text-slate-400 font-medium">International System</p>
+                                </div>
+                                <div onclick="selectTest('PTE')" id="card_PTE" class="selectable-card p-4 rounded-2xl text-center cursor-pointer hover:shadow-md bg-white">
+                                    <p class="font-extrabold text-base text-slate-900">PTE</p>
+                                    <p class="text-[10px] text-slate-400 font-medium">Pearson Academic</p>
+                                </div>
+                                <div onclick="selectTest('TOEFL')" id="card_TOEFL" class="selectable-card p-4 rounded-2xl text-center cursor-pointer hover:shadow-md bg-white">
+                                    <p class="font-extrabold text-base text-slate-900">TOEFL</p>
+                                    <p class="text-[10px] text-slate-400 font-medium">Internet-based Test</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="scoreFieldWrapper" class="space-y-1.5 hidden animate-fadeIn">
+                            <label id="scoreLabel" class="text-xs font-bold text-slate-700 uppercase tracking-wide">Obtained Band/Score</label>
+                            <input type="number" id="score" name="test_score" value="{{ student.test_score|default:'' }}" step="0.01" placeholder="Enter score" class="w-full px-4 py-3 bg-slate-50/50 border border-slate-200 rounded-xl text-slate-900 text-sm font-medium outline-none transition input-glow">
+                        </div>
+
+                        <div class="space-y-3 pt-2">
+                            <label class="text-xs font-black text-blue-600 uppercase tracking-widest block">Preferred Educational Destination</label>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                                <div onclick="selectCountry('United Kingdom')" id="country_UK" class="selectable-card active p-3 rounded-xl text-center cursor-pointer bg-white">
+                                    <span class="text-xs font-bold text-slate-800">United Kingdom</span>
+                                </div>
+                                <div onclick="selectCountry('United States')" id="country_USA" class="selectable-card p-3 rounded-xl text-center cursor-pointer bg-white">
+                                    <span class="text-xs font-bold text-slate-800">United States</span>
+                                </div>
+                                <div onclick="selectCountry('Canada')" id="country_Canada" class="selectable-card p-3 rounded-xl text-center cursor-pointer bg-white">
+                                    <span class="text-xs font-bold text-slate-800">Canada</span>
+                                </div>
+                                <div onclick="selectCountry('Australia')" id="country_Australia" class="selectable-card p-3 rounded-xl text-center cursor-pointer bg-white">
+                                    <span class="text-xs font-bold text-slate-800">Australia</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="error" class="text-xs font-bold text-rose-600 bg-rose-50 border border-rose-100 rounded-2xl p-4 text-center hidden"></div>
+
+                    <div class="border-t border-slate-100 pt-6 flex justify-between items-center">
+                        <button type="button" id="prevBtn" onclick="moveBack()" class="px-6 py-3 border border-slate-200 hover:bg-slate-50 text-slate-500 font-bold text-xs uppercase tracking-widest rounded-xl transition visibility-hidden opacity-0">
+                            <i class="fa-solid fa-arrow-left mr-2"></i> Back
+                        </button>
+
+                        <button type="button" id="nextActionBtn" onclick="processStep()" class="px-8 py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-black text-xs uppercase tracking-widest rounded-xl transition shadow-lg shadow-blue-600/30 flex items-center gap-2 transform hover:-translate-y-0.5">
+                            <span id="btnText">Continue</span> <i class="fa-solid fa-arrow-right" id="btnIcon"></i>
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    let currentStep = 1;
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const savedTest = document.getElementById('testType').value;
+        if (savedTest) { selectTest(savedTest); }
+
+        const savedCountry = document.getElementById('preferredCountry').value;
+        if (savedCountry) { selectCountry(savedCountry); }
+    });
+
+    function selectTest(type) {
+        document.getElementById('testType').value = type;
+        ['IELTS', 'PTE', 'TOEFL'].forEach(t => {
+            document.getElementById(`card_${t}`).classList.remove('active');
+        });
+        document.getElementById(`card_${type}`).classList.add('active');
+
+        const wrapper = document.getElementById('scoreFieldWrapper');
+        const label = document.getElementById('scoreLabel');
+        const scoreInput = document.getElementById('score');
+
+        wrapper.classList.remove('hidden');
+        if(type === 'IELTS') { label.innerText = "Obtained Band Score (0 - 9)"; scoreInput.placeholder = "e.g., 7.5"; }
+        if(type === 'PTE') { label.innerText = "Obtained Overall Score (10 - 90)"; scoreInput.placeholder = "e.g., 68"; }
+        if(type === 'TOEFL') { label.innerText = "Obtained Total Score (0 - 120)"; scoreInput.placeholder = "e.g., 102"; }
+    }
+
+    function selectCountry(country) {
+        document.getElementById('preferredCountry').value = country;
+        ['UK', 'USA', 'Canada', 'Australia'].forEach(c => {
+            document.getElementById(`country_${c}`).classList.remove('active');
+        });
+        let elementId = country === "United Kingdom" ? 'UK' : country === "United States" ? 'USA' : country;
+        const el = document.getElementById(`country_${elementId}`);
+        if (el) { el.classList.add('active'); }
+    }
+
+    function processStep() {
+        let error = document.getElementById("error");
+        error.classList.add("hidden");
+        error.classList.remove("shake-element");
+
+        if (currentStep === 1) {
+            let dob = document.getElementById("dob");
+            if (!dob.value) { return triggerError(dob, "Please supply your valid Date of Birth parameter."); }
+
+            currentStep = 2;
+            document.getElementById("formSection1").classList.add("hidden");
+            document.getElementById("formSection2").classList.remove("hidden");
+            document.getElementById("prevBtn").classList.remove("opacity-0", "visibility-hidden");
+            updateMeters();
+        }
+        else if (currentStep === 2) {
+            let college = document.getElementById("college");
+            let year = document.getElementById("year");
+            let gpa = document.getElementById("gpa");
+
+            if (!college.value.trim()) { return triggerError(college, "Institution workspace location name cannot remain empty."); }
+            let y = parseInt(year.value);
+            if (isNaN(y) || y < 1990 || y > 2027) { return triggerError(year, "Passed year must belong strictly between 1990 and 2027."); }
+            let g = parseFloat(gpa.value);
+            if (isNaN(g) || g < 0 || g > 4) { return triggerError(gpa, "Calculated score parameters must sit inside 0.0 and 4.0 GPA limits."); }
+
+            currentStep = 3;
+            document.getElementById("formSection2").classList.add("hidden");
+            document.getElementById("formSection3").classList.remove("hidden");
+            document.getElementById("btnText").innerText = "Submit Application";
+            document.getElementById("btnIcon").className = "fa-solid fa-circle-check";
+            updateMeters();
+        }
+        else if (currentStep === 3) {
+            let testType = document.getElementById("testType").value;
+            let score = document.getElementById("score");
+            let s = parseFloat(score.value);
+
+            if (!testType) { return triggerError(document.getElementById("card_IELTS"), "Please select one English Assessment matrix option."); }
+
+            if (testType === "IELTS" && (isNaN(s) || s < 0 || s > 9)) { return triggerError(score, "IELTS score bands scale explicitly between 0 and 9."); }
+            if (testType === "PTE" && (isNaN(s) || s < 10 || s > 90)) { return triggerError(score, "PTE scores dynamically operate solely between 10 and 90."); }
+            if (testType === "TOEFL" && (isNaN(s) || s < 0 || s > 120)) { return triggerError(score, "TOEFL standard point thresholds range inside 0 - 120."); }
+
+            document.getElementById('appForm').submit();
+        }
+    }
+
+    function moveBack() {
+        if (currentStep === 3) {
+            currentStep = 2;
+            document.getElementById("formSection3").classList.add("hidden");
+            document.getElementById("formSection2").classList.remove("hidden");
+            document.getElementById("btnText").innerText = "Continue";
+            document.getElementById("btnIcon").className = "fa-solid fa-arrow-right";
+        } else if (currentStep === 2) {
+            currentStep = 1;
+            document.getElementById("formSection2").classList.add("hidden");
+            document.getElementById("formSection1").classList.remove("hidden");
+            document.getElementById("prevBtn").classList.add("opacity-0", "visibility-hidden");
+        }
+        updateMeters();
+    }
+
+    function updateMeters() {
+        for (let i = 1; i <= 3; i++) {
+            let meter = document.getElementById(`stepMeter${i}`);
+            let badge = meter.querySelector('span');
+            let txt = meter.querySelector('p');
+
+            if (i === currentStep) {
+                meter.className = "flex items-center gap-3 border-b-4 border-blue-600 pb-3 transition-all";
+                badge.className = "w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center text-xs font-black";
+                txt.className = "text-xs font-black uppercase tracking-wider text-slate-800";
+            } else if (i < currentStep) {
+                meter.className = "flex items-center gap-3 border-b-4 border-emerald-500 pb-3 transition-all";
+                badge.className = "w-8 h-8 rounded-xl bg-emerald-500 text-white flex items-center justify-center text-xs font-black";
+                txt.className = "text-xs font-black uppercase tracking-wider text-slate-500";
+            } else {
+                meter.className = "flex items-center gap-3 border-b-4 border-slate-200 pb-3 transition-all";
+                badge.className = "w-8 h-8 rounded-xl bg-slate-200 text-slate-600 flex items-center justify-center text-xs font-black";
+                txt.className = "text-xs font-black uppercase tracking-wider text-slate-400";
+            }
+        }
+    }
+
+    function triggerError(el, msg) {
+        let error = document.getElementById("error");
+        error.innerText = msg;
+        error.classList.remove("hidden");
+
+        setTimeout(() => { error.classList.add("shake-element"); }, 10);
+        el.focus();
+        return false;
+    }
+    </script>
+
+</body>
+</html>

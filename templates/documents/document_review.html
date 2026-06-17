@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Document Review - DristiSewa{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto">
+    <div class="luxury-glass-card rounded-3xl p-8">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+            <h1 class="text-xl font-black text-white uppercase tracking-wide">Document Review</h1>
+            <form method="GET" class="flex gap-2">
+                <select name="status" class="form-input !w-56">
+                    <option value="">All Statuses</option>
+                    {% for value, label in statuses %}
+                        <option value="{{ value }}" {% if status_filter == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn-primary">Filter</button>
+            </form>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left">
+                <thead>
+                    <tr class="text-xs font-black uppercase tracking-widest text-slate-400 border-b border-slate-800">
+                        <th class="py-2 pr-4">Student</th>
+                        <th class="py-2 pr-4">Type</th>
+                        <th class="py-2 pr-4">File</th>
+                        <th class="py-2 pr-4">Status</th>
+                        <th class="py-2 pr-4">Remarks</th>
+                        <th class="py-2 pr-4">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for document in documents %}
+                    <tr class="border-b border-slate-900">
+                        <td class="py-2 pr-4 font-semibold text-white">{{ document.student.user.get_full_name|default:document.student.user.email }}</td>
+                        <td class="py-2 pr-4 text-slate-400">{{ document.get_doc_type_display }}</td>
+                        <td class="py-2 pr-4"><a href="{{ document.file.url }}" target="_blank" class="text-blue-400 hover:underline">View</a></td>
+                        <td class="py-2 pr-4">
+                            <form method="POST" class="flex items-center gap-2">
+                                {% csrf_token %}
+                                <input type="hidden" name="document_id" value="{{ document.id }}">
+                                <select name="status" class="form-input !w-auto !py-1.5">
+                                    {% for value, label in statuses %}
+                                        <option value="{{ value }}" {% if document.status == value %}selected{% endif %}>{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                                <input type="text" name="remarks" value="{{ document.remarks }}" placeholder="Remarks" class="form-input !w-auto !py-1.5">
+                                <button type="submit" class="btn-primary !py-1.5 !px-3">Save</button>
+                            </form>
+                        </td>
+                        <td class="py-2 pr-4 text-slate-400"></td>
+                        <td class="py-2 pr-4 text-slate-400">{{ document.created_at|date:"M d, Y" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="6" class="py-4 text-center text-slate-500">No documents found.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

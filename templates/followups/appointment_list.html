@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}Appointments - DristiSewa{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto space-y-8">
+
+    <div class="luxury-glass-card rounded-3xl p-8">
+        <h1 class="text-xl font-black text-white mb-6 uppercase tracking-wide">Schedule Appointment</h1>
+        <form method="POST" class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            {% csrf_token %}
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold text-blue-400 uppercase tracking-wide">{{ form.student.label }}</label>
+                {{ form.student }}
+            </div>
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold text-blue-400 uppercase tracking-wide">{{ form.staff.label }}</label>
+                {{ form.staff }}
+            </div>
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold text-blue-400 uppercase tracking-wide">{{ form.appointment_date.label }}</label>
+                {{ form.appointment_date }}
+            </div>
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold text-blue-400 uppercase tracking-wide">{{ form.appointment_time.label }}</label>
+                {{ form.appointment_time }}
+            </div>
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold text-blue-400 uppercase tracking-wide">{{ form.purpose.label }}</label>
+                {{ form.purpose }}
+            </div>
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold text-blue-400 uppercase tracking-wide">{{ form.status.label }}</label>
+                {{ form.status }}
+            </div>
+            <div class="space-y-1.5 sm:col-span-2">
+                <label class="text-xs font-bold text-blue-400 uppercase tracking-wide">{{ form.notes.label }}</label>
+                {{ form.notes }}
+            </div>
+            <div class="sm:col-span-2">
+                <button type="submit" class="btn-primary">Save <i class="fa-solid fa-floppy-disk"></i></button>
+            </div>
+        </form>
+    </div>
+
+    <div class="luxury-glass-card rounded-3xl p-8">
+        <h2 class="text-lg font-black text-white mb-4 uppercase tracking-wide">All Appointments</h2>
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left">
+                <thead>
+                    <tr class="text-xs font-black uppercase tracking-widest text-slate-400 border-b border-slate-800">
+                        <th class="py-2 pr-4">Student</th>
+                        <th class="py-2 pr-4">Staff</th>
+                        <th class="py-2 pr-4">Purpose</th>
+                        <th class="py-2 pr-4">Date</th>
+                        <th class="py-2 pr-4">Time</th>
+                        <th class="py-2 pr-4">Status</th>
+                        <th class="py-2 pr-4">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for appointment in appointments %}
+                    <tr class="border-b border-slate-900">
+                        <td class="py-2 pr-4 font-semibold text-white">{{ appointment.student.user.get_full_name|default:appointment.student.user.email }}</td>
+                        <td class="py-2 pr-4 text-slate-400">{{ appointment.staff|default:"—" }}</td>
+                        <td class="py-2 pr-4 text-slate-400">{{ appointment.purpose|default:"—" }}</td>
+                        <td class="py-2 pr-4 text-slate-400">{{ appointment.appointment_date }}</td>
+                        <td class="py-2 pr-4 text-slate-400">{{ appointment.appointment_time }}</td>
+                        <td class="py-2 pr-4 text-blue-400 font-bold">{{ appointment.get_status_display }}</td>
+                        <td class="py-2 pr-4 flex gap-3">
+                            <a href="{% url 'followups:appointment_update' appointment.id %}" class="text-xs font-bold text-blue-400 hover:text-blue-300 uppercase">Edit</a>
+                            {% if appointment.status != "CANCELLED" and appointment.status != "COMPLETED" %}
+                            <a href="{% url 'followups:appointment_cancel' appointment.id %}" class="text-xs font-bold text-rose-400 hover:text-rose-300 uppercase">Cancel</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="7" class="py-4 text-center text-slate-500">No appointments scheduled.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

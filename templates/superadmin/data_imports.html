@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Imports - SuperAdmin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background-color: #f5f7fa; font-family: 'Inter', sans-serif; }
+        .sidebar { background: white; border-right: 1px solid #e0e0e0; position: fixed; width: 250px; height: 100vh; padding: 24px 0; }
+        .sidebar a { display: flex; align-items: center; gap: 12px; padding: 12px 24px; color: #666; text-decoration: none; font-size: 14px; }
+        .sidebar a.active { background: #f5f7fa; color: #667eea; border-left: 3px solid #667eea; padding-left: 21px; }
+        .main-content { margin-left: 250px; padding: 32px; }
+        .card { background: white; border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-bottom: 24px; }
+        table { width: 100%; border-collapse: collapse; }
+        thead { background: #f5f7fa; border-bottom: 2px solid #e0e0e0; }
+        th { padding: 16px; text-align: left; font-weight: 600; color: #333; font-size: 13px; }
+        td { padding: 12px 16px; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
+        tbody tr:hover { background: #f9f9f9; }
+        .badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .badge-success { background: #d4edda; color: #155724; }
+        .badge-warning { background: #fff3cd; color: #856404; }
+        .badge-danger { background: #f8d7da; color: #721c24; }
+        .btn { padding: 10px 16px; border-radius: 6px; font-weight: 600; font-size: 14px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; border: none; background: #667eea; color: white; }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div style="padding: 0 24px 24px; border-bottom: 1px solid #e0e0e0; margin-bottom: 24px;">
+            <h2 style="font-size: 18px; font-weight: 700; color: #667eea; margin: 0;"><i class="fas fa-lock"></i> SuperAdmin</h2>
+        </div>
+        <a href="{% url 'superadmin:dashboard' %}"><i class="fas fa-chart-line"></i> Dashboard</a>
+        <a href="{% url 'superadmin:database_management' %}"><i class="fas fa-database"></i> Database</a>
+        <a href="{% url 'superadmin:backups' %}"><i class="fas fa-save"></i> Backups</a>
+        <a href="{% url 'superadmin:exports' %}"><i class="fas fa-download"></i> Exports</a>
+        <a href="{% url 'superadmin:imports' %}" class="active"><i class="fas fa-upload"></i> Imports</a>
+        <a href="{% url 'superadmin:statistics' %}"><i class="fas fa-chart-bar"></i> Statistics</a>
+        <a href="{% url 'superadmin:audit_log' %}"><i class="fas fa-scroll"></i> Audit Log</a>
+        <a href="/admin/"><i class="fas fa-cog"></i> Django Admin</a>
+        <a href="{% url 'superadmin:logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
+
+    <div class="main-content">
+        <div style="margin-bottom: 32px;">
+            <h1 style="font-size: 28px; font-weight: 700; color: #1a1a1a; margin: 0 0 8px 0;"><i class="fas fa-upload"></i> Data Imports</h1>
+            <p style="color: #666; margin: 8px 0 0 0;">Import bulk data into the database</p>
+        </div>
+
+        <div class="card">
+            <h2 style="margin: 0 0 16px 0; font-size: 18px; font-weight: 700;">Import Data</h2>
+            <form method="POST" enctype="multipart/form-data" style="display: grid; gap: 16px;">
+                {% csrf_token %}
+                <div>
+                    <label style="display: block; font-weight: 600; margin-bottom: 8px;">Import Type</label>
+                    <select name="import_type" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                        <option value="STUDENTS">Students</option>
+                        <option value="APPLICATIONS">Applications</option>
+                        <option value="DOCUMENTS">Documents</option>
+                        <option value="USERS">Users</option>
+                        <option value="BULK">Bulk Mixed Data</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 600; margin-bottom: 8px;">Select File (CSV or Excel)</label>
+                    <input type="file" name="import_file" accept=".csv,.xlsx,.xls" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                </div>
+                <button type="submit" class="btn" style="width: fit-content;"><i class="fas fa-upload"></i> Upload and Import</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2 style="margin: 0 0 20px 0; font-size: 18px; font-weight: 700;">Import History ({{ total_imports }})</h2>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th><i class="fas fa-file"></i> Type</th>
+                            <th><i class="fas fa-list"></i> Total Records</th>
+                            <th><i class="fas fa-check"></i> Successful</th>
+                            <th><i class="fas fa-times"></i> Failed</th>
+                            <th><i class="fas fa-hourglass"></i> Status</th>
+                            <th><i class="fas fa-calendar"></i> Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for import in imports %}
+                        <tr>
+                            <td>{{ import.get_import_type_display }}</td>
+                            <td>{{ import.total_records }}</td>
+                            <td><span style="color: #28a745; font-weight: 600;">{{ import.successful_records }}</span></td>
+                            <td><span style="color: #dc3545; font-weight: 600;">{{ import.failed_records }}</span></td>
+                            <td><span class="badge {% if import.status == 'COMPLETED' %}badge-success{% elif import.status == 'FAILED' %}badge-danger{% else %}badge-warning{% endif %}">{{ import.get_status_display }}</span></td>
+                            <td>{{ import.created_at|date:"M d, Y H:i" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: 40px 16px; color: #999;">No imports yet</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

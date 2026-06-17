@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Statistics - SuperAdmin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background-color: #f5f7fa; font-family: 'Inter', sans-serif; }
+        .sidebar { background: white; border-right: 1px solid #e0e0e0; position: fixed; width: 250px; height: 100vh; padding: 24px 0; }
+        .sidebar a { display: flex; align-items: center; gap: 12px; padding: 12px 24px; color: #666; text-decoration: none; font-size: 14px; }
+        .sidebar a.active { background: #f5f7fa; color: #667eea; border-left: 3px solid #667eea; padding-left: 21px; }
+        .main-content { margin-left: 250px; padding: 32px; }
+        .card { background: white; border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-bottom: 24px; }
+        .metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; }
+        .metric { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 8px; text-align: center; }
+        .metric-value { font-size: 28px; font-weight: 700; margin: 8px 0; }
+        .metric-label { font-size: 12px; opacity: 0.9; }
+        table { width: 100%; border-collapse: collapse; }
+        thead { background: #f5f7fa; border-bottom: 2px solid #e0e0e0; }
+        th { padding: 16px; text-align: left; font-weight: 600; color: #333; font-size: 13px; }
+        td { padding: 12px 16px; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
+        tbody tr:hover { background: #f9f9f9; }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div style="padding: 0 24px 24px; border-bottom: 1px solid #e0e0e0; margin-bottom: 24px;">
+            <h2 style="font-size: 18px; font-weight: 700; color: #667eea; margin: 0;"><i class="fas fa-lock"></i> SuperAdmin</h2>
+        </div>
+        <a href="{% url 'superadmin:dashboard' %}"><i class="fas fa-chart-line"></i> Dashboard</a>
+        <a href="{% url 'superadmin:database_management' %}"><i class="fas fa-database"></i> Database</a>
+        <a href="{% url 'superadmin:backups' %}"><i class="fas fa-save"></i> Backups</a>
+        <a href="{% url 'superadmin:exports' %}"><i class="fas fa-download"></i> Exports</a>
+        <a href="{% url 'superadmin:imports' %}"><i class="fas fa-upload"></i> Imports</a>
+        <a href="{% url 'superadmin:statistics' %}" class="active"><i class="fas fa-chart-bar"></i> Statistics</a>
+        <a href="{% url 'superadmin:audit_log' %}"><i class="fas fa-scroll"></i> Audit Log</a>
+        <a href="/admin/"><i class="fas fa-cog"></i> Django Admin</a>
+        <a href="{% url 'superadmin:logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
+
+    <div class="main-content">
+        <div style="margin-bottom: 32px;">
+            <h1 style="font-size: 28px; font-weight: 700; color: #1a1a1a; margin: 0 0 8px 0;"><i class="fas fa-chart-bar"></i> Database Statistics</h1>
+            <p style="color: #666; margin: 8px 0 0 0;">Real-time database metrics and health monitoring</p>
+        </div>
+
+        <!-- Current Stats -->
+        <div class="card">
+            <h2 style="margin: 0 0 20px 0; font-size: 18px; font-weight: 700;">Current Database Statistics</h2>
+            <div class="metric-grid">
+                <div class="metric">
+                    <div class="metric-label"><i class="fas fa-users"></i> Total Users</div>
+                    <div class="metric-value">{{ current_stats.total_users }}</div>
+                </div>
+                <div class="metric" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                    <div class="metric-label"><i class="fas fa-graduation-cap"></i> Total Students</div>
+                    <div class="metric-value">{{ current_stats.total_students }}</div>
+                </div>
+                <div class="metric" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                    <div class="metric-label"><i class="fas fa-file-alt"></i> Total Applications</div>
+                    <div class="metric-value">{{ current_stats.total_applications }}</div>
+                </div>
+                <div class="metric" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+                    <div class="metric-label"><i class="fas fa-file-upload"></i> Total Documents</div>
+                    <div class="metric-value">{{ current_stats.total_documents }}</div>
+                </div>
+                <div class="metric" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                    <div class="metric-label"><i class="fas fa-building"></i> Total Branches</div>
+                    <div class="metric-value">{{ current_stats.total_branches }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Student Breakdown -->
+        <div class="card">
+            <h2 style="margin: 0 0 20px 0; font-size: 18px; font-weight: 700;">Student Breakdown</h2>
+            <div class="metric-grid">
+                <div class="metric" style="background: #d4edda; color: #155724;">
+                    <div class="metric-label">Active</div>
+                    <div class="metric-value">{{ current_stats.active_students }}</div>
+                </div>
+                <div class="metric" style="background: #fff3cd; color: #856404;">
+                    <div class="metric-label">Archived</div>
+                    <div class="metric-value">{{ current_stats.archived_students }}</div>
+                </div>
+                <div class="metric" style="background: #d1ecf1; color: #0c5460;">
+                    <div class="metric-label">Verified</div>
+                    <div class="metric-value">{{ current_stats.verified_students }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="card">
+            <h2 style="margin: 0 0 20px 0; font-size: 18px; font-weight: 700;">Today's Activity</h2>
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px;">
+                <div>
+                    <div style="font-size: 24px; font-weight: 700; color: #667eea;">{{ new_students_today }}</div>
+                    <div style="color: #666; font-size: 14px;">New Students Today</div>
+                </div>
+                <div>
+                    <div style="font-size: 24px; font-weight: 700; color: #667eea;">{{ new_applications_today }}</div>
+                    <div style="color: #666; font-size: 14px;">New Applications Today</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Historical Stats -->
+        <div class="card">
+            <h2 style="margin: 0 0 20px 0; font-size: 18px; font-weight: 700;">Historical Statistics (Last 30 Days)</h2>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th><i class="fas fa-calendar"></i> Date</th>
+                            <th><i class="fas fa-graduation-cap"></i> Students</th>
+                            <th><i class="fas fa-file-alt"></i> Applications</th>
+                            <th><i class="fas fa-file-upload"></i> Documents</th>
+                            <th><i class="fas fa-sync"></i> Logins</th>
+                            <th><i class="fas fa-tasks"></i> Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for stat in all_stats %}
+                        <tr>
+                            <td>{{ stat.timestamp|date:"M d, Y" }}</td>
+                            <td>{{ stat.total_students }}</td>
+                            <td>{{ stat.total_applications }}</td>
+                            <td>{{ stat.total_documents }}</td>
+                            <td>{{ stat.logins_today }}</td>
+                            <td>{{ stat.actions_today }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: 40px 16px; color: #999;">No historical data yet</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}Branches - DristiSewa{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto space-y-8">
+
+    <div class="luxury-glass-card rounded-3xl p-8">
+        <h1 class="text-xl font-black text-white mb-6 uppercase tracking-wide">Create Branch</h1>
+
+        <form method="POST" class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            {% csrf_token %}
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold text-blue-400 uppercase tracking-wide">{{ form.name.label }}</label>
+                {{ form.name }}
+            </div>
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold text-blue-400 uppercase tracking-wide">{{ form.code.label }}</label>
+                {{ form.code }}
+            </div>
+            <div class="space-y-1.5 sm:col-span-2">
+                <label class="text-xs font-bold text-blue-400 uppercase tracking-wide">{{ form.address.label }}</label>
+                {{ form.address }}
+            </div>
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold text-blue-400 uppercase tracking-wide">{{ form.phone.label }}</label>
+                {{ form.phone }}
+            </div>
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold text-blue-400 uppercase tracking-wide">{{ form.email.label }}</label>
+                {{ form.email }}
+            </div>
+            <div class="flex items-center gap-2">
+                {{ form.is_active }}
+                <label class="text-xs font-bold text-slate-300 uppercase tracking-wide">{{ form.is_active.label }}</label>
+            </div>
+            <div class="sm:col-span-2">
+                <button type="submit" class="btn-primary">Save Branch <i class="fa-solid fa-floppy-disk"></i></button>
+            </div>
+        </form>
+    </div>
+
+    <div class="luxury-glass-card rounded-3xl p-8">
+        <h2 class="text-lg font-black text-white mb-4 uppercase tracking-wide">All Branches</h2>
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left">
+                <thead>
+                    <tr class="text-xs font-black uppercase tracking-widest text-slate-400 border-b border-slate-800">
+                        <th class="py-2 pr-4">Name</th>
+                        <th class="py-2 pr-4">Code</th>
+                        <th class="py-2 pr-4">Phone</th>
+                        <th class="py-2 pr-4">Email</th>
+                        <th class="py-2 pr-4">Active</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for branch in branches %}
+                    <tr class="border-b border-slate-900">
+                        <td class="py-2 pr-4 font-semibold text-white">{{ branch.name }}</td>
+                        <td class="py-2 pr-4 text-slate-400">{{ branch.code }}</td>
+                        <td class="py-2 pr-4 text-slate-400">{{ branch.phone|default:"—" }}</td>
+                        <td class="py-2 pr-4 text-slate-400">{{ branch.email|default:"—" }}</td>
+                        <td class="py-2 pr-4">
+                            {% if branch.is_active %}
+                                <span class="text-emerald-400 font-bold">Active</span>
+                            {% else %}
+                                <span class="text-rose-400 font-bold">Inactive</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="5" class="py-4 text-center text-slate-500">No branches yet.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

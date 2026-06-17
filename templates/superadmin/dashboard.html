@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SuperAdmin Dashboard - DristiSewa</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background-color: #f5f7fa;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .metric-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            border-left: 4px solid;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: transform 0.2s;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+        }
+
+        .metric-card.blue {
+            border-left-color: #667eea;
+        }
+
+        .metric-card.green {
+            border-left-color: #28a745;
+        }
+
+        .metric-card.orange {
+            border-left-color: #ff9800;
+        }
+
+        .metric-card.red {
+            border-left-color: #dc3545;
+        }
+
+        .metric-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin: 12px 0;
+        }
+
+        .metric-label {
+            font-size: 13px;
+            color: #666;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .metric-change {
+            font-size: 12px;
+            margin-top: 8px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .metric-change.positive {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .metric-change.negative {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .sidebar {
+            background: white;
+            border-right: 1px solid #e0e0e0;
+            min-height: 100vh;
+            padding: 24px 0;
+            position: fixed;
+            width: 250px;
+            left: 0;
+            top: 0;
+        }
+
+        .sidebar-logo {
+            padding: 0 24px 24px;
+            border-bottom: 1px solid #e0e0e0;
+            margin-bottom: 24px;
+        }
+
+        .sidebar-logo h2 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #667eea;
+            margin: 0;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-menu li {
+            margin: 0;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 24px;
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background: #f5f7fa;
+            color: #667eea;
+            border-left: 3px solid #667eea;
+            padding-left: 21px;
+        }
+
+        .sidebar-menu i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 32px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin: 0;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .user-info {
+            text-align: right;
+        }
+
+        .user-info .name {
+            font-weight: 600;
+            color: #1a1a1a;
+            font-size: 14px;
+        }
+
+        .user-info .role {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .btn {
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .section h2 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin: 0 0 20px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section h2 i {
+            color: #667eea;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-bottom: 20px;
+        }
+
+        .activity-item {
+            display: flex;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 600;
+            color: #1a1a1a;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .activity-time {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge-danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .badge-info {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+        }
+
+        @media (max-width: 1024px) {
+            .grid-4, .grid-3 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 16px;
+            }
+
+            .grid-4, .grid-3, .grid-2 {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                flex-direction: column;
+                text-align: center;
+                gap: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <div class="sidebar-logo">
+            <h2><i class="fas fa-lock"></i> SuperAdmin</h2>
+        </div>
+
+        <ul class="sidebar-menu">
+            <li><a href="{% url 'superadmin:dashboard' %}" class="active"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+            <li><a href="{% url 'superadmin:database_management' %}"><i class="fas fa-database"></i> Database</a></li>
+            <li><a href="{% url 'superadmin:backups' %}"><i class="fas fa-save"></i> Backups</a></li>
+            <li><a href="{% url 'superadmin:exports' %}"><i class="fas fa-download"></i> Exports</a></li>
+            <li><a href="{% url 'superadmin:imports' %}"><i class="fas fa-upload"></i> Imports</a></li>
+            <li><a href="{% url 'superadmin:statistics' %}"><i class="fas fa-chart-bar"></i> Statistics</a></li>
+            <li><a href="{% url 'superadmin:audit_log' %}"><i class="fas fa-scroll"></i> Audit Log</a></li>
+            <li style="margin-top: auto; border-top: 1px solid #e0e0e0; padding-top: 24px;">
+                <a href="/admin/"><i class="fas fa-cog"></i> Django Admin</a>
+            </li>
+            <li>
+                <a href="{% url 'superadmin:logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header">
+            <div>
+                <h1><i class="fas fa-chart-line"></i> SuperAdmin Dashboard</h1>
+            </div>
+            <div class="header-right">
+                <div class="user-info">
+                    <div class="name">{{ superadmin.user.get_full_name|default:superadmin.user.email }}</div>
+                    <div class="role">SuperAdmin</div>
+                </div>
+                <div style="width: 40px; height: 40px; background: #667eea; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">
+                    {{ superadmin.user.get_full_name|first|upper }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Key Metrics -->
+        <div class="grid-4">
+            <div class="metric-card blue">
+                <div class="metric-label"><i class="fas fa-users"></i> Total Users</div>
+                <div class="metric-value">{{ total_users }}</div>
+                <span class="metric-change positive"><i class="fas fa-arrow-up"></i> 12% this month</span>
+            </div>
+
+            <div class="metric-card green">
+                <div class="metric-label"><i class="fas fa-graduation-cap"></i> Total Students</div>
+                <div class="metric-value">{{ total_students }}</div>
+                <span class="metric-change positive"><i class="fas fa-arrow-up"></i> +{{ new_students_month }} this month</span>
+            </div>
+
+            <div class="metric-card orange">
+                <div class="metric-label"><i class="fas fa-file-alt"></i> Total Applications</div>
+                <div class="metric-value">{{ total_applications }}</div>
+                <span class="metric-change positive"><i class="fas fa-arrow-up"></i> +{{ new_apps_month }} this month</span>
+            </div>
+
+            <div class="metric-card red">
+                <div class="metric-label"><i class="fas fa-file-upload"></i> Total Documents</div>
+                <div class="metric-value">{{ total_documents }}</div>
+                <span class="metric-change positive"><i class="fas fa-arrow-up"></i> Success Rate: {{ visa_success_rate }}%</span>
+            </div>
+        </div>
+
+        <!-- Database Overview -->
+        <div class="section">
+            <h2><i class="fas fa-server"></i> Database Overview</h2>
+            <div class="grid-3">
+                <div>
+                    <div style="font-size: 28px; font-weight: 700; color: #667eea;">{{ total_branches }}</div>
+                    <div style="font-size: 12px; color: #999; margin-top: 8px;">Active Branches</div>
+                </div>
+                <div>
+                    <div style="font-size: 28px; font-weight: 700; color: #28a745;">{{ pending_documents }}</div>
+                    <div style="font-size: 12px; color: #999; margin-top: 8px;">Pending Documents</div>
+                </div>
+                <div>
+                    <div style="font-size: 28px; font-weight: 700; color: #ff9800;">{{ pending_actions }}</div>
+                    <div style="font-size: 12px; color: #999; margin-top: 8px;">Pending Actions</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity & Backups -->
+        <div class="grid-2">
+            <!-- Recent Activity -->
+            <div class="section">
+                <h2><i class="fas fa-history"></i> Recent Activity</h2>
+                {% for log in recent_audits %}
+                <div class="activity-item">
+                    <div class="activity-icon" style="background: {% if log.status == 'SUCCESS' %}#d4edda{% else %}#f8d7da{% endif %}; color: {% if log.status == 'SUCCESS' %}#155724{% else %}#721c24{% endif %};">
+                        <i class="fas fa-{% if log.action == 'LOGIN' %}sign-in-alt{% elif log.action == 'LOGOUT' %}sign-out-alt{% elif log.action == 'DATABASE_BACKUP' %}save{% elif log.action == 'DATA_EXPORT' %}download{% elif log.action == 'DATA_IMPORT' %}upload{% else %}check{% endif %}"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">{{ log.get_action_display }}</div>
+                        <div class="activity-time">{{ log.created_at|timesince }} ago</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <span class="badge {% if log.status == 'SUCCESS' %}badge-success{% else %}badge-danger{% endif %}">{{ log.status }}</span>
+                    </div>
+                </div>
+                {% empty %}
+                <p style="color: #999; font-size: 14px;">No recent activity</p>
+                {% endfor %}
+            </div>
+
+            <!-- Recent Backups -->
+            <div class="section">
+                <h2><i class="fas fa-save"></i> Recent Backups</h2>
+                {% for backup in recent_backups %}
+                <div class="activity-item">
+                    <div class="activity-icon" style="background: #d1ecf1; color: #0c5460;">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">{{ backup.get_backup_type_display }}</div>
+                        <div class="activity-time">{{ backup.created_at|date:"M d, Y H:i" }}</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <span class="badge {% if backup.is_verified %}badge-success{% else %}badge-warning{% endif %}">
+                            {% if backup.is_verified %}Verified{% else %}Unverified{% endif %}
+                        </span>
+                    </div>
+                </div>
+                {% empty %}
+                <p style="color: #999; font-size: 14px;">No backups yet</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="section">
+            <h2><i class="fas fa-bolt"></i> Quick Actions</h2>
+            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                <a href="{% url 'superadmin:database_management' %}" class="btn btn-primary">
+                    <i class="fas fa-database"></i> Manage Database
+                </a>
+                <a href="{% url 'superadmin:backups' %}" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Create Backup
+                </a>
+                <a href="{% url 'superadmin:exports' %}" class="btn btn-primary">
+                    <i class="fas fa-download"></i> Export Data
+                </a>
+                <a href="{% url 'superadmin:imports' %}" class="btn btn-primary">
+                    <i class="fas fa-upload"></i> Import Data
+                </a>
+                <a href="{% url 'superadmin:statistics' %}" class="btn btn-primary">
+                    <i class="fas fa-chart-bar"></i> View Statistics
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

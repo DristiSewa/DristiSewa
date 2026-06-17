@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Reports - DristiSewa{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto space-y-8">
+
+    <div class="luxury-glass-card rounded-3xl p-8">
+        <h1 class="text-xl font-black text-white mb-6 uppercase tracking-wide">Reports Overview</h1>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+            <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-4 text-center">
+                <p class="text-2xl font-black text-blue-400">{{ summary.total_students }}</p>
+                <p class="text-[10px] font-bold uppercase tracking-wide text-slate-400 mt-1">Students</p>
+            </div>
+            <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-4 text-center">
+                <p class="text-2xl font-black text-blue-400">{{ summary.total_applications }}</p>
+                <p class="text-[10px] font-bold uppercase tracking-wide text-slate-400 mt-1">Applications</p>
+            </div>
+            <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-4 text-center">
+                <p class="text-2xl font-black text-amber-400">{{ summary.pending_documents }}</p>
+                <p class="text-[10px] font-bold uppercase tracking-wide text-slate-400 mt-1">Pending Docs</p>
+            </div>
+            <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-4 text-center">
+                <p class="text-2xl font-black text-amber-400">{{ summary.pending_followups }}</p>
+                <p class="text-[10px] font-bold uppercase tracking-wide text-slate-400 mt-1">Open Follow-ups</p>
+            </div>
+        </div>
+
+        <h2 class="text-sm font-black text-blue-400 uppercase tracking-wide mb-3">Visa Pipeline</h2>
+        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4">
+            {% for status_value, count in summary.pipeline.items %}
+                <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-4 text-center">
+                    <p class="text-2xl font-black text-blue-400">{{ count }}</p>
+                    <p class="text-[10px] font-bold uppercase tracking-wide text-slate-400 mt-1">{{ status_value }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+</div>
+{% endblock %}

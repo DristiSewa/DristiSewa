@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% block title %}{{ student.user.get_full_name|default:student.user.email }} - Student Profile - DristiSewa{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto space-y-8">
+
+    <div class="luxury-glass-card rounded-3xl p-8">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+            <div>
+                <h1 class="text-xl font-black text-white uppercase tracking-wide">{{ student.user.get_full_name|default:student.user.email }}</h1>
+                <p class="text-sm text-slate-400 mt-1">Student ID #{{ student.id }} &middot; {{ student.user.email }}</p>
+            </div>
+            <div class="flex flex-wrap gap-2">
+                <a href="{% url 'frontdesk:student_edit' student.id %}" class="btn-primary"><i class="fa-solid fa-pen"></i> Edit Student</a>
+                <a href="{% url 'frontdesk:student_status_update' student.id %}" class="btn-primary"><i class="fa-solid fa-list-check"></i> Update Status</a>
+                <a href="{% url 'frontdesk:student_list' %}" class="text-xs font-bold text-slate-400 hover:text-slate-200 uppercase tracking-wide self-center">
+                    <i class="fa-solid fa-arrow-left mr-1"></i> Back
+                </a>
+            </div>
+        </div>
+
+        <h2 class="text-xs font-black uppercase tracking-widest text-blue-400 mb-3">Personal Information</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6 text-sm">
+            <div><p class="text-slate-500 text-xs uppercase">Full Name</p><p class="text-white font-semibold">{{ student.user.get_full_name|default:"—" }}</p></div>
+            <div><p class="text-slate-500 text-xs uppercase">Email</p><p class="text-white font-semibold">{{ student.user.email }}</p></div>
+            <div><p class="text-slate-500 text-xs uppercase">Phone</p><p class="text-white font-semibold">{{ student.user.phone|default:"—" }}</p></div>
+            <div><p class="text-slate-500 text-xs uppercase">Date of Birth</p><p class="text-white font-semibold">{{ student.date_of_birth|default:"—" }}</p></div>
+            <div><p class="text-slate-500 text-xs uppercase">Branch</p><p class="text-white font-semibold">{{ student.user.branch|default:"—" }}</p></div>
+        </div>
+
+        <h2 class="text-xs font-black uppercase tracking-widest text-blue-400 mb-3">Academic Information</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6 text-sm">
+            <div><p class="text-slate-500 text-xs uppercase">College</p><p class="text-white font-semibold">{{ student.college|default:"—" }}</p></div>
+            <div><p class="text-slate-500 text-xs uppercase">Passed Year</p><p class="text-white font-semibold">{{ student.passed_year|default:"—" }}</p></div>
+            <div><p class="text-slate-500 text-xs uppercase">GPA</p><p class="text-white font-semibold">{{ student.gpa|default:"—" }}</p></div>
+            <div><p class="text-slate-500 text-xs uppercase">Test</p><p class="text-white font-semibold">{{ student.get_test_type_display|default:"—" }}</p></div>
+            <div><p class="text-slate-500 text-xs uppercase">Test Score</p><p class="text-white font-semibold">{{ student.test_score|default:"—" }}</p></div>
+            <div><p class="text-slate-500 text-xs uppercase">Preferred Country</p><p class="text-white font-semibold">{{ student.preferred_country|default:"—" }}</p></div>
+        </div>
+
+        <h2 class="text-xs font-black uppercase tracking-widest text-blue-400 mb-3">Application Status</h2>
+        <div class="overflow-x-auto mb-2">
+            <table class="w-full text-sm text-left">
+                <thead>
+                    <tr class="text-xs font-black uppercase tracking-widest text-slate-400 border-b border-slate-800">
+                        <th class="py-2 pr-4">Institution</th>
+                        <th class="py-2 pr-4">Destination</th>
+                        <th class="py-2 pr-4">Status</th>
+                        <th class="py-2 pr-4">Remarks</th>
+                        <th class="py-2 pr-4">Updated</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for application in applications %}
+                    <tr class="border-b border-slate-900">
+                        <td class="py-2 pr-4 text-white font-semibold">{{ application.institution|default:"—" }}</td>
+                        <td class="py-2 pr-4 text-slate-400">{{ application.destination_country|default:"—" }}</td>
+                        <td class="py-2 pr-4 text-blue-400 font-bold">{{ application.get_status_display }}</td>
+                        <td class="py-2 pr-4 text-slate-400">{{ application.remarks|default:"—" }}</td>
+                        <td class="py-2 pr-4 text-slate-400">{{ application.updated_at|date:"M d, Y" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="5" class="py-4 text-center text-slate-500">No application records yet.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="luxury-glass-card rounded-3xl p-8">
+        <h2 class="text-xs font-black uppercase tracking-widest text-blue-400 mb-3">Consultation History</h2>
+        <div class="overflow-x-auto mb-6">
+            <table class="w-full text-sm text-left">
+                <thead>
+                    <tr class="text-xs font-black uppercase tracking-widest text-slate-400 border-b border-slate-800">
+                        <th class="py-2 pr-4">Date</th>
+                        <th class="py-2 pr-4">Note</th>
+                        <th class="py-2 pr-4">Assigned To</th>
+                        <th class="py-2 pr-4">Done</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for followup in followups %}
+                    <tr class="border-b border-slate-900">
+                        <td class="py-2 pr-4 text-slate-400">{{ followup.scheduled_date|default:"—" }}</td>
+                        <td class="py-2 pr-4 text-white">{{ followup.note }}</td>
+                        <td class="py-2 pr-4 text-slate-400">{{ followup.assigned_to|default:"—" }}</td>
+                        <td class="py-2 pr-4 text-slate-400">{{ followup.is_done|yesno:"Yes,No" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="4" class="py-4 text-center text-slate-500">No follow-ups recorded.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <h2 class="text-xs font-black uppercase tracking-widest text-blue-400 mb-3">Appointments</h2>
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left">
+                <thead>
+                    <tr class="text-xs font-black uppercase tracking-widest text-slate-400 border-b border-slate-800">
+                        <th class="py-2 pr-4">Date</th>
+                        <th class="py-2 pr-4">Time</th>
+                        <th class="py-2 pr-4">Purpose</th>
+                        <th class="py-2 pr-4">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for appointment in appointments %}
+                    <tr class="border-b border-slate-900">
+                        <td class="py-2 pr-4 text-slate-400">{{ appointment.appointment_date }}</td>
+                        <td class="py-2 pr-4 text-slate-400">{{ appointment.appointment_time }}</td>
+                        <td class="py-2 pr-4 text-white">{{ appointment.purpose|default:"—" }}</td>
+                        <td class="py-2 pr-4 text-blue-400 font-bold">{{ appointment.get_status_display }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="4" class="py-4 text-center text-slate-500">No appointments recorded.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="luxury-glass-card rounded-3xl p-8">
+        <h2 class="text-xs font-black uppercase tracking-widest text-blue-400 mb-3">Uploaded Documents</h2>
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left">
+                <thead>
+                    <tr class="text-xs font-black uppercase tracking-widest text-slate-400 border-b border-slate-800">
+                        <th class="py-2 pr-4">Type</th>
+                        <th class="py-2 pr-4">File</th>
+                        <th class="py-2 pr-4">Status</th>
+                        <th class="py-2 pr-4">Remarks</th>
+                        <th class="py-2 pr-4">Uploaded</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for document in documents %}
+                    <tr class="border-b border-slate-900">
+                        <td class="py-2 pr-4 text-white font-semibold">{{ document.get_doc_type_display }}</td>
+                        <td class="py-2 pr-4"><a href="{{ document.file.url }}" target="_blank" class="text-blue-400 hover:text-blue-300 underline">View File</a></td>
+                        <td class="py-2 pr-4 text-blue-400 font-bold">{{ document.get_status_display }}</td>
+                        <td class="py-2 pr-4 text-slate-400">{{ document.remarks|default:"—" }}</td>
+                        <td class="py-2 pr-4 text-slate-400">{{ document.created_at|date:"M d, Y" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="5" class="py-4 text-center text-slate-500">No documents uploaded.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

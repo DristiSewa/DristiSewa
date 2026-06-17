@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}{% if mode == "edit" %}Edit Student{% else %}Add Student{% endif %} - DristiSewa{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <div class="luxury-glass-card rounded-3xl p-8">
+        <h1 class="text-xl font-black text-white mb-2 uppercase tracking-wide">
+            {% if mode == "edit" %}Edit Student{% else %}Register New Student{% endif %}
+        </h1>
+        {% if student %}
+        <p class="text-sm text-slate-400 mb-6">{{ student.user.email }}</p>
+        {% endif %}
+
+        <form method="POST" class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            {% csrf_token %}
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold text-blue-400 uppercase tracking-wide">{{ form.first_name.label }}</label>
+                {{ form.first_name }}
+            </div>
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold text-blue-400 uppercase tracking-wide">{{ form.last_name.label }}</label>
+                {{ form.last_name }}
+            </div>
+            {% if mode == "create" %}
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold text-blue-400 uppercase tracking-wide">{{ form.email.label }}</label>
+                {{ form.email }}
+            </div>
+            {% endif %}
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold text-blue-400 uppercase tracking-wide">{{ form.phone.label }}</label>
+                {{ form.phone }}
+            </div>
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold text-blue-400 uppercase tracking-wide">{{ form.date_of_birth.label }}</label>
+                {{ form.date_of_birth }}
+            </div>
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold text-blue-400 uppercase tracking-wide">{{ form.college.label }}</label>
+                {{ form.college }}
+            </div>
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold text-blue-400 uppercase tracking-wide">{{ form.passed_year.label }}</label>
+                {{ form.passed_year }}
+            </div>
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold text-blue-400 uppercase tracking-wide">{{ form.gpa.label }}</label>
+                {{ form.gpa }}
+            </div>
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold text-blue-400 uppercase tracking-wide">{{ form.test_type.label }}</label>
+                {{ form.test_type }}
+            </div>
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold text-blue-400 uppercase tracking-wide">{{ form.test_score.label }}</label>
+                {{ form.test_score }}
+            </div>
+            <div class="space-y-1.5 sm:col-span-2">
+                <label class="text-xs font-bold text-blue-400 uppercase tracking-wide">{{ form.preferred_country.label }}</label>
+                {{ form.preferred_country }}
+            </div>
+            <div class="sm:col-span-2 flex justify-between items-center pt-2">
+                <a href="{% if request.user.role == 'FRONTDESK' %}{% url 'accounts:frontdesk_dashboard' %}{% else %}{% url 'students:student_management' %}{% endif %}" class="text-xs font-bold text-slate-400 hover:text-slate-200 uppercase tracking-wide">
+                    <i class="fa-solid fa-arrow-left mr-1"></i> Back
+                </a>
+                <button type="submit" class="btn-primary">Save <i class="fa-solid fa-floppy-disk"></i></button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,196 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DristiSewa - Home</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0f172a;
+        }
+        .deep-gradient-text {
+            background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 50%, #1d4ed8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .luxury-glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+        .electric-glow {
+            box-shadow: 0 0 40px -10px rgba(59, 130, 246, 0.3);
+        }
+        .flag-card-premium {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .flag-card-premium:hover {
+            transform: translateY(-8px);
+            border-color: #3b82f6;
+            background: rgba(30, 41, 59, 0.8);
+            box-shadow: 0 20px 40px -15px rgba(59, 130, 246, 0.4);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between overflow-x-hidden antialiased text-slate-100 relative">
+
+    <div class="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-blue-600/20 rounded-full filter blur-[150px] pointer-events-none"></div>
+    <div class="absolute bottom-[10%] right-[-10%] w-[500px] h-[500px] bg-indigo-500/15 rounded-full filter blur-[130px] pointer-events-none"></div>
+
+    <nav class="sticky top-0 z-50 bg-[#0f172a]/70 backdrop-blur-xl px-6 lg:px-20 py-4 flex justify-between items-center border-b border-slate-800 shadow-xl">
+
+        <a href="#" class="flex items-center transform hover:scale-105 transition duration-300">
+            <div class="p-1.5 bg-slate-900 rounded-xl border border-slate-700 shadow-inner">
+                <img src="{% static 'images/logo.png' %}" alt="Logo" class="h-14 w-auto object-contain">
+            </div>
+        </a>
+
+        <div class="flex items-center gap-6">
+            <div class="hidden md:flex items-center gap-2">
+                <span class="px-4 py-1 text-xs font-bold tracking-widest text-blue-400 bg-blue-500/10 rounded-full border border-blue-500/30">IELTS
+                    
+                </span>
+                <span class="px-4 py-1 text-xs font-bold tracking-widest text-indigo-400 bg-indigo-500/10 rounded-full border border-indigo-500/30">PTE</span>
+            </div>
+
+            <div class="h-5 w-[1px] bg-slate-800 hidden md:block"></div>
+
+            <div class="flex items-center gap-3">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'accounts:dashboard' %}" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm rounded-xl transition duration-300 shadow-lg shadow-blue-500/20">
+                        Dashboard
+                    </a>
+                    <a href="{% url 'accounts:logout' %}" class="px-4 py-2.5 bg-slate-800 hover:bg-rose-950/30 text-slate-400 hover:text-rose-400 font-bold text-sm rounded-xl border border-slate-700 transition duration-300">
+                        Logout
+                    </a>
+                {% else %}
+                    <a href="{% url 'accounts:login' %}" class="px-5 py-2.5 text-slate-300 hover:text-blue-400 font-extrabold text-sm transition duration-200">
+                    
+                        Login
+                    </a>
+                    <a href="{% url 'accounts:register' %}" class="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-extrabold text-sm rounded-xl transition duration-300 shadow-lg shadow-blue-500/30 hover:-translate-y-0.5 transform">
+                        Register Here
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow container mx-auto px-6 lg:px-20 py-12 lg:py-20 flex flex-col lg:flex-row items-center gap-12 lg:gap-16 relative z-10">
+
+        <div class="w-full lg:w-[55%] flex flex-col space-y-8 text-center lg:text-left order-2 lg:order-1">
+
+            <div class="space-y-4">
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-blue-500/10 rounded-full mx-auto lg:mx-0 border border-blue-500/20 shadow-inner">
+                    <span class="w-2 h-2 rounded-full bg-blue-500 animate-ping"></span>
+                    <span class="text-xs font-black uppercase tracking-widest text-blue-400">Next-Gen Consultant Platform</span>
+                </div>
+
+                <h1 class="text-5xl lg:text-7xl font-black tracking-tight text-white leading-[1.15]">
+                    Initiate Your <br>
+                    <span class="deep-gradient-text">International Future.</span>
+                </h1>
+
+                <h2 class="text-2xl lg:text-3xl font-extrabold text-slate-300 tracking-tight">
+                    Welcome to <span class="text-blue-500 border-b-4 border-blue-500/30 pb-1">DristiSewa</span>
+                </h2>
+            </div>
+
+            <p class="text-slate-300 text-base lg:text-lg leading-relaxed max-w-xl mx-auto lg:mx-0 luxury-glass-card p-6 rounded-3xl electric-glow">
+                DristiSewa is a modern student consultancy platform designed to simplify the study abroad application process. It helps students manage documents, track progress, and receive guidance for international education.
+            </p>
+
+            <div class="space-y-4">
+                <h3 class="text-xs font-black uppercase tracking-widest text-slate-500 text-center lg:text-left">Global Target Hubs</h3>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-md sm:max-w-none mx-auto">
+
+                    <div class="flag-card-premium rounded-2xl p-3 shadow-md">
+                        <div class="overflow-hidden rounded-xl h-24 relative shadow-inner">
+                            <img src="{% static 'images/uk.jpg' %}" class="w-full h-full object-cover filter brightness-90 group-hover:brightness-100 transition" alt="UK">
+                        </div>
+                        <div class="text-center mt-3">
+                            <span class="text-sm font-bold text-slate-200 tracking-wide">United Kingdom</span>
+                        </div>
+                    </div>
+
+                    <div class="flag-card-premium rounded-2xl p-3 shadow-md">
+                        <div class="overflow-hidden rounded-xl h-24 relative shadow-inner">
+                            <img src="{% static 'images/usa.jpg' %}" class="w-full h-full object-cover filter brightness-90 group-hover:brightness-100 transition" alt="USA">
+                        </div>
+                        <div class="text-center mt-3">
+                            <span class="text-sm font-bold text-slate-200 tracking-wide">United States</span>
+                        </div>
+                    </div>
+
+                    <div class="flag-card-premium rounded-2xl p-3 shadow-md">
+                        <div class="overflow-hidden rounded-xl h-24 relative shadow-inner">
+                            <img src="{% static 'images/canada.jpg' %}" class="w-full h-full object-cover filter brightness-90 group-hover:brightness-100 transition" alt="Canada">
+                        </div>
+                        <div class="text-center mt-3">
+                            <span class="text-sm font-bold text-slate-200 tracking-wide">Canada</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <div class="w-full lg:w-[45%] flex justify-center order-1 lg:order-2">
+            <div class="relative w-80 h-80 sm:w-[380px] sm:h-[380px] md:w-[420px] md:h-[420px] flex items-center justify-center">
+
+                <div class="absolute inset-0 rounded-full bg-gradient-to-tr from-blue-500/20 via-indigo-500/10 to-transparent blur-2xl animate-pulse"></div>
+                <div class="absolute inset-2 rounded-full border-2 border-dashed border-blue-500/30 animate-spin" style="animation-duration: 25s;"></div>
+                <div class="absolute inset-10 rounded-full border border-blue-500/20"></div>
+
+                <div class="absolute inset-6 luxury-glass-card rounded-full p-4 flex items-center justify-center electric-glow">
+                    <div class="w-full h-full rounded-full overflow-hidden relative group shadow-2xl">
+                        <img src="{% static 'images/ielts.jpg' %}" alt="Student Data" class="w-full h-full object-cover transform scale-105 group-hover:scale-110 transition duration-700 filter contrast-[105%]">
+                        <div class="absolute inset-0 bg-blue-900/10 group-hover:bg-transparent transition duration-300"></div>
+                    </div>
+                </div>
+
+                <div class="absolute bottom-6 right-6 bg-slate-900 border border-blue-500/40 rounded-2xl px-4 py-2.5 shadow-xl flex items-center gap-2 transform hover:scale-105 transition duration-300 text-white">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="bg-slate-950 border-t border-slate-900 py-8 text-xs tracking-wide relative z-10 shadow-2xl">
+        <div class="container mx-auto px-6 lg:px-20 flex flex-col md:flex-row justify-between items-center gap-6">
+
+            <div class="text-center md:text-left space-y-1">
+                <p class="text-blue-400 font-extrabold text-sm tracking-tight">DristiSewa </p>
+                <p class="text-slate-500 font-medium">&copy; 2026 Educational Corporate System. All rights reserved.</p>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-8 md:gap-12 text-center md:text-right text-slate-400">
+                <div class="space-y-0.5">
+                    <p class="text-slate-600 font-black uppercase text-[9px] tracking-widest">Global Terminal</p>
+                    <p class="font-bold"><a href="mailto:dristisewa3@gmail.com" class="text-blue-400 hover:underline">dristisewa3@gmail.com</a></p>
+                </div>
+                <div class="space-y-0.5">
+                    <p class="text-slate-600 font-black uppercase text-[9px] tracking-widest">Secure Line</p>
+                    <p class="font-extrabold text-slate-200">065-563200</p>
+                </div>
+            </div>
+
+        </div>
+    </footer>
+
+</body>
+</html>

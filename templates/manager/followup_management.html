@@ -1,0 +1,206 @@
+{% extends 'manager/base.html' %}
+
+{% block title %}Followup Management | DristiSewa{% endblock %}
+
+{% block content %}
+<div class="header-panel"
+     style="display:flex;justify-content:space-between;align-items:center;background:#fff;padding:18px 24px;border-radius:16px;box-shadow:0 2px 10px rgba(0,0,0,.05);margin-bottom:25px;">
+
+    <div style="display:flex;gap:18px;flex-wrap:wrap;">
+
+        <!-- Total Students -->
+        <div style="background:#dbeafe;border:1px solid #bfdbfe;border-radius:16px;padding:16px 20px;display:flex;align-items:center;gap:15px;min-width:220px;">
+
+            <div style="width:55px;height:55px;background:white;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#2563eb;font-size:20px;">
+                <i class="fas fa-users"></i>
+            </div>
+
+            <div>
+                <p style="margin:0;font-size:14px;font-weight:600;color:#374151;">
+                    Total Students
+                </p>
+
+                <p style="margin:4px 0 0;font-size:28px;font-weight:800;color:#111827;">
+                    {{ total_branch_students }}
+                </p>
+            </div>
+
+        </div>
+
+        <!-- Pending -->
+        <a href="{% url 'accounts:pending_followups' %}"
+           style="background:#fef3c7;border:1px solid #fde68a;border-radius:16px;padding:16px 20px;display:flex;align-items:center;gap:15px;min-width:220px;text-decoration:none;">
+
+            <div style="width:55px;height:55px;background:white;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#d97706;font-size:20px;">
+                <i class="fas fa-list-ul"></i>
+            </div>
+
+            <div>
+                <p style="margin:0;font-size:14px;font-weight:600;color:#374151;">
+                    Pending Followups
+                </p>
+
+                <p style="margin:4px 0 0;font-size:28px;font-weight:800;color:#111827;">
+                    {{ pending_trackers }}
+                </p>
+            </div>
+
+        </a>
+
+        <!-- Completed -->
+        <a href="{% url 'accounts:complete_followups' %}"
+           style="background:#fce7f3;border:1px solid #fbcfe8;border-radius:16px;padding:16px 20px;display:flex;align-items:center;gap:15px;min-width:220px;text-decoration:none;">
+
+            <div style="width:55px;height:55px;background:white;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#db2777;font-size:20px;">
+                <i class="fas fa-file-alt"></i>
+            </div>
+
+            <div>
+                <p style="margin:0;font-size:14px;font-weight:600;color:#374151;">
+                    Completed Followups
+                </p>
+
+                <p style="margin:4px 0 0;font-size:28px;font-weight:800;color:#111827;">
+                    {{ completed_trackers }}
+                </p>
+            </div>
+
+        </a>
+
+    </div>
+
+
+
+</div>
+
+<style>
+    .fm-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: nowrap;
+        gap: 20px;
+    }
+    .fm-header .table-actions {
+        flex-wrap: nowrap;
+        flex-shrink: 0;
+    }
+    .fm-header .search-input-wrapper { flex: 0 0 260px; }
+    .fm-header .filter-wrapper { flex-shrink: 0; }
+    @media (max-width: 900px) {
+        .fm-header { flex-wrap: wrap; }
+        .fm-header .table-actions { flex-wrap: wrap; width: 100%; }
+        .fm-header .search-input-wrapper { flex: 1 1 100%; }
+    }
+</style>
+<div class="data-table-container">
+    <div class="table-header-bar fm-header">
+        <h2 class="table-title">Followup Management</h2>
+        <div class="table-actions">
+            <div class="search-input-wrapper">
+                <i class="fas fa-search"></i>
+                <input type="text" id="studentSearch" placeholder="Search name or phone..." class="search-bar">
+            </div>
+            <div class="filter-wrapper">
+                <label class="filter-label">Filter:</label>
+                <select id="sortFilter" class="filter-dropdown">
+                    <option value="all">All Records</option>
+                    <option value="today">Today's Followup</option>
+                    <option value="upcoming">Upcoming (Tomorrow)</option>
+                    <option value="overdue">Overdue</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="responsive-table-holder">
+        <table class="custom-table" id="studentTable">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Country</th>
+                    <th class="text-center">Followup Date</th>
+                    <th>Assigned By</th>
+                    <th class="text-center">Application Status</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                {% for s in students %}
+                <tr data-name="{{ s.name|lower }}" data-phone="{{ s.phone }}" data-label="{{ s.date_label }}">
+                    <td>
+                        <a href="{% url 'accounts:student_document' s.id %}" class="student-link">{{ s.name }}</a>
+                    </td>
+                    <td class="muted-cell">{{ s.email }}</td>
+                    <td class="phone-cell">{{ s.phone }}</td>
+                    <td><span class="country-tag">{{ s.country }}</span></td>
+                    <td class="text-center">
+                        <span class="date-badge {% if s.date_label == 'today' %}date-today{% elif s.date_label == 'overdue' %}date-overdue{% else %}date-normal{% endif %}">
+                            {{ s.followup }}
+                        </span>
+                    </td>
+                    <td class="strong-cell">{{ s.assigned_by }}</td>
+                    <td class="text-center">
+                        <form method="post" action="{% url 'accounts:followup_management' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="student_id" value="{{ s.id }}">
+                            <select class="status-select" name="status" onchange="this.form.submit()">
+                                {% for opt in status_options %}
+                                <option {% if opt == s.status %}selected{% endif %}>{{ opt }}</option>
+                                {% endfor %}
+                            </select>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="table-footer">
+        <p id="counter">Showing {{ students|length }} of {{ total }} entries</p>
+        <div class="pagination-btns">
+            <button class="page-btn">Prev</button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">Next</button>
+        </div>
+    </div>
+</div>
+
+<script>
+(function () {
+    const searchInput = document.getElementById('studentSearch');
+    const sortFilter  = document.getElementById('sortFilter');
+    const rows        = Array.from(document.querySelectorAll('#tableBody tr'));
+    const counter     = document.getElementById('counter');
+    const total       = {{ total }};
+
+    function applyFilters() {
+        const q      = searchInput.value.toLowerCase().trim();
+        const filter = sortFilter.value;
+        let shown = 0;
+
+        rows.forEach(row => {
+            const nameMatch  = row.dataset.name.includes(q);
+            const phoneMatch = row.dataset.phone.includes(q);
+            const label      = row.dataset.label;
+
+            let filterMatch = true;
+            if (filter === 'today')    filterMatch = label === 'today';
+            if (filter === 'upcoming') filterMatch = label === 'upcoming';
+            if (filter === 'overdue')  filterMatch = label === 'overdue';
+
+            const visible = (nameMatch || phoneMatch) && filterMatch;
+            row.style.display = visible ? '' : 'none';
+            if (visible) shown++;
+        });
+
+        counter.textContent = `Showing ${shown} of ${total} entries`;
+    }
+
+    searchInput.addEventListener('keyup', applyFilters);
+    sortFilter.addEventListener('change', applyFilters);
+})();
+</script>
+{% endblock %}

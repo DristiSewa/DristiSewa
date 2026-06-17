@@ -1,0 +1,165 @@
+{% extends 'admin/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; font-family: 'Segoe UI', Roboto, sans-serif;">
+    <div>
+        <h1 style="font-size: 32px; font-weight: 700; margin: 0; color: #1e293b;">Student Management</h1>
+        <p style="color: #64748b; font-size: 14px; margin: 5px 0 0 0;">Oversee student and active follow-ups.</p>
+    </div>
+</div>
+
+<div class="filter-bar" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; font-family: 'Segoe UI', Roboto, sans-serif;">
+    <div style="display: flex; gap: 15px; align-items: center;">
+        <div style="position: relative;">
+            <i class="fas fa-search" style="position: absolute; left: 14px; top: 13px; color: #94a3b8;"></i>
+            <input type="text" id="studentSearch" placeholder="Search students..." 
+                   style="padding: 10px 15px 10px 40px; border-radius: 8px; border: 1px solid #e2e8f0; width: 280px; background: #f8fafc; font-size: 14px; outline: none;">
+        </div>
+        
+        <div style="position: relative;">
+            <i class="fas fa-filter" style="position: absolute; left: 14px; top: 13px; color: #94a3b8; font-size: 13px;"></i>
+            <select id="branchFilter" style="padding: 10px 40px 10px 36px; border-radius: 8px; border: 1px solid #e2e8f0; background: #f8fafc; color: #1e293b; font-size: 14px; font-weight: 500; appearance: none; cursor: pointer; outline: none;">
+                <option value="all">All Branches</option>
+                <option value="kathmandu" selected>Kathmandu Branch</option>
+                <option value="pokhara">Pokhara Branch</option>
+                <option value="chitwan">Chitwan Branch</option>
+            </select>
+            <i class="fas fa-chevron-down" style="position: absolute; right: 14px; top: 14px; color: #64748b; font-size: 11px; pointer-events: none;"></i>
+        </div>
+    </div>
+
+    <div style="display: flex; background: #e2e8f0; padding: 4px; border-radius: 8px; gap: 2px;">
+        <button class="tab-btn active" style="background: white; color: #1e40af; border: none; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">All</button>
+        <button class="tab-btn" style="background: transparent; color: #64748b; border: none; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer;">Due</button>
+        <button class="tab-btn" style="background: transparent; color: #64748b; border: none; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer;">Upcoming</button>
+        <button class="tab-btn" style="background: transparent; color: #64748b; border: none; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer;">Completed</button>
+    </div>
+</div>
+
+<div style="background: white; border-radius: 16px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02), 0 2px 4px -1px rgba(0,0,0,0.01); font-family: 'Segoe UI', Roboto, sans-serif;">
+    <table style="width: 100%; border-collapse: collapse; text-align: left;">
+        <thead>
+            <tr style="color: #94a3b8; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; border-bottom: 1px solid #f1f5f9;">
+                <th style="padding: 24px 30px; width: 35%;">Student Name</th>
+                <th style="padding: 24px 30px; width: 25%;">Phone Number</th>
+                <th style="padding: 24px 30px; width: 20%;">Status</th>
+                <th style="padding: 24px 30px; width: 20%; text-align: right;">Follow-Up</th>
+            </tr>
+        </thead>
+        <tbody style="font-size: 14px;">
+            {% for student in students %}
+            <tr style="border-bottom: 1px solid #f1f5f9; background: white; transition: background 0.2s;">
+                <td style="padding: 20px 30px;">
+                    <div style="display: flex; align-items: center; gap: 16px;">
+                        {% if student.avatar %}
+                            <img src="{{ student.avatar.url }}" alt="Profile" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+                        {% else %}
+                            <div style="width: 40px; height: 40px; border-radius: 50%; background: #e0f2fe; color: #0369a1; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px;">
+                                {{ student.name|slice:":1"|upper }}
+                            </div>
+                        {% endif %}
+                        <span style="font-weight: 600; color: #1e293b;">{{ student.name }}</span>
+                    </div>
+                </td>
+                
+                <td style="padding: 20px 30px; color: #0f172a; font-weight: 700; letter-spacing: 0.3px;">
+                    {{ student.phone_number }}
+                </td>
+                
+                <td style="padding: 20px 30px;">
+                    {% if student.is_active %}
+                    <span style="background: #e0e7ff; color: #3730a3; padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: 700; tracking-spacing: 0.5px;">ACTIVE</span>
+                    {% else %}
+                    <span style="background: #f1f5f9; color: #475569; padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: 700; tracking-spacing: 0.5px;">INACTIVE</span>
+                    {% endif %}
+                </td>
+                
+                <td style="padding: 20px 30px; text-align: right;">
+                    {% if student.follow_up_status == 'due' %}
+                        <span style="background: #fee2e2; color: #991b1b; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;"><span style="width: 6px; height: 6px; background: #ef4444; border-radius: 50%;"></span> Due</span>
+                    {% elif student.follow_up_status == 'upcoming' %}
+                        <span style="background: #fef3c7; color: #92400e; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;"><span style="width: 6px; height: 6px; background: #f59e0b; border-radius: 50%;"></span> Upcoming</span>
+                    {% else %}
+                        <span style="background: #dcfce7; color: #166534; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;"><span style="width: 6px; height: 6px; background: #22c55e; border-radius: 50%;"></span> Completed</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr style="border-bottom: 1px solid #f1f5f9;">
+                <td style="padding: 20px 30px;">
+                    <div style="display: flex; align-items: center; gap: 16px;">
+                        <div style="width: 36px; height: 36px; border-radius: 50%; background: #eee; display: flex; align-items: center; justify-content: center; font-size: 18px;">👨‍🎓</div>
+                        <span style="font-weight: 600; color: #1e293b;">Sanu Thapa</span>
+                    </div>
+                </td>
+                <td style="padding: 20px 30px; color: #0f172a; font-weight: 700;">9801234567</td>
+                <td style="padding: 20px 30px;"><span style="background: #e0e7ff; color: #3730a3; padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: 700;">ACTIVE</span></td>
+                <td style="padding: 20px 30px; text-align: right;"><span style="background: #fee2e2; color: #991b1b; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;"><span style="width: 6px; height: 6px; background: #ef4444; border-radius: 50%;"></span> Due</span></td>
+            </tr>
+            <tr style="border-bottom: 1px solid #f1f5f9;">
+                <td style="padding: 20px 30px;">
+                    <div style="display: flex; align-items: center; gap: 16px;">
+                        <div style="width: 36px; height: 36px; border-radius: 50%; background: #eee; display: flex; align-items: center; justify-content: center; font-size: 18px;">🧑‍🎓</div>
+                        <span style="font-weight: 600; color: #1e293b;">Susan Gurung</span>
+                    </div>
+                </td>
+                <td style="padding: 20px 30px; color: #0f172a; font-weight: 700;">9802345678</td>
+                <td style="padding: 20px 30px;"><span style="background: #e0e7ff; color: #3730a3; padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: 700;">ACTIVE</span></td>
+                <td style="padding: 20px 30px; text-align: right;"><span style="background: #fef3c7; color: #92400e; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;"><span style="width: 6px; height: 6px; background: #f59e0b; border-radius: 50%;"></span> Upcoming</span></td>
+            </tr>
+            <tr style="border-bottom: 1px solid #f1f5f9;">
+                <td style="padding: 20px 30px;">
+                    <div style="display: flex; align-items: center; gap: 16px;">
+                        <div style="width: 36px; height: 36px; border-radius: 50%; background: #eee; display: flex; align-items: center; justify-content: center; font-size: 18px;">👨‍💼</div>
+                        <span style="font-weight: 600; color: #1e293b;">Marcus Nepali</span>
+                    </div>
+                </td>
+                <td style="padding: 20px 30px; color: #0f172a; font-weight: 700;">9803456789</td>
+                <td style="padding: 20px 30px;"><span style="background: #f1f5f9; color: #475569; padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: 700;">INACTIVE</span></td>
+                <td style="padding: 20px 30px; text-align: right;"><span style="background: #dcfce7; color: #166534; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;"><span style="width: 6px; height: 6px; background: #22c55e; border-radius: 50%;"></span> Completed</span></td>
+            </tr>
+            <tr style="border-bottom: 1px solid #f1f5f9;">
+                <td style="padding: 20px 30px;">
+                    <div style="display: flex; align-items: center; gap: 16px;">
+                        <div style="width: 36px; height: 36px; border-radius: 50%; background: #eee; display: flex; align-items: center; justify-content: center; font-size: 18px;">👩‍🎓</div>
+                        <span style="font-weight: 600; color: #1e293b;">Sophia Thakuri</span>
+                    </div>
+                </td>
+                <td style="padding: 20px 30px; color: #0f172a; font-weight: 700;">9804567890</td>
+                <td style="padding: 20px 30px;"><span style="background: #e0e7ff; color: #3730a3; padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: 700;">ACTIVE</span></td>
+                <td style="padding: 20px 30px; text-align: right;"><span style="background: #fef3c7; color: #92400e; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;"><span style="width: 6px; height: 6px; background: #f59e0b; border-radius: 50%;"></span> Upcoming</span></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div style="padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; background: #ffffff; border-top: 1px solid #f1f5f9;">
+        <span style="font-size: 13px; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
+            Showing {{ students.count|default:"4" }} of {{ total_students_count|default:"282" }} Students
+        </span>
+        <div style="display: flex; gap: 6px; align-items: center;">
+            <button style="border: none; background: transparent; padding: 6px 12px; font-size: 13px; font-weight: 600; color: #94a3b8; cursor: pointer;">Previous</button>
+            <button style="background: #1e40af; color: white; border: none; width: 28px; height: 28px; border-radius: 6px; font-weight: 600; font-size: 13px; cursor: pointer;">1</button>
+            <button style="background: transparent; color: #64748b; border: none; width: 28px; height: 28px; border-radius: 6px; font-weight: 600; font-size: 13px; cursor: pointer;">2</button>
+            <button style="background: transparent; color: #64748b; border: none; width: 28px; height: 28px; border-radius: 6px; font-weight: 600; font-size: 13px; cursor: pointer;">3</button>
+            <button style="border: none; background: transparent; padding: 6px 12px; font-size: 13px; font-weight: 600; color: #1e40af; cursor: pointer;">Next</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('.tab-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.style.background = 'transparent';
+                btn.style.color = '#64748b';
+                btn.style.fontWeight = '500';
+            });
+            this.style.background = 'white';
+            this.style.color = '#1e40af';
+            this.style.fontWeight = '600';
+        });
+    });
+</script>
+{% endblock %}

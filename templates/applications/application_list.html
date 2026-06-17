@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Applications - DristiSewa{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto space-y-8">
+
+    <div class="luxury-glass-card rounded-3xl p-8">
+        <h1 class="text-xl font-black text-white mb-4 uppercase tracking-wide">Visa Pipeline</h1>
+        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4">
+            {% for status_value, count in pipeline.items %}
+                <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-4 text-center">
+                    <p class="text-2xl font-black text-blue-400">{{ count }}</p>
+                    <p class="text-[10px] font-bold uppercase tracking-wide text-slate-400 mt-1">{{ status_value }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="luxury-glass-card rounded-3xl p-8">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+            <h2 class="text-lg font-black text-white uppercase tracking-wide">All Applications</h2>
+            <div class="flex flex-col sm:flex-row gap-2">
+                <form method="GET" class="flex gap-2">
+                    <select name="status" class="form-input !w-56">
+                        <option value="">All Statuses</option>
+                        {% for value, label in statuses %}
+                            <option value="{{ value }}" {% if status_filter == value %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="btn-primary">Filter</button>
+                </form>
+                <a href="{% url 'applications:application_create' %}" class="btn-primary"><i class="fa-solid fa-plus"></i> New Application</a>
+            </div>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left">
+                <thead>
+                    <tr class="text-xs font-black uppercase tracking-widest text-slate-400 border-b border-slate-800">
+                        <th class="py-2 pr-4">Student</th>
+                        <th class="py-2 pr-4">Country</th>
+                        <th class="py-2 pr-4">Institution</th>
+                        <th class="py-2 pr-4">Status</th>
+                        <th class="py-2 pr-4">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for application in applications %}
+                    <tr class="border-b border-slate-900">
+                        <td class="py-2 pr-4 font-semibold text-white">{{ application.student.user.get_full_name|default:application.student.user.email }}</td>
+                        <td class="py-2 pr-4 text-slate-400">{{ application.destination_country|default:"—" }}</td>
+                        <td class="py-2 pr-4 text-slate-400">{{ application.institution|default:"—" }}</td>
+                        <td class="py-2 pr-4 text-blue-400 font-bold">{{ application.get_status_display }}</td>
+                        <td class="py-2 pr-4">
+                            <a href="{% url 'applications:application_update' application.id %}" class="text-xs font-bold text-blue-400 hover:text-blue-300 uppercase">Edit</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="5" class="py-4 text-center text-slate-500">No applications found.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

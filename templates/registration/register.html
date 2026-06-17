@@ -1,0 +1,214 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration - DristiSewa</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0f172a;
+        }
+        .deep-gradient-text {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .luxury-glass-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 50px 100px -20px rgba(0, 0, 0, 0.4), 0 30px 60px -30px rgba(59, 130, 246, 0.3);
+        }
+        .input-glow:focus {
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
+            border-color: #2563eb;
+        }
+        .error-field {
+            border-color: #ef4444 !important;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.2) !important;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4 sm:p-6 md:p-10 overflow-x-hidden relative antialiased">
+
+    <div class="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-blue-600/15 rounded-full filter blur-[120px] pointer-events-none"></div>
+    <div class="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-indigo-500/15 rounded-full filter blur-[120px] pointer-events-none"></div>
+
+    <div class="w-full max-w-5xl luxury-glass-container rounded-3xl overflow-hidden flex flex-col md:flex-row relative z-10 transition-all duration-300">
+
+        <div class="w-full md:w-[55%] p-8 sm:p-12 md:p-14 flex flex-col justify-center text-slate-900 bg-white">
+
+            <div class="flex flex-col items-center text-center mb-6">
+                <div class="p-1 bg-white rounded-xl shadow-sm border border-blue-50 mb-4 transform hover:scale-105 transition duration-300">
+                    <img src="{% static 'images/logo.png' %}" alt="Logo" class="h-16 w-auto object-contain">
+                </div>
+                <h2 class="text-2xl font-extrabold tracking-tight text-slate-900">
+                    Create Your Account
+                </h2>
+                <p class="text-xs font-medium text-slate-400 mt-1 italic max-w-xs">
+                    "Register to apply to your dream universities."
+                </p>
+            </div>
+
+            {% if messages %}
+                <div class="mb-4 space-y-2">
+                    {% for message in messages %}
+                        <div class="p-3 text-sm text-red-600 bg-red-50 border border-red-200 font-medium rounded-xl text-center shadow-inner">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <form id="registerForm" action="{% url 'accounts:register' %}" method="POST" class="space-y-4">
+                {% csrf_token %}
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-slate-700 tracking-wide uppercase">First Name</label>
+                        <input type="text" name="first_name" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm font-medium outline-none transition input-glow">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-slate-700 tracking-wide uppercase">Last Name</label>
+                        <input type="text" name="last_name" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm font-medium outline-none transition input-glow">
+                    </div>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-slate-700 tracking-wide uppercase">Email Address</label>
+                    <input type="email" name="email" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm font-medium outline-none transition input-glow">
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-slate-700 tracking-wide uppercase">Phone Number</label>
+                    <input type="tel" name="phone" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm font-medium outline-none transition input-glow">
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-slate-700 tracking-wide uppercase">Branch</label>
+                    <select name="branch" id="branchSelect" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm font-medium outline-none transition input-glow">
+                        <option value="">Select your branch</option>
+                        {% for branch in branches %}
+                            <option value="{{ branch.pk }}">{{ branch.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="space-y-1 hidden" id="frontDeskFieldWrapper">
+                    <label class="text-xs font-bold text-slate-700 tracking-wide uppercase">Front Desk Officer</label>
+                    <select name="front_desk_user" id="frontDeskSelect" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm font-medium outline-none transition input-glow">
+                        <option value="">Auto-assign</option>
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-slate-700 tracking-wide uppercase">Password</label>
+                        <input type="password" id="password" name="password" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm font-medium outline-none transition input-glow">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-slate-700 tracking-wide uppercase">Confirm Password</label>
+                        <input type="password" id="confirm_password" name="confirm_password" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm font-medium outline-none transition input-glow">
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-sm tracking-wider uppercase rounded-xl shadow-lg shadow-blue-600/30 transition transform hover:-translate-y-0.5 active:translate-y-0 mt-4">
+                    Register
+                </button>
+            </form>
+
+            <p class="text-center mt-6 text-xs font-medium text-slate-500 tracking-wide">
+                Already have an account?
+                <a href="{% url 'accounts:login' %}" class="text-blue-600 hover:text-blue-800 font-extrabold underline decoration-2 transition ml-1">Login</a>
+            </p>
+        </div>
+
+        <div class="hidden md:block w-[45%] bg-slate-950 relative overflow-hidden group">
+
+            <div class="absolute inset-0 z-0">
+                <img src="{% static 'images/ielts.jpg' %}" alt="Student Visual" class="w-full h-full object-cover opacity-60 filter contrast-[105%] brightness-[90%] transform scale-105 group-hover:scale-110 transition duration-1000">
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/40 to-blue-900/20 mix-blend-multiply"></div>
+            </div>
+
+            <div class="absolute inset-0 z-10 p-12 flex flex-col justify-between text-white">
+                <div class="space-y-1">
+
+                </div>
+
+                <div class="space-y-3">
+                    <h3 class="text-3xl font-black tracking-tight text-white leading-tight">
+                        Your Global Journey <br><span class="text-blue-400">Begins Right Here.</span>
+                    </h3>
+                    <p class="text-xs text-slate-300 font-medium leading-relaxed">
+                        Join thousands of global students tracking applications, managing educational files, and scheduling elite advisory desk operations seamlessly.
+                    </p>
+                </div>
+
+                <p class="text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+                    &copy; 2026 Core Platform Management.
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+    // When a branch is picked, check if it has more than one Front Desk
+    // officer; if so, let the student choose who handles their application.
+    document.getElementById("branchSelect").addEventListener("change", function(){
+        const branchId = this.value;
+        const wrapper = document.getElementById("frontDeskFieldWrapper");
+        const select = document.getElementById("frontDeskSelect");
+
+        select.innerHTML = '<option value="">Auto-assign</option>';
+        wrapper.classList.add("hidden");
+
+        if (!branchId) return;
+
+        fetch(`/register/branches/${branchId}/frontdesk/`)
+            .then(res => res.json())
+            .then(data => {
+                const staff = data.front_desk_staff || [];
+                if (staff.length > 1) {
+                    staff.forEach(fd => {
+                        const opt = document.createElement("option");
+                        opt.value = fd.id;
+                        opt.textContent = fd.name;
+                        select.appendChild(opt);
+                    });
+                    wrapper.classList.remove("hidden");
+                }
+            })
+            .catch(() => {});
+    });
+
+    document.getElementById("registerForm").addEventListener("submit", function(e){
+
+        let password = document.getElementById("password");
+        let confirm = document.getElementById("confirm_password");
+
+        password.classList.remove("error-field");
+        confirm.classList.remove("error-field");
+
+        if(password.value !== confirm.value){
+            e.preventDefault();
+
+            password.classList.add("error-field");
+            confirm.classList.add("error-field");
+
+            // Custom elegant validation alert logic trigger
+            alert("Oops! Passwords do not match. Please verify again.");
+        }
+    });
+    </script>
+
+</body>
+</html>

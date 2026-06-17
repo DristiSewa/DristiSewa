@@ -1,0 +1,126 @@
+{% extends 'admin/base.html' %}
+
+{% block title %}Create Staff Account - DristiSewa{% endblock %}
+
+{% block content %}
+<div class="mb-8">
+    <h2 class="text-3xl font-bold text-slate-950 tracking-tight font-sans">Create Staff Account</h2>
+    <p class="text-sm text-slate-400 mt-1 font-medium">Register a new branch manager or front desk profile and assign it to a branch.</p>
+</div>
+
+<div class="max-w-3xl bg-white rounded-3xl border border-slate-100 shadow-sm p-8">
+    <form method="POST" class="space-y-6">
+        {% csrf_token %}
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <label class="block text-xs font-bold uppercase text-slate-600 mb-1.5">First Name</label>
+                {{ form.first_name }}
+                {% if form.first_name.errors %}
+                    <p class="text-xs text-rose-600 mt-1">{{ form.first_name.errors.0 }}</p>
+                {% endif %}
+            </div>
+            <div>
+                <label class="block text-xs font-bold uppercase text-slate-600 mb-1.5">Last Name</label>
+                {{ form.last_name }}
+                {% if form.last_name.errors %}
+                    <p class="text-xs text-rose-600 mt-1">{{ form.last_name.errors.0 }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <label class="block text-xs font-bold uppercase text-slate-600 mb-1.5">Email Address</label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                    <p class="text-xs text-rose-600 mt-1">{{ form.email.errors.0 }}</p>
+                {% endif %}
+            </div>
+            <div>
+                <label class="block text-xs font-bold uppercase text-slate-600 mb-1.5">Password</label>
+                {{ form.password }}
+                {% if form.password.errors %}
+                    <p class="text-xs text-rose-600 mt-1">{{ form.password.errors.0 }}</p>
+                {% endif %}
+                <button type="button" onclick="generatePassword('id_password')" class="mt-2 inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wide text-blue-600 hover:text-blue-700 transition">
+                    <i class="fa-solid fa-key"></i> Generate Password
+                </button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <label class="block text-xs font-bold uppercase text-slate-600 mb-1.5">System Role Assignment</label>
+                {{ form.role }}
+                {% if form.role.errors %}
+                    <p class="text-xs text-rose-600 mt-1">{{ form.role.errors.0 }}</p>
+                {% endif %}
+            </div>
+            <div>
+                <label class="block text-xs font-bold uppercase text-slate-600 mb-1.5">Assign Operational Branch</label>
+                {{ form.branch }}
+                {% if form.branch.errors %}
+                    <p class="text-xs text-rose-600 mt-1">{{ form.branch.errors.0 }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div>
+            <label class="block text-xs font-bold uppercase text-slate-600 mb-1.5">Experience Details / Background Notes</label>
+            {{ form.experience_details }}
+            {% if form.experience_details.errors %}
+                <p class="text-xs text-rose-600 mt-1">{{ form.experience_details.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+            <a href="{% url 'accounts:branch_staff' %}" class="px-5 py-2.5 text-sm font-semibold text-slate-700 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition">
+                Cancel
+            </a>
+            <button type="submit" class="px-5 py-2.5 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-sm transition">
+                Save & Register Account
+            </button>
+        </div>
+    </form>
+</div>
+
+<style>
+    #content input[type="text"], #content input[type="email"], #content input[type="password"],
+    .max-w-3xl select, .max-w-3xl textarea,
+    .max-w-3xl input[type="text"], .max-w-3xl input[type="email"], .max-w-3xl input[type="password"] {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 10px 14px;
+        background-color: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 13px;
+        color: #1e293b;
+        outline: none;
+        transition: all 0.2s ease;
+    }
+
+    .max-w-3xl select:focus, .max-w-3xl textarea:focus,
+    .max-w-3xl input:focus {
+        border-color: #2563eb;
+        background-color: #ffffff;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+</style>
+
+<script>
+    function generatePassword(fieldId) {
+        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%';
+        let password = '';
+        for (let i = 0; i < 10; i++) {
+            password += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        const field = document.getElementById(fieldId);
+        if (field) {
+            field.value = password;
+            field.type = 'text';
+        }
+    }
+</script>
+{% endblock %}

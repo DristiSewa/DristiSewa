@@ -1,0 +1,89 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}DristiSewa{% endblock %}</title>
+    <!-- Tailwind CSS & FontAwesome Icons -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-50 text-slate-800 text-base min-h-screen font-sans antialiased">
+
+    <div class="flex h-screen overflow-hidden">
+        <!-- SIDEBAR LAYER -->
+        <aside class="w-64 bg-slate-100/80 border-r border-slate-200 flex flex-col justify-between">
+            <div class="p-6">
+                <!-- Branding Logo Space (Stacked Vertically & Enlarged) -->
+                <div class="flex flex-col items-center text-center mb-6 px-2 space-y-2 border-b border-slate-200/60 pb-4">
+                    <img src="{% static 'images/logo.png' %}"
+                         alt="DristiSewa Logo"
+                         class="h-14 w-auto object-contain drop-shadow-sm">
+                    <div>
+                        <h1 class="font-black text-xl tracking-tight text-blue-900">DristiSewa</h1>
+                    </div>
+                </div>
+                
+                <!-- Dynamic Navigation Links -->
+                <nav class="space-y-5">
+                    <div class="space-y-1">
+                        <p class="px-4 text-[11px] font-bold uppercase tracking-widest text-slate-400">Overview</p>
+                        <!-- Dashboard Home Link -->
+                        <a href="{% url 'accounts:admin_dashboard' %}"
+                           class="flex items-center space-x-3 px-4 py-2.5 rounded-xl transition font-medium text-base {% if request.resolver_match.url_name == 'admin_dashboard' %}bg-blue-100 text-blue-700 shadow-sm{% else %}text-slate-600 hover:bg-slate-200/60 hover:text-slate-900{% endif %}">
+                            <i class="fa-solid w-5 fa-chart-pie text-lg"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </div>
+
+                    <div class="space-y-1">
+                        <p class="px-4 text-[11px] font-bold uppercase tracking-widest text-slate-400">Management</p>
+                        <!-- Branch & Staff Link -->
+                        <a href="{% url 'accounts:branch_staff' %}"
+                           class="flex items-center space-x-3 px-4 py-2.5 rounded-xl transition font-medium text-base {% if request.resolver_match.url_name == 'branch_staff' %}bg-blue-100 text-blue-700 shadow-sm{% else %}text-slate-600 hover:bg-slate-200/60 hover:text-slate-900{% endif %}">
+                            <i class="fa-regular w-5 fa-id-badge text-lg"></i>
+                            <span>Branch & Staff</span>
+                        </a>
+
+                        <!-- Students Link -->
+                        <a href="{% url 'accounts:student_management' %}"
+                           class="flex items-center space-x-3 px-4 py-2.5 rounded-xl transition font-medium text-base {% if request.resolver_match.url_name == 'student_management' %}bg-blue-100 text-blue-700 shadow-sm{% else %}text-slate-600 hover:bg-slate-200/60 hover:text-slate-900{% endif %}">
+                            <i class="fa-solid w-5 fa-graduation-cap text-lg"></i>
+                            <span>Students</span>
+                        </a>
+                    </div>
+                </nav>
+            </div>
+
+            <!-- LOGOUT CONTROL AT BOTTOM -->
+            <div class="p-4 border-t border-slate-200/60">
+                <a href="{% url 'accounts:logout' %}" class="flex items-center space-x-3 px-4 py-2.5 rounded-xl text-slate-600 hover:bg-slate-200/80 hover:text-rose-600 transition font-medium text-base">
+                    <i class="fa-solid fa-right-from-bracket text-lg"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- MAIN WINDOW CONTENT PORT -->
+        <main class="flex-1 flex flex-col overflow-y-auto bg-slate-5/40">
+            <!-- FLASH NOTIFICATIONS CONTAINER -->
+            {% if messages %}
+                <div class="px-8 pt-6">
+                    {% for message in messages %}
+                        <div class="p-4 rounded-xl border {% if message.tags == 'success' %}bg-emerald-50 border-emerald-200 text-emerald-800{% else %}bg-rose-50 border-rose-200 text-rose-800{% endif %} shadow-sm">
+                            {{ message }}
+                        </div>
+                    {% endfor %} <!-- Fixed closing tag -->
+                </div>
+            {% endif %}
+
+            <!-- RENDER DASHBOARD SECTION CODES -->
+            <div class="p-12 max-w-7xl w-full mx-auto">
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    </div>
+
+</body>
+</html>

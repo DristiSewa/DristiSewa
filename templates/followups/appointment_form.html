@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Edit Appointment - DristiSewa{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <div class="luxury-glass-card rounded-3xl p-8">
+        <h1 class="text-xl font-black text-white mb-2 uppercase tracking-wide">Edit / Reschedule Appointment</h1>
+        <p class="text-sm text-slate-400 mb-6">{{ appointment.student.user.get_full_name|default:appointment.student.user.email }}</p>
+
+        <form method="POST" class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            {% csrf_token %}
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold text-blue-400 uppercase tracking-wide">{{ form.student.label }}</label>
+                {{ form.student }}
+            </div>
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold text-blue-400 uppercase tracking-wide">{{ form.staff.label }}</label>
+                {{ form.staff }}
+            </div>
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold text-blue-400 uppercase tracking-wide">{{ form.appointment_date.label }}</label>
+                {{ form.appointment_date }}
+            </div>
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold text-blue-400 uppercase tracking-wide">{{ form.appointment_time.label }}</label>
+                {{ form.appointment_time }}
+            </div>
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold text-blue-400 uppercase tracking-wide">{{ form.purpose.label }}</label>
+                {{ form.purpose }}
+            </div>
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold text-blue-400 uppercase tracking-wide">{{ form.status.label }}</label>
+                {{ form.status }}
+            </div>
+            <div class="space-y-1.5 sm:col-span-2">
+                <label class="text-xs font-bold text-blue-400 uppercase tracking-wide">{{ form.notes.label }}</label>
+                {{ form.notes }}
+            </div>
+            <div class="sm:col-span-2 flex justify-between items-center pt-2">
+                <a href="{% url 'followups:appointment_list' %}" class="text-xs font-bold text-slate-400 hover:text-slate-200 uppercase tracking-wide">
+                    <i class="fa-solid fa-arrow-left mr-1"></i> Back
+                </a>
+                <button type="submit" class="btn-primary">Save <i class="fa-solid fa-floppy-disk"></i></button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
