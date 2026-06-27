@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
         /* ==========================================================================
            DRISTISEWA MANAGER DASHBOARD — UNIFIED DESIGN SYSTEM
@@ -18,7 +19,7 @@
            DESIGN TOKENS
            -------------------------------------------------------------------------- */
         :root {
-            --sidebar-width: 280px;
+            --sidebar-width: 256px;
             --content-padding: 32px;
             --primary: #2b35d2;
             --primary-dark: #1e257c;
@@ -68,11 +69,10 @@
         /* --------------------------------------------------------------------------
            SIDEBAR
            -------------------------------------------------------------------------- */
-        .sidebar {
-            width: var(--sidebar-width);
-            background: var(--primary);
-            color: #fff;
-            padding: 28px 14px 0;
+        .new-sidebar {
+            width: 256px;
+            background: #f8fafc;
+            border-right: 1px solid #e2e8f0;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -84,118 +84,167 @@
             flex-shrink: 0;
         }
 
-        .sidebar-brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 20px;
-            font-weight: 800;
-            letter-spacing: 0.3px;
-            padding: 0 10px 22px;
-            margin-bottom: 18px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-            color: #fff;
+        .new-sidebar-inner {
+            padding: 24px 16px;
         }
 
-        .sidebar-brand-icon {
-            width: 36px;
-            height: 36px;
-            min-width: 36px;
-            border-radius: var(--radius-sm);
-            background: rgba(255, 255, 255, 0.14);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            overflow: hidden;
-        }
-        .sidebar-brand-icon img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .sidebar-menu {
-            list-style: none;
+        .new-sidebar-brand {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            align-items: center;
+            text-align: center;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(226,232,240,0.8);
+            gap: 8px;
         }
 
-        .sidebar-menu li a {
+        .new-sidebar-brand img {
+            height: 56px;
+            width: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.08));
+        }
+
+        .new-sidebar-brand h1 {
+            font-size: 18px;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            color: #1e3a8a;
+        }
+
+        .new-nav { display: flex; flex-direction: column; gap: 20px; }
+
+        .new-nav-group { display: flex; flex-direction: column; gap: 2px; }
+
+        .new-nav-label {
+            font-size: 10.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #94a3b8;
+            padding: 0 12px;
+            margin-bottom: 4px;
+        }
+
+        .new-nav-link {
             display: flex;
             align-items: center;
             gap: 12px;
-            color: rgba(255, 255, 255, 0.75);
+            padding: 10px 12px;
+            border-radius: 10px;
             text-decoration: none;
-            padding: 0 14px;
-            height: 56px;
-            border-radius: 0 var(--radius-md) var(--radius-md) 0;
-            border-left: 3px solid transparent;
+            font-size: 14px;
             font-weight: 600;
-            font-size: 16px;
-            line-height: 1;
-            transition: background 0.18s, color 0.18s, border-color 0.18s;
+            color: #64748b;
+            transition: background 0.15s, color 0.15s;
             white-space: nowrap;
         }
 
-        .sidebar-menu li a i {
-            width: 22px;
-            min-width: 22px;
+        .new-nav-link i {
+            width: 20px;
+            min-width: 20px;
+            font-size: 15px;
             text-align: center;
-            font-size: 18px;
         }
 
-        .sidebar-menu li a:hover {
-            color: #fff;
-            background: rgba(255, 255, 255, 0.08);
+        .new-nav-link:hover {
+            background: rgba(226,232,240,0.7);
+            color: #1e293b;
         }
 
-        .sidebar-menu li.active a {
-            color: #fff;
-            background: rgba(255, 255, 255, 0.14);
-            border-left-color: #fff;
+        .new-nav-link.active {
+            background: #dbeafe;
+            color: #1d4ed8;
+            box-shadow: 0 1px 3px rgba(59,130,246,0.12);
         }
 
-        .sidebar-footer {
-            margin: 0 -14px;
-            padding: 20px 22px;
-            background: rgba(0, 0, 0, 0.15);
+        .new-nav-link.active i { color: #2563eb; }
+
+        .new-sidebar-footer {
+            padding: 16px 16px 14px;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
         }
 
-        .user-profile-info {
+        .sidebar-user-card {
             display: flex;
             align-items: center;
             gap: 10px;
+            padding: 8px 12px;
+        }
+
+        .sidebar-user-avatar {
+            width: 34px;
+            height: 34px;
+            min-width: 34px;
+            background: linear-gradient(135deg, #3b82f6, #2b35d2);
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 800;
+            flex-shrink: 0;
+            letter-spacing: 0.02em;
+        }
+
+        .sidebar-user-info { min-width: 0; }
+
+        .sidebar-user-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: #1e293b;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 1.3;
+        }
+
+        .sidebar-user-meta {
+            font-size: 11px;
+            color: #94a3b8;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-top: 1px;
+            line-height: 1.3;
+        }
+
+        .new-nav-logout {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            text-decoration: none;
             font-size: 14px;
             font-weight: 600;
-            color: #fff;
-            margin-bottom: 12px;
+            color: #64748b;
+            transition: background 0.15s, color 0.15s;
         }
 
-        .logout-btn {
-            display: inline-flex;
-            align-items: center;
-            color: rgba(255, 255, 255, 0.6);
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: 500;
-            transition: color 0.2s;
-        }
+        .new-nav-logout i { width: 20px; min-width: 20px; font-size: 15px; text-align: center; }
 
-        .logout-btn:hover { color: #fca5a5; }
-        .logout-btn i { margin-right: 7px; }
+        .new-nav-logout:hover {
+            background: #fee2e2;
+            color: #dc2626;
+        }
 
         /* --------------------------------------------------------------------------
            MAIN CONTENT
            -------------------------------------------------------------------------- */
         .main-content {
-            margin-left: var(--sidebar-width);
+            margin-left: 256px;
             flex: 1;
             padding: var(--content-padding);
             background: var(--bg);
             min-height: 100vh;
-            max-width: calc(100vw - var(--sidebar-width));
+            max-width: calc(100vw - 256px);
             overflow-x: hidden;
         }
 
@@ -1175,8 +1224,7 @@
            -------------------------------------------------------------------------- */
         @media (max-width: 1536px) {
             :root { --content-padding: 28px; }
-            .sidebar { width: 260px; }
-            .main-content { margin-left: 260px; max-width: calc(100vw - 260px); }
+            .main-content { margin-left: 256px; max-width: calc(100vw - 256px); }
             .cards-wrapper { gap: 16px; }
             .card-value, .metric-card-value { font-size: 34px; }
         }
@@ -1200,7 +1248,6 @@
         }
 
         @media (max-width: 900px) {
-            .sidebar { position: relative; width: 100%; height: auto; }
             .main-content { margin-left: 0; max-width: 100%; padding: 20px; }
             .metrics-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         }
@@ -1301,43 +1348,48 @@
 <body>
     <div class="wrapper">
 
-        <aside class="sidebar">
-            <div>
-                <div class="sidebar-brand">
-                    <span class="sidebar-brand-icon"><img src="{% static 'images/logo.png' %}" alt="DristiSewa logo"></span>
-                    DristiSewa
+        <aside class="new-sidebar">
+            <div class="new-sidebar-inner">
+                <!-- Brand -->
+                <div class="new-sidebar-brand">
+                    <img src="{% static 'images/logo.png' %}" alt="DristiSewa Logo">
+                    <h1>DristiSewa</h1>
                 </div>
-                <ul class="sidebar-menu">
-                    <li class="{% if 'branch/monitoring' in request.path %}active{% endif %}">
-                        <a href="{% url 'accounts:branch_monitoring' %}">
-                            <i class="fa-solid fa-code-branch"></i> Branch Monitoring
+                <!-- Navigation -->
+                <nav class="new-nav">
+                    <div class="new-nav-group">
+                        <p class="new-nav-label">Overview</p>
+                        <a href="{% url 'accounts:branch_monitoring' %}"
+                           class="new-nav-link {% if 'branch-monitoring' in request.path %}active{% endif %}">
+                            <i class="fa-solid fa-code-branch"></i>
+                            <span>Branch Monitoring</span>
                         </a>
-                    </li>
-                    <li class="{% if 'followup/management' in request.path or 'followups' in request.path %}active{% endif %}">
-                        <a href="{% url 'accounts:followup_management' %}">
-                            <i class="fa-solid fa-bars-progress"></i> Followup Management
+                    </div>
+                    <div class="new-nav-group">
+                        <p class="new-nav-label">Management</p>
+                        <a href="{% url 'accounts:followup_management' %}"
+                           class="new-nav-link {% if 'followup-management' in request.path %}active{% endif %}">
+                            <i class="fa-solid fa-bars-progress"></i>
+                            <span>Followup Management</span>
                         </a>
-                    </li>
-                    <li class="{% if 'front-desk' in request.path %}active{% endif %}">
-                        <a href="{% url 'accounts:front_desk' %}">
-                            <i class="fa-solid fa-user-gear"></i> Front-desk Users
+                        <a href="{% url 'accounts:front_desk' %}"
+                           class="new-nav-link {% if 'front-desk' in request.path %}active{% endif %}">
+                            <i class="fa-solid fa-user-gear"></i>
+                            <span>Front-desk Users</span>
                         </a>
-                    </li>
-                    <li class="{% if 'reports' in request.path %}active{% endif %}">
-                        <a href="{% url 'accounts:reports' %}">
-                            <i class="fa-solid fa-chart-line"></i> Report and Analytics
+                        <a href="{% url 'accounts:reports' %}"
+                           class="new-nav-link {% if 'reports' in request.path %}active{% endif %}">
+                            <i class="fa-solid fa-chart-line"></i>
+                            <span>Reports &amp; Analytics</span>
                         </a>
-                    </li>
-                </ul>
+                    </div>
+                </nav>
             </div>
-
-            <div class="sidebar-footer">
-                <div class="user-profile-info">
-                    <i class="fa-solid fa-circle-user sidebar-user-icon"></i>
-                    <span>{{ user.get_full_name|default:user.email }}</span>
-                </div>
-                <a href="{% url 'accounts:logout' %}" class="logout-btn">
-                    <i class="fa-solid fa-right-from-bracket"></i> Logout
+            <!-- Footer: Logout -->
+            <div class="new-sidebar-footer">
+                <a href="{% url 'accounts:logout' %}" class="new-nav-logout">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span>Logout</span>
                 </a>
             </div>
         </aside>

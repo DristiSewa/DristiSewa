@@ -5,7 +5,14 @@
 {% block content %}
 <div class="analytics-container">
 
-    <div class="analytics-title">Reports &amp; Analytics Dashboard</div>
+    <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:8px;">
+        <div class="analytics-title" style="margin-bottom:0;">Reports &amp; Analytics Dashboard</div>
+        <a href="{% url 'accounts:manager_view_report' %}"
+           style="display:inline-flex; align-items:center; gap:8px; background:#2b35d2; color:#fff; font-weight:700; font-size:13px; padding:10px 20px; border-radius:8px; text-decoration:none; transition:background 0.2s;"
+           onmouseover="this.style.background='#1e27a8'" onmouseout="this.style.background='#2b35d2'">
+            <i class="fa-solid fa-eye"></i> View Report
+        </a>
+    </div>
 
     <div class="metrics-grid">
         <div class="metric-card">
@@ -78,43 +85,6 @@
         </div>
     </div>
 
-    <div class="table-card">
-        <div class="section-heading"><i class="fa-solid fa-id-card-clip"></i> Front-Desk Executive Performance Index</div>
-        <table class="report-table rpt-fix">
-            <colgroup>
-                <col class="rpt-c1">
-                <col class="rpt-c2">
-                <col class="rpt-c3">
-                <col class="rpt-c4">
-                <col class="rpt-c5">
-                <col class="rpt-c6">
-            </colgroup>
-            <thead>
-                <tr>
-                    <th>Counselor Name</th>
-                    <th>Assigned Cases</th>
-                    <th>Offers Secured</th>
-                    <th>COE Issued</th>
-                    <th>Visas Granted</th>
-                    <th>Conversion %</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for staff in staff_performance %}
-                <tr>
-                    <td><strong>{{ staff.name }}</strong></td>
-                    <td>{{ staff.assigned_cases }}</td>
-                    <td>{{ staff.offers_secured }}</td>
-                    <td>{{ staff.coe_issued }}</td>
-                    <td>{{ staff.visas_granted }}</td>
-                    <td><span class="conversion-percentage">{{ staff.conversion }}%</span></td>
-                </tr>
-                {% empty %}
-                <tr><td colspan="6" style="text-align:center;color:#9ca3af;padding:20px;">No front desk staff assigned to this branch yet.</td></tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
 
 </div>
 {% endblock %}

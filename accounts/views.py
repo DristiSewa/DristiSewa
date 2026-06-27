@@ -329,6 +329,7 @@ def admin_dashboard(request):
         frontdesk_count = User.objects.filter(branch=branch, role=User.Role.FRONTDESK).count()
         branch_staff_summary.append(
             {
+                "id": branch.id,
                 "name": branch.name,
                 "manager_count": manager_count,
                 "frontdesk_count": frontdesk_count,
@@ -351,6 +352,597 @@ def admin_dashboard(request):
             "total_frontdesk": User.objects.filter(role=User.Role.FRONTDESK).count(),
         },
     )
+
+
+def _build_overall_report_data(user):
+    """Shared data builder for overall admin report (view + PDF)."""
+    from django.db.models import Count
+    from django.utils import timezone
+    from applications.models import Application
+    from branches.models import Branch
+    from followups.models import FollowUp
+    from students.models import Student
+
+    today = timezone.localdate()
+    active_branches = Branch.objects.filter(is_active=True)
+    all_students = Student.objects.filter(is_archived=False)
+    all_applications = Application.objects.filter(student__in=all_students)
+
+    total_students = all_students.count()
+    total_applications = all_applications.count()
+    visa_granted = all_applications.filter(status=Application.Status.VISA_GRANTED).count()
+    rejected = all_applications.filter(status=Application.Status.REJECTED).count()
+    decided = visa_granted + rejected
+    visa_success_rate = round((visa_granted / decided) * 100, 1) if decided else 0
+    coes_received = all_applications.filter(
+        status__in=[Application.Status.COE_RECEIVED, Application.Status.VISA_GRANTED]
+    ).count()
+    offer_letter = all_applications.filter(status=Application.Status.OFFER_LETTER_RECEIVED).count()
+    coe_applied  = all_applications.filter(status=Application.Status.COE_APPLIED).count()
+    pending_fups = FollowUp.objects.filter(is_done=False).count()
+    total_managers  = User.objects.filter(role=User.Role.MANAGER).count()
+    total_frontdesk = User.objects.filter(role=User.Role.FRONTDESK).count()
+
+    top_destinations = list(
+        all_students.exclude(preferred_country="")
+        .values("preferred_country")
+        .annotate(total=Count("id"))
+        .order_by("-total")[:5]
+    )
+
+    branch_summary = []
+    for branch in active_branches.order_by("name"):
+        b_students = all_students.filter(user__branch=branch).count()
+        b_apps     = all_applications.filter(student__user__branch=branch).count()
+        b_visas    = all_applications.filter(student__user__branch=branch, status=Application.Status.VISA_GRANTED).count()
+        b_managers = User.objects.filter(branch=branch, role=User.Role.MANAGER).count()
+        b_success  = round((b_visas / b_apps) * 100, 1) if b_apps else 0
+        branch_summary.append({
+            "id": branch.id, "name": branch.name,
+            "students": b_students, "applications": b_apps,
+            "visas": b_visas, "managers": b_managers, "success_rate": b_success,
+        })
+
+    return {
+        "today": today,
+        "prepared_by": user.get_full_name() or user.email,
+        "total_branches": active_branches.count(),
+        "total_students": total_students,
+        "total_applications": total_applications,
+        "visa_granted": visa_granted,
+        "coes_received": coes_received,
+        "visa_success_rate": visa_success_rate,
+        "rejected": rejected,
+        "offer_letter": offer_letter,
+        "coe_applied": coe_applied,
+        "pending_fups": pending_fups,
+        "total_managers": total_managers,
+        "total_frontdesk": total_frontdesk,
+        "top_destinations": top_destinations,
+        "branch_summary": branch_summary,
+    }
+
+
+@role_required("ADMIN")
+def admin_view_report(request):
+    ctx = _build_overall_report_data(request.user)
+    return render(request, "admin/report_overall.html", ctx)
+
+
+@role_required("ADMIN")
+def admin_download_report(request):
+    import io
+    from django.http import HttpResponse
+    from reportlab.lib import colors
+    from reportlab.lib.pagesizes import A4
+    from reportlab.lib.styles import ParagraphStyle
+    from reportlab.lib.units import cm
+    from reportlab.platypus import HRFlowable, Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
+
+    d = _build_overall_report_data(request.user)
+    today = d["today"]
+
+    PRIMARY    = colors.HexColor("#2b35d2")
+    PRIMARY_LT = colors.HexColor("#eef2ff")
+    DARK       = colors.HexColor("#1e293b")
+    MUTED      = colors.HexColor("#64748b")
+    BORDER     = colors.HexColor("#cbd5e1")
+    WHITE      = colors.white
+    GREEN      = colors.HexColor("#16a34a")
+    GREEN_LT   = colors.HexColor("#f0fdf4")
+
+    PAGE_W = A4[0] - 4*cm
+
+    def sty(name, **kw):
+        base = dict(fontName="Helvetica", fontSize=9, textColor=DARK, leading=13)
+        base.update(kw)
+        return ParagraphStyle(name, **base)
+
+    ST_ORG     = sty("org",   fontSize=8,  textColor=MUTED)
+    ST_META    = sty("meta",  fontSize=8,  textColor=MUTED, spaceAfter=2)
+    ST_TITLE   = sty("title", fontSize=18, textColor=PRIMARY, fontName="Helvetica-Bold", spaceAfter=2, leading=22)
+    ST_SEC     = sty("sec",   fontSize=10, textColor=WHITE, fontName="Helvetica-Bold", leading=14)
+    ST_LABEL   = sty("lbl",   fontSize=8,  textColor=MUTED, fontName="Helvetica-Bold")
+    ST_NOTE    = sty("note",  fontSize=8,  textColor=MUTED, fontName="Helvetica-Oblique")
+    ST_FOOT    = sty("foot",  fontSize=7,  textColor=MUTED)
+
+    def section_hdr(text):
+        t = Table([[Paragraph(text, ST_SEC)]], colWidths=[PAGE_W])
+        t.setStyle(TableStyle([
+            ("BACKGROUND",    (0,0),(-1,-1), PRIMARY),
+            ("TOPPADDING",    (0,0),(-1,-1), 7),
+            ("BOTTOMPADDING", (0,0),(-1,-1), 7),
+            ("LEFTPADDING",   (0,0),(-1,-1), 10),
+        ]))
+        return t
+
+    def data_tbl(data, col_widths, bold_col0=True):
+        t = Table(data, colWidths=col_widths, repeatRows=1)
+        cmds = [
+            ("BACKGROUND",    (0,0), (-1,0),  PRIMARY),
+            ("TEXTCOLOR",     (0,0), (-1,0),  WHITE),
+            ("FONTNAME",      (0,0), (-1,0),  "Helvetica-Bold"),
+            ("FONTSIZE",      (0,0), (-1,0),  8),
+            ("ROWBACKGROUNDS",(0,1), (-1,-1), [WHITE, PRIMARY_LT]),
+            ("FONTNAME",      (0,1), (-1,-1), "Helvetica"),
+            ("FONTSIZE",      (0,1), (-1,-1), 8),
+            ("TEXTCOLOR",     (0,1), (-1,-1), DARK),
+            ("GRID",          (0,0), (-1,-1), 0.3, BORDER),
+            ("TOPPADDING",    (0,0), (-1,-1), 6),
+            ("BOTTOMPADDING", (0,0), (-1,-1), 6),
+            ("LEFTPADDING",   (0,0), (-1,-1), 8),
+            ("RIGHTPADDING",  (0,0), (-1,-1), 8),
+        ]
+        if bold_col0:
+            cmds.append(("FONTNAME", (0,1), (0,-1), "Helvetica-Bold"))
+        t.setStyle(TableStyle(cmds))
+        return t
+
+    card_w = (PAGE_W - 1*cm) / 4
+
+    def card(label, value, bg=PRIMARY_LT, vc=PRIMARY):
+        inner = Table(
+            [[Paragraph(label, ST_LABEL)],
+             [Paragraph(str(value), sty("cv", fontSize=16, fontName="Helvetica-Bold", textColor=vc, leading=20))]],
+            colWidths=[card_w],
+        )
+        inner.setStyle(TableStyle([
+            ("BACKGROUND",    (0,0),(-1,-1), bg),
+            ("TOPPADDING",    (0,0),(-1,-1), 10),
+            ("BOTTOMPADDING", (0,0),(-1,-1), 10),
+            ("LEFTPADDING",   (0,0),(-1,-1), 10),
+            ("LINEBELOW",     (0,0),(-1,-1), 2, vc),
+            ("BOX",           (0,0),(-1,-1), 0.3, BORDER),
+        ]))
+        return inner
+
+    snap1 = Table([[
+        card("Active Branches",    d["total_branches"]),
+        card("Total Students",     d["total_students"]),
+        card("Total Applications", d["total_applications"]),
+        card("Visa Success Rate",  f"{d['visa_success_rate']}%", bg=GREEN_LT, vc=GREEN),
+    ]], colWidths=[card_w]*4, hAlign="LEFT")
+    snap1.setStyle(TableStyle([("LEFTPADDING",(0,0),(-1,-1),0),("RIGHTPADDING",(0,0),(-1,-1),4)]))
+
+    snap2 = Table([[
+        card("Visas Granted",     d["visa_granted"],    bg=GREEN_LT, vc=GREEN),
+        card("COEs Received",     d["coes_received"]),
+        card("Open Follow-ups",   d["pending_fups"]),
+        card("Total Staff",       d["total_managers"] + d["total_frontdesk"]),
+    ]], colWidths=[card_w]*4, hAlign="LEFT")
+    snap2.setStyle(TableStyle([("LEFTPADDING",(0,0),(-1,-1),0),("RIGHTPADDING",(0,0),(-1,-1),4)]))
+
+    buffer = io.BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=A4, leftMargin=2*cm, rightMargin=2*cm, topMargin=2*cm, bottomMargin=2*cm)
+    E = []
+
+    hdr = Table(
+        [[Paragraph("DRISTISEWA CONSULTANCY", ST_ORG),
+          Paragraph(f"Report Date: {today.strftime('%d %B %Y')}", ST_META)]],
+        colWidths=[PAGE_W*0.6, PAGE_W*0.4],
+    )
+    hdr.setStyle(TableStyle([("ALIGN",(1,0),(1,0),"RIGHT"),("VALIGN",(0,0),(-1,-1),"BOTTOM")]))
+    E.append(hdr)
+    E.append(HRFlowable(width="100%", thickness=2, color=PRIMARY, spaceAfter=6))
+    E.append(Paragraph("Network-Wide Performance Report", ST_TITLE))
+    E.append(Paragraph(
+        f"Prepared by: {d['prepared_by']}   |   "
+        f"Managers: {d['total_managers']}   |   Front-Desk Staff: {d['total_frontdesk']}",
+        ST_META,
+    ))
+    E.append(Spacer(1, 0.4*cm))
+
+    E.append(section_hdr("AT A GLANCE"))
+    E.append(Spacer(1, 0.25*cm))
+    E.append(snap1)
+    E.append(Spacer(1, 0.2*cm))
+    E.append(snap2)
+    E.append(Spacer(1, 0.4*cm))
+
+    E.append(section_hdr("APPLICATION PIPELINE (NETWORK-WIDE)"))
+    E.append(Spacer(1, 0.25*cm))
+    pipeline = [
+        ["Stage", "Count"],
+        ["Total Applications Submitted", str(d["total_applications"])],
+        ["Offer Letter Received",        str(d["offer_letter"])],
+        ["COE Applied",                  str(d["coe_applied"])],
+        ["COE Received",                 str(d["coes_received"])],
+        ["Visa Granted",                 str(d["visa_granted"])],
+        ["Rejected / Dropped",           str(d["rejected"])],
+    ]
+    E.append(data_tbl(pipeline, [PAGE_W*0.75, PAGE_W*0.25]))
+    E.append(Spacer(1, 0.4*cm))
+
+    E.append(section_hdr("BRANCH-WISE BREAKDOWN"))
+    E.append(Spacer(1, 0.25*cm))
+    if d["branch_summary"]:
+        b_data = [["Branch", "Students", "Applications", "Visas", "Success %", "Managers"]]
+        for b in d["branch_summary"]:
+            b_data.append([b["name"], str(b["students"]), str(b["applications"]),
+                           str(b["visas"]), f"{b['success_rate']}%", str(b["managers"])])
+        E.append(data_tbl(b_data, [PAGE_W*0.30, PAGE_W*0.13, PAGE_W*0.17, PAGE_W*0.10, PAGE_W*0.15, PAGE_W*0.15]))
+    else:
+        E.append(Paragraph("No active branches found.", ST_NOTE))
+    E.append(Spacer(1, 0.4*cm))
+
+    if d["top_destinations"]:
+        E.append(section_hdr("TOP DESTINATION COUNTRIES (NETWORK-WIDE)"))
+        E.append(Spacer(1, 0.25*cm))
+        dest = [["Rank", "Country", "Students"]]
+        for i, row in enumerate(d["top_destinations"], 1):
+            dest.append([str(i), row["preferred_country"], str(row["total"])])
+        E.append(data_tbl(dest, [PAGE_W*0.1, PAGE_W*0.65, PAGE_W*0.25], bold_col0=False))
+        E.append(Spacer(1, 0.4*cm))
+
+    E.append(Spacer(1, 0.6*cm))
+    E.append(HRFlowable(width="100%", thickness=0.5, color=BORDER, spaceAfter=4))
+    E.append(Table(
+        [[Paragraph("Confidential — DristiSewa Consultancy", ST_FOOT),
+          Paragraph(f"Network-Wide Report  |  Generated {today.strftime('%d %B %Y')}", ST_FOOT)]],
+        colWidths=[PAGE_W*0.5, PAGE_W*0.5],
+    ))
+
+    doc.build(E)
+    buffer.seek(0)
+    filename = f"DristiSewa_Admin_Report_{today.strftime('%Y%m%d')}.pdf"
+    response = HttpResponse(buffer, content_type="application/pdf")
+    response["Content-Disposition"] = f'attachment; filename="{filename}"'
+    return response
+
+
+def _build_branch_report_data(branch, user):
+    """Shared data builder for a single branch report (view + PDF)."""
+    from django.db.models import Count
+    from django.utils import timezone
+    from applications.models import Application
+    from followups.models import FollowUp
+    from students.models import Student
+
+    today = timezone.localdate()
+    students_qs = Student.objects.filter(is_archived=False, user__branch=branch)
+    applications_qs = Application.objects.filter(student__in=students_qs)
+
+    total_students = students_qs.count()
+    total_apps = applications_qs.count()
+    visa_granted = applications_qs.filter(status=Application.Status.VISA_GRANTED).count()
+    rejected = applications_qs.filter(status=Application.Status.REJECTED).count()
+    decided = visa_granted + rejected
+    visa_success_rate = round((visa_granted / decided) * 100, 1) if decided else 0
+    coes_received = applications_qs.filter(
+        status__in=[Application.Status.COE_RECEIVED, Application.Status.VISA_GRANTED]
+    ).count()
+    offer_letter = applications_qs.filter(status=Application.Status.OFFER_LETTER_RECEIVED).count()
+    coe_applied  = applications_qs.filter(status=Application.Status.COE_APPLIED).count()
+    pending_fups = FollowUp.objects.filter(student__user__branch=branch, is_done=False).count()
+
+    managers_qs = User.objects.filter(branch=branch, role=User.Role.MANAGER)
+    frontdesk_qs = User.objects.filter(branch=branch, role=User.Role.FRONTDESK)
+
+    top_destinations = list(
+        students_qs.exclude(preferred_country="")
+        .values("preferred_country")
+        .annotate(total=Count("id"))
+        .order_by("-total")[:5]
+    )
+
+    offer_or_beyond = [
+        Application.Status.OFFER_LETTER_RECEIVED, Application.Status.COE_APPLIED,
+        Application.Status.COE_RECEIVED, Application.Status.VISA_GRANTED,
+    ]
+    coe_or_beyond = [Application.Status.COE_RECEIVED, Application.Status.VISA_GRANTED]
+    staff_performance = []
+    for staff_user in frontdesk_qs:
+        staff_apps = applications_qs.filter(student__assigned_to=staff_user)
+        assigned = students_qs.filter(assigned_to=staff_user).count()
+        offers  = staff_apps.filter(status__in=offer_or_beyond).count()
+        coe     = staff_apps.filter(status__in=coe_or_beyond).count()
+        visas   = staff_apps.filter(status=Application.Status.VISA_GRANTED).count()
+        conv    = round((visas / assigned) * 100, 1) if assigned else 0
+        staff_performance.append({
+            "name": staff_user.get_full_name() or staff_user.email,
+            "assigned": assigned, "offers": offers,
+            "coe": coe, "visas": visas, "conv": conv,
+        })
+
+    return {
+        "today": today,
+        "branch": branch,
+        "prepared_by": user.get_full_name() or user.email,
+        "total_students": total_students,
+        "total_apps": total_apps,
+        "visa_granted": visa_granted,
+        "rejected": rejected,
+        "visa_success_rate": visa_success_rate,
+        "coes_received": coes_received,
+        "offer_letter": offer_letter,
+        "coe_applied": coe_applied,
+        "pending_fups": pending_fups,
+        "manager_count": managers_qs.count(),
+        "frontdesk_count": frontdesk_qs.count(),
+        "top_destinations": top_destinations,
+        "staff_performance": staff_performance,
+    }
+
+
+@role_required("ADMIN")
+def admin_view_branch_report(request, branch_id):
+    from django.http import Http404
+    from branches.models import Branch
+    try:
+        branch = Branch.objects.get(pk=branch_id)
+    except Branch.DoesNotExist:
+        raise Http404
+    ctx = _build_branch_report_data(branch, request.user)
+    return render(request, "admin/report_branch.html", ctx)
+
+
+@role_required("ADMIN")
+def admin_download_branch_report(request, branch_id):
+    import io
+    from django.db.models import Count
+    from django.http import HttpResponse, Http404
+    from django.utils import timezone
+    from reportlab.lib import colors
+    from reportlab.lib.pagesizes import A4
+    from reportlab.lib.styles import ParagraphStyle
+    from reportlab.lib.units import cm
+    from reportlab.platypus import (
+        HRFlowable, KeepTogether, Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle,
+    )
+    from applications.models import Application
+    from branches.models import Branch
+    from followups.models import FollowUp
+    from students.models import Student
+
+    try:
+        branch = Branch.objects.get(pk=branch_id)
+    except Branch.DoesNotExist:
+        raise Http404
+
+    today = timezone.localdate()
+    students_qs = Student.objects.filter(is_archived=False, user__branch=branch)
+    applications_qs = Application.objects.filter(student__in=students_qs)
+
+    total_students = students_qs.count()
+    total_apps = applications_qs.count()
+    visa_granted = applications_qs.filter(status=Application.Status.VISA_GRANTED).count()
+    rejected = applications_qs.filter(status=Application.Status.REJECTED).count()
+    decided = visa_granted + rejected
+    visa_success_rate = round((visa_granted / decided) * 100, 1) if decided else 0
+    coes_received = applications_qs.filter(
+        status__in=[Application.Status.COE_RECEIVED, Application.Status.VISA_GRANTED]
+    ).count()
+    pending_fups = FollowUp.objects.filter(student__user__branch=branch, is_done=False).count()
+    managers_qs = User.objects.filter(branch=branch, role=User.Role.MANAGER)
+    frontdesk_users = User.objects.filter(branch=branch, role=User.Role.FRONTDESK)
+
+    top_destinations = list(
+        students_qs.exclude(preferred_country="")
+        .values("preferred_country")
+        .annotate(total=Count("id"))
+        .order_by("-total")[:5]
+    )
+
+    offer_or_beyond = [
+        Application.Status.OFFER_LETTER_RECEIVED, Application.Status.COE_APPLIED,
+        Application.Status.COE_RECEIVED, Application.Status.VISA_GRANTED,
+    ]
+    coe_or_beyond = [Application.Status.COE_RECEIVED, Application.Status.VISA_GRANTED]
+    staff_rows = []
+    for staff_user in frontdesk_users:
+        staff_apps = applications_qs.filter(student__assigned_to=staff_user)
+        assigned = students_qs.filter(assigned_to=staff_user).count()
+        offers  = staff_apps.filter(status__in=offer_or_beyond).count()
+        coe     = staff_apps.filter(status__in=coe_or_beyond).count()
+        visas   = staff_apps.filter(status=Application.Status.VISA_GRANTED).count()
+        conv    = round((visas / assigned) * 100, 1) if assigned else 0
+        staff_rows.append([
+            staff_user.get_full_name() or staff_user.email,
+            str(assigned), str(offers), str(coe), str(visas), f"{conv}%",
+        ])
+
+    # ── Colours & styles ────────────────────────────────────────────────────
+    PRIMARY    = colors.HexColor("#2b35d2")
+    PRIMARY_LT = colors.HexColor("#eef2ff")
+    ACCENT     = colors.HexColor("#1e40af")
+    DARK       = colors.HexColor("#1e293b")
+    MUTED      = colors.HexColor("#64748b")
+    BORDER     = colors.HexColor("#cbd5e1")
+    WHITE      = colors.white
+    GREEN      = colors.HexColor("#16a34a")
+    GREEN_LT   = colors.HexColor("#f0fdf4")
+
+    PAGE_W = A4[0] - 4*cm   # usable width
+
+    def style(name, **kw):
+        defaults = dict(fontName="Helvetica", fontSize=9, textColor=DARK, leading=13)
+        defaults.update(kw)
+        return ParagraphStyle(name, **defaults)
+
+    ST_ORG      = style("org",   fontSize=8,  textColor=MUTED)
+    ST_TITLE    = style("title", fontSize=18, textColor=PRIMARY, fontName="Helvetica-Bold", spaceAfter=2, leading=22)
+    ST_META     = style("meta",  fontSize=8,  textColor=MUTED,  spaceAfter=2)
+    ST_SECTION  = style("sec",   fontSize=10, textColor=WHITE,  fontName="Helvetica-Bold", leading=14)
+    ST_LABEL    = style("lbl",   fontSize=8,  textColor=MUTED,  fontName="Helvetica-Bold")
+    ST_VALUE    = style("val",   fontSize=9,  textColor=DARK,   fontName="Helvetica-Bold")
+    ST_BODY     = style("body",  fontSize=8,  textColor=DARK)
+    ST_FOOT     = style("foot",  fontSize=7,  textColor=MUTED)
+    ST_NOTE     = style("note",  fontSize=8,  textColor=MUTED,  fontName="Helvetica-Oblique")
+
+    def section_header(text):
+        tbl = Table([[Paragraph(text, ST_SECTION)]], colWidths=[PAGE_W])
+        tbl.setStyle(TableStyle([
+            ("BACKGROUND", (0,0), (-1,-1), PRIMARY),
+            ("TOPPADDING",    (0,0), (-1,-1), 7),
+            ("BOTTOMPADDING", (0,0), (-1,-1), 7),
+            ("LEFTPADDING",   (0,0), (-1,-1), 10),
+        ]))
+        return tbl
+
+    def data_table(data, col_widths, bold_col0=True):
+        tbl = Table(data, colWidths=col_widths, repeatRows=1)
+        style_cmds = [
+            ("BACKGROUND",    (0,0),  (-1,0),  PRIMARY),
+            ("TEXTCOLOR",     (0,0),  (-1,0),  WHITE),
+            ("FONTNAME",      (0,0),  (-1,0),  "Helvetica-Bold"),
+            ("FONTSIZE",      (0,0),  (-1,0),  8),
+            ("ROWBACKGROUNDS",(0,1),  (-1,-1), [WHITE, PRIMARY_LT]),
+            ("FONTNAME",      (0,1),  (-1,-1), "Helvetica"),
+            ("FONTSIZE",      (0,1),  (-1,-1), 8),
+            ("TEXTCOLOR",     (0,1),  (-1,-1), DARK),
+            ("GRID",          (0,0),  (-1,-1), 0.3, BORDER),
+            ("TOPPADDING",    (0,0),  (-1,-1), 6),
+            ("BOTTOMPADDING", (0,0),  (-1,-1), 6),
+            ("LEFTPADDING",   (0,0),  (-1,-1), 8),
+            ("RIGHTPADDING",  (0,0),  (-1,-1), 8),
+        ]
+        if bold_col0:
+            style_cmds.append(("FONTNAME", (0,1), (0,-1), "Helvetica-Bold"))
+        tbl.setStyle(TableStyle(style_cmds))
+        return tbl
+
+    # ── Snapshot cards (2×3 grid) ────────────────────────────────────────────
+    def snapshot_card(label, value, bg=PRIMARY_LT, val_color=PRIMARY):
+        inner = Table(
+            [[Paragraph(label, ST_LABEL)], [Paragraph(str(value), style("cv", fontSize=18, fontName="Helvetica-Bold", textColor=val_color, leading=22))]],
+            colWidths=[(PAGE_W - 1*cm) / 3]
+        )
+        inner.setStyle(TableStyle([
+            ("BACKGROUND",    (0,0), (-1,-1), bg),
+            ("TOPPADDING",    (0,0), (-1,-1), 10),
+            ("BOTTOMPADDING", (0,0), (-1,-1), 10),
+            ("LEFTPADDING",   (0,0), (-1,-1), 12),
+            ("RIGHTPADDING",  (0,0), (-1,-1), 8),
+            ("LINEBELOW",     (0,0), (-1,-1), 2, val_color),
+            ("BOX",           (0,0), (-1,-1), 0.3, BORDER),
+        ]))
+        return inner
+
+    card_w = (PAGE_W - 1*cm) / 3
+    snap_row1 = Table([
+        [snapshot_card("Total Students", total_students),
+         snapshot_card("Total Applications", total_apps),
+         snapshot_card("Visa Success Rate", f"{visa_success_rate}%", bg=GREEN_LT, val_color=GREEN)],
+    ], colWidths=[card_w, card_w, card_w], hAlign="LEFT")
+    snap_row1.setStyle(TableStyle([("LEFTPADDING",(0,0),(-1,-1),0),("RIGHTPADDING",(0,0),(-1,-1),4)]))
+
+    snap_row2 = Table([
+        [snapshot_card("Visas Granted", visa_granted, bg=GREEN_LT, val_color=GREEN),
+         snapshot_card("COEs Received", coes_received),
+         snapshot_card("Open Follow-ups", pending_fups)],
+    ], colWidths=[card_w, card_w, card_w], hAlign="LEFT")
+    snap_row2.setStyle(TableStyle([("LEFTPADDING",(0,0),(-1,-1),0),("RIGHTPADDING",(0,0),(-1,-1),4)]))
+
+    # ── Build document ───────────────────────────────────────────────────────
+    buffer = io.BytesIO()
+    doc = SimpleDocTemplate(
+        buffer, pagesize=A4,
+        leftMargin=2*cm, rightMargin=2*cm, topMargin=2*cm, bottomMargin=2*cm,
+    )
+
+    E = []  # elements list
+
+    # — Letterhead —
+    header_tbl = Table(
+        [[Paragraph("DRISTISEWA CONSULTANCY", ST_ORG),
+          Paragraph(f"Report Date: {today.strftime('%d %B %Y')}", ST_META)]],
+        colWidths=[PAGE_W * 0.6, PAGE_W * 0.4],
+    )
+    header_tbl.setStyle(TableStyle([
+        ("ALIGN",  (1,0), (1,0), "RIGHT"),
+        ("VALIGN", (0,0), (-1,-1), "BOTTOM"),
+    ]))
+    E.append(header_tbl)
+    E.append(HRFlowable(width="100%", thickness=2, color=PRIMARY, spaceAfter=6))
+    E.append(Paragraph(f"Branch Performance Report — {branch.name}", ST_TITLE))
+    E.append(Paragraph(
+        f"Address: {branch.address or '—'}   |   "
+        f"Prepared by: {request.user.get_full_name() or request.user.email}   |   "
+        f"Staff: {managers_qs.count()} Manager(s), {frontdesk_users.count()} Front-Desk",
+        ST_META,
+    ))
+    E.append(Spacer(1, 0.4*cm))
+
+    # — Snapshot —
+    E.append(section_header("AT A GLANCE"))
+    E.append(Spacer(1, 0.25*cm))
+    E.append(snap_row1)
+    E.append(Spacer(1, 0.2*cm))
+    E.append(snap_row2)
+    E.append(Spacer(1, 0.4*cm))
+
+    # — Application pipeline —
+    E.append(section_header("APPLICATION PIPELINE"))
+    E.append(Spacer(1, 0.25*cm))
+    pipeline_data = [
+        ["Category", "Count"],
+        ["Total Applications Submitted", str(total_apps)],
+        ["Offer Letter Received", str(applications_qs.filter(status=Application.Status.OFFER_LETTER_RECEIVED).count())],
+        ["COE Applied", str(applications_qs.filter(status=Application.Status.COE_APPLIED).count())],
+        ["COE Received", str(applications_qs.filter(status=Application.Status.COE_RECEIVED).count())],
+        ["Visa Granted", str(visa_granted)],
+        ["Rejected / Dropped", str(rejected)],
+    ]
+    E.append(data_table(pipeline_data, [PAGE_W * 0.75, PAGE_W * 0.25]))
+    E.append(Spacer(1, 0.4*cm))
+
+    # — Top destinations —
+    if top_destinations:
+        E.append(section_header("TOP DESTINATION COUNTRIES"))
+        E.append(Spacer(1, 0.25*cm))
+        dest_data = [["Rank", "Country", "Students"]]
+        for i, dest in enumerate(top_destinations, 1):
+            dest_data.append([str(i), dest["preferred_country"], str(dest["total"])])
+        E.append(data_table(dest_data, [PAGE_W*0.1, PAGE_W*0.65, PAGE_W*0.25], bold_col0=False))
+        E.append(Spacer(1, 0.4*cm))
+
+    # — Counselor performance —
+    E.append(section_header("FRONT-DESK COUNSELOR PERFORMANCE INDEX"))
+    E.append(Spacer(1, 0.25*cm))
+    if staff_rows:
+        perf_data = [["Counselor", "Assigned", "Offers", "COE Issued", "Visas Granted", "Conv. %"]] + staff_rows
+        E.append(data_table(
+            perf_data,
+            [PAGE_W*0.32, PAGE_W*0.12, PAGE_W*0.12, PAGE_W*0.14, PAGE_W*0.17, PAGE_W*0.13],
+        ))
+    else:
+        E.append(Paragraph("No front-desk staff are currently assigned to this branch.", ST_NOTE))
+    E.append(Spacer(1, 0.6*cm))
+
+    # — Footer —
+    E.append(HRFlowable(width="100%", thickness=0.5, color=BORDER, spaceAfter=4))
+    E.append(Table(
+        [[Paragraph(f"Confidential — DristiSewa Consultancy", ST_FOOT),
+          Paragraph(f"{branch.name}  |  Generated {today.strftime('%d %B %Y')}", ST_FOOT)]],
+        colWidths=[PAGE_W * 0.5, PAGE_W * 0.5],
+    ))
+
+    doc.build(E)
+    buffer.seek(0)
+    filename = f"DristiSewa_{branch.name.replace(' ', '_')}_Report_{today.strftime('%Y%m%d')}.pdf"
+    response = HttpResponse(buffer, content_type="application/pdf")
+    response["Content-Disposition"] = f'attachment; filename="{filename}"'
+    return response
 
 
 @role_required("ADMIN")
@@ -1117,6 +1709,263 @@ def reports(request):
             "staff_performance": staff_performance,
         },
     )
+
+
+@role_required("MANAGER")
+def manager_view_report(request):
+    from django.db.models import Count
+    from django.utils import timezone
+    from applications.models import Application
+    from followups.models import FollowUp
+    from students.models import Student
+
+    user_branch = request.user.branch
+    today = timezone.localdate()
+    students_qs = Student.objects.filter(is_archived=False, user__branch=user_branch)
+    applications_qs = Application.objects.filter(student__in=students_qs)
+
+    visa_granted  = applications_qs.filter(status=Application.Status.VISA_GRANTED).count()
+    rejected      = applications_qs.filter(status=Application.Status.REJECTED).count()
+    decided       = visa_granted + rejected
+    visa_success_rate = round((visa_granted / decided) * 100, 1) if decided else 0
+    coes_received = applications_qs.filter(
+        status__in=[Application.Status.COE_RECEIVED, Application.Status.VISA_GRANTED]
+    ).count()
+    offer_letter  = applications_qs.filter(status=Application.Status.OFFER_LETTER_RECEIVED).count()
+    coe_applied   = applications_qs.filter(status=Application.Status.COE_APPLIED).count()
+    total_apps    = applications_qs.count()
+    pending_fups  = FollowUp.objects.filter(student__user__branch=user_branch, is_done=False).count()
+
+    top_destinations = list(
+        students_qs.exclude(preferred_country="")
+        .values("preferred_country")
+        .annotate(total=Count("id"))
+        .order_by("-total")[:5]
+    )
+
+    offer_or_beyond = [
+        Application.Status.OFFER_LETTER_RECEIVED, Application.Status.COE_APPLIED,
+        Application.Status.COE_RECEIVED, Application.Status.VISA_GRANTED,
+    ]
+    coe_or_beyond = [Application.Status.COE_RECEIVED, Application.Status.VISA_GRANTED]
+    frontdesk_users = User.objects.filter(branch=user_branch, role=User.Role.FRONTDESK) if user_branch else []
+    staff_performance = []
+    for staff_user in frontdesk_users:
+        staff_apps = applications_qs.filter(student__assigned_to=staff_user)
+        assigned = students_qs.filter(assigned_to=staff_user).count()
+        offers   = staff_apps.filter(status__in=offer_or_beyond).count()
+        coe      = staff_apps.filter(status__in=coe_or_beyond).count()
+        visas    = staff_apps.filter(status=Application.Status.VISA_GRANTED).count()
+        conv     = round((visas / assigned) * 100, 1) if assigned else 0
+        staff_performance.append({
+            "name": staff_user.get_full_name() or staff_user.email,
+            "assigned": assigned, "offers": offers,
+            "coe": coe, "visas": visas, "conv": conv,
+        })
+
+    ctx = {
+        "today": today,
+        "branch": user_branch,
+        "prepared_by": request.user.get_full_name() or request.user.email,
+        "total_students": students_qs.count(),
+        "total_apps": total_apps,
+        "visa_granted": visa_granted,
+        "rejected": rejected,
+        "visa_success_rate": visa_success_rate,
+        "coes_received": coes_received,
+        "offer_letter": offer_letter,
+        "coe_applied": coe_applied,
+        "pending_fups": pending_fups,
+        "top_destinations": top_destinations,
+        "staff_performance": staff_performance,
+    }
+    return render(request, "manager/report_view.html", ctx)
+
+
+@role_required("MANAGER")
+def download_report(request):
+    import calendar
+    import io
+    from django.db.models import Count
+    from django.http import HttpResponse
+    from django.utils import timezone
+    from reportlab.lib import colors
+    from reportlab.lib.pagesizes import A4
+    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+    from reportlab.lib.units import cm
+    from reportlab.platypus import (
+        HRFlowable, Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle,
+    )
+    from applications.models import Application
+    from students.models import Student
+
+    user_branch = request.user.branch
+    today = timezone.localdate()
+
+    students_qs = Student.objects.filter(is_archived=False, user__branch=user_branch)
+    applications_qs = Application.objects.filter(student__in=students_qs)
+
+    def month_bounds(offset):
+        month_index = today.month - offset
+        year = today.year
+        while month_index <= 0:
+            month_index += 12
+            year -= 1
+        return year, month_index
+
+    this_year, this_month = month_bounds(0)
+    visa_granted_count = applications_qs.filter(status=Application.Status.VISA_GRANTED).count()
+    rejected_count = applications_qs.filter(status=Application.Status.REJECTED).count()
+    decided_count = visa_granted_count + rejected_count
+    visa_success_rate = round((visa_granted_count / decided_count) * 100, 1) if decided_count else 0
+    new_apps_this_month = applications_qs.filter(created_at__year=this_year, created_at__month=this_month).count()
+    coes_received_count = applications_qs.filter(status__in=[Application.Status.COE_RECEIVED, Application.Status.VISA_GRANTED]).count()
+    total_applications_count = applications_qs.count()
+
+    top_destinations = (
+        students_qs.exclude(preferred_country="")
+        .values("preferred_country")
+        .annotate(total=Count("id"))
+        .order_by("-total")[:5]
+    )
+
+    offer_or_beyond = [Application.Status.OFFER_LETTER_RECEIVED, Application.Status.COE_APPLIED, Application.Status.COE_RECEIVED, Application.Status.VISA_GRANTED]
+    coe_or_beyond = [Application.Status.COE_RECEIVED, Application.Status.VISA_GRANTED]
+
+    staff_performance = []
+    if user_branch is not None:
+        frontdesk_users = User.objects.filter(branch=user_branch, role=User.Role.FRONTDESK)
+        for staff_user in frontdesk_users:
+            staff_apps = applications_qs.filter(student__assigned_to=staff_user)
+            assigned_cases = students_qs.filter(assigned_to=staff_user).count()
+            offers_secured = staff_apps.filter(status__in=offer_or_beyond).count()
+            coe_issued = staff_apps.filter(status__in=coe_or_beyond).count()
+            visas_granted = staff_apps.filter(status=Application.Status.VISA_GRANTED).count()
+            conversion = round((visas_granted / assigned_cases) * 100, 1) if assigned_cases else 0
+            staff_performance.append({
+                "name": staff_user.get_full_name() or staff_user.email,
+                "assigned_cases": assigned_cases,
+                "offers_secured": offers_secured,
+                "coe_issued": coe_issued,
+                "visas_granted": visas_granted,
+                "conversion": conversion,
+            })
+
+    # --- Build PDF ---
+    buffer = io.BytesIO()
+    doc = SimpleDocTemplate(
+        buffer, pagesize=A4,
+        leftMargin=2*cm, rightMargin=2*cm, topMargin=2*cm, bottomMargin=2*cm,
+    )
+    styles = getSampleStyleSheet()
+    PRIMARY = colors.HexColor("#2b35d2")
+    LIGHT_BLUE = colors.HexColor("#eef2ff")
+    DARK = colors.HexColor("#1e293b")
+    MUTED = colors.HexColor("#64748b")
+    WHITE = colors.white
+
+    title_style = ParagraphStyle("title", fontSize=20, textColor=PRIMARY, fontName="Helvetica-Bold", spaceAfter=2)
+    sub_style = ParagraphStyle("sub", fontSize=9, textColor=MUTED, fontName="Helvetica", spaceAfter=4)
+    heading_style = ParagraphStyle("heading", fontSize=11, textColor=DARK, fontName="Helvetica-Bold", spaceBefore=14, spaceAfter=6)
+    normal_style = ParagraphStyle("normal", fontSize=9, textColor=DARK, fontName="Helvetica")
+
+    branch_name = user_branch.name if user_branch else "All Branches"
+    report_date = today.strftime("%B %d, %Y")
+
+    elements = []
+
+    # Header
+    elements.append(Paragraph("DristiSewa Consultancy", title_style))
+    elements.append(Paragraph(f"Branch Performance Report — {branch_name}", sub_style))
+    elements.append(Paragraph(f"Report Date: {report_date}  |  Prepared by: {request.user.get_full_name() or request.user.email}", sub_style))
+    elements.append(HRFlowable(width="100%", thickness=1.5, color=PRIMARY, spaceAfter=12))
+
+    # Summary metrics table
+    elements.append(Paragraph("Key Performance Indicators", heading_style))
+    kpi_data = [
+        ["Metric", "Value"],
+        ["Total Active Students", str(students_qs.count())],
+        ["Total Applications", str(total_applications_count)],
+        ["New Applications This Month", str(new_apps_this_month)],
+        ["Visas Granted", str(visa_granted_count)],
+        ["COEs Received", str(coes_received_count)],
+        ["Visa Success Rate", f"{visa_success_rate}%"],
+        ["Dropped / Rejected Files", str(rejected_count)],
+    ]
+    kpi_table = Table(kpi_data, colWidths=[10*cm, 6*cm])
+    kpi_table.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), PRIMARY),
+        ("TEXTCOLOR", (0, 0), (-1, 0), WHITE),
+        ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+        ("FONTSIZE", (0, 0), (-1, 0), 9),
+        ("BACKGROUND", (0, 1), (-1, -1), LIGHT_BLUE),
+        ("ROWBACKGROUNDS", (0, 1), (-1, -1), [WHITE, LIGHT_BLUE]),
+        ("FONTNAME", (0, 1), (-1, -1), "Helvetica"),
+        ("FONTSIZE", (0, 1), (-1, -1), 9),
+        ("FONTNAME", (0, 1), (0, -1), "Helvetica-Bold"),
+        ("TEXTCOLOR", (0, 1), (-1, -1), DARK),
+        ("GRID", (0, 0), (-1, -1), 0.4, colors.HexColor("#cbd5e1")),
+        ("ROWPADDING", (0, 0), (-1, -1), 6),
+    ]))
+    elements.append(kpi_table)
+
+    # Top destinations
+    if top_destinations:
+        elements.append(Paragraph("Top Destination Countries", heading_style))
+        dest_data = [["#", "Country", "Students"]]
+        for i, dest in enumerate(top_destinations, 1):
+            dest_data.append([str(i), dest["preferred_country"], str(dest["total"])])
+        dest_table = Table(dest_data, colWidths=[1.5*cm, 10*cm, 4.5*cm])
+        dest_table.setStyle(TableStyle([
+            ("BACKGROUND", (0, 0), (-1, 0), PRIMARY),
+            ("TEXTCOLOR", (0, 0), (-1, 0), WHITE),
+            ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+            ("FONTSIZE", (0, 0), (-1, 0), 9),
+            ("ROWBACKGROUNDS", (0, 1), (-1, -1), [WHITE, LIGHT_BLUE]),
+            ("FONTNAME", (0, 1), (-1, -1), "Helvetica"),
+            ("FONTSIZE", (0, 1), (-1, -1), 9),
+            ("TEXTCOLOR", (0, 1), (-1, -1), DARK),
+            ("GRID", (0, 0), (-1, -1), 0.4, colors.HexColor("#cbd5e1")),
+            ("ROWPADDING", (0, 0), (-1, -1), 6),
+        ]))
+        elements.append(dest_table)
+
+    # Staff performance
+    elements.append(Paragraph("Front-Desk Counselor Performance Index", heading_style))
+    if staff_performance:
+        perf_data = [["Counselor", "Assigned", "Offers", "COE Issued", "Visas", "Conv. %"]]
+        for s in staff_performance:
+            perf_data.append([s["name"], str(s["assigned_cases"]), str(s["offers_secured"]), str(s["coe_issued"]), str(s["visas_granted"]), f"{s['conversion']}%"])
+        perf_table = Table(perf_data, colWidths=[5*cm, 2.5*cm, 2.5*cm, 2.5*cm, 2.5*cm, 2*cm])
+        perf_table.setStyle(TableStyle([
+            ("BACKGROUND", (0, 0), (-1, 0), PRIMARY),
+            ("TEXTCOLOR", (0, 0), (-1, 0), WHITE),
+            ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+            ("FONTSIZE", (0, 0), (-1, 0), 9),
+            ("ROWBACKGROUNDS", (0, 1), (-1, -1), [WHITE, LIGHT_BLUE]),
+            ("FONTNAME", (0, 1), (-1, -1), "Helvetica"),
+            ("FONTSIZE", (0, 1), (-1, -1), 9),
+            ("FONTNAME", (0, 1), (0, -1), "Helvetica-Bold"),
+            ("TEXTCOLOR", (0, 1), (-1, -1), DARK),
+            ("GRID", (0, 0), (-1, -1), 0.4, colors.HexColor("#cbd5e1")),
+            ("ROWPADDING", (0, 0), (-1, -1), 6),
+        ]))
+        elements.append(perf_table)
+    else:
+        elements.append(Paragraph("No front-desk staff assigned to this branch.", normal_style))
+
+    # Footer
+    elements.append(Spacer(1, 0.5*cm))
+    elements.append(HRFlowable(width="100%", thickness=0.5, color=MUTED))
+    elements.append(Spacer(1, 0.2*cm))
+    elements.append(Paragraph(f"Confidential — DristiSewa Consultancy | {branch_name} | Generated {report_date}", ParagraphStyle("footer", fontSize=7, textColor=MUTED, fontName="Helvetica")))
+
+    doc.build(elements)
+    buffer.seek(0)
+    filename = f"DristiSewa_Report_{branch_name.replace(' ', '_')}_{today.strftime('%Y%m%d')}.pdf"
+    response = HttpResponse(buffer, content_type="application/pdf")
+    response["Content-Disposition"] = f'attachment; filename="{filename}"'
+    return response
 
 
 @role_required("MANAGER")

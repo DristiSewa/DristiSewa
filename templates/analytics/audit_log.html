@@ -140,7 +140,7 @@
                         {{ activity.get_action_display }}
                     </span>
                 </td>
-                <td class="py-4 px-6 text-sm font-semibold text-slate-700">{{ activity.user.get_full_name|default:activity.user.email|default:"—" }}</td>
+                <td class="py-4 px-6 text-sm font-semibold text-slate-700">{% if activity.user %}{{ activity.user.get_full_name|default:activity.user.email }}{% else %}—{% endif %}</td>
                 <td class="py-4 px-6 text-sm text-slate-500">{{ activity.branch.name|default:"—" }}</td>
                 <td class="py-4 px-6 text-sm text-slate-600 max-w-[260px] truncate">{{ activity.description|default:"—" }}</td>
                 <td class="py-4 px-6">

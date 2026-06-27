@@ -73,6 +73,12 @@
         </a>
 
         <div class="flex items-center gap-3">
+            {% if user.is_authenticated and user.role == 'FRONTDESK' %}
+                <div class="text-right mr-2">
+                    <p class="text-xs text-slate-400">Welcome back,</p>
+                    <p class="text-sm font-bold text-blue-400">{{ user.get_full_name|default:user.email }} 👋</p>
+                </div>
+            {% endif %}
             {% if user.is_authenticated %}
                 <a href="{% url 'accounts:dashboard' %}" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl transition">
                     Dashboard

@@ -100,14 +100,9 @@
                     </div>
                 </div>
 
-                <div class="flex items-center gap-3 px-4 py-2">
-                    <div class="text-right">
-                        <p class="font-bold text-[#0f172a] text-base leading-tight">{{ request.user.get_full_name|default:request.user.email }}</p>
-                        <p class="text-xs text-gray-400 font-medium">Front desk</p>
-                    </div>
-                    <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 border border-gray-300 shadow-sm">
-                        <i class="fas fa-user text-lg"></i>
-                    </div>
+                <div class="px-4 py-2 text-right">
+                    <p class="text-sm text-gray-400 font-medium">Welcome back,</p>
+                    <p class="font-bold text-[#3f39c5] text-base leading-tight">{{ request.user.get_full_name|default:request.user.email }} 👋</p>
                 </div>
             </div>
 
@@ -150,7 +145,7 @@
                             {% for followup in followups %}
                             <tr class="hover:bg-blue-50 transition-all group" data-name="{{ followup.student.user.get_full_name|default:followup.student.user.email|lower }}" data-phone="{{ followup.student.user.phone|default:'' }}" data-followup="{{ followup.scheduled_date|date:'Y-m-d' }}">
                                 <td class="p-4 font-semibold text-blue-600 group-hover:underline">
-                                    <a href="{% url 'students:student_edit' followup.student.pk %}">{{ followup.student.user.get_full_name|default:followup.student.user.email }}</a>
+                                    <a href="{% url 'students:student_profile' followup.student.pk %}">{{ followup.student.user.get_full_name|default:followup.student.user.email }}</a>
                                 </td>
                                 <td class="p-4 text-gray-500">{{ followup.student.user.email }}</td>
                                 <td class="p-4 font-mono font-medium">{{ followup.student.user.phone|default:"-" }}</td>
