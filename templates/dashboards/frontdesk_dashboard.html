@@ -10,9 +10,53 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; background-color: #f4f7fe; }
-        .nav-link { color: rgba(255,255,255,0.75); border-left: 3px solid transparent; }
-        .nav-link:hover { background-color: rgba(255,255,255,0.08); color: #fff; }
-        .sidebar-active { background-color: rgba(255,255,255,0.14) !important; color: #fff; border-left-color: #fff; font-weight: 600; }
+        /* ── Sidebar ── */
+        .fd-sidebar {
+            width: 256px; min-width: 256px;
+            background: #f8fafc;
+            border-right: 1px solid #e2e8f0;
+            display: flex; flex-direction: column;
+            justify-content: space-between;
+            min-height: 100vh;
+        }
+        .fd-sidebar-inner { padding: 24px 16px; }
+        .fd-brand {
+            display: flex; flex-direction: column;
+            align-items: center; text-align: center;
+            padding-bottom: 20px; margin-bottom: 20px;
+            border-bottom: 1px solid rgba(226,232,240,0.8);
+            gap: 8px;
+        }
+        .fd-brand img { height: 56px; width: auto; object-fit: contain; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.08)); }
+        .fd-brand h1 { font-size: 18px; font-weight: 900; letter-spacing: -0.02em; color: #1e3a8a; margin: 0; }
+        .fd-nav { display: flex; flex-direction: column; gap: 20px; }
+        .fd-nav-group { display: flex; flex-direction: column; gap: 2px; }
+        .fd-nav-label {
+            font-size: 10.5px; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.1em; color: #94a3b8;
+            padding: 0 12px; margin-bottom: 4px;
+        }
+        .fd-nav-link {
+            display: flex; align-items: center; gap: 12px;
+            padding: 10px 12px; border-radius: 10px;
+            text-decoration: none; font-size: 14px; font-weight: 600;
+            color: #64748b;
+            transition: background 0.15s, color 0.15s;
+            white-space: nowrap;
+        }
+        .fd-nav-link i { width: 20px; min-width: 20px; font-size: 15px; text-align: center; }
+        .fd-nav-link:hover { background: rgba(226,232,240,0.7); color: #1e293b; }
+        .fd-nav-link.active { background: #dbeafe; color: #1d4ed8; box-shadow: 0 1px 3px rgba(59,130,246,0.12); }
+        .fd-nav-link.active i { color: #2563eb; }
+        .fd-footer { padding: 14px 16px; border-top: 1px solid #e2e8f0; }
+        .fd-logout {
+            display: flex; align-items: center; gap: 12px;
+            padding: 10px 12px; border-radius: 10px;
+            text-decoration: none; font-size: 14px; font-weight: 600;
+            color: #64748b; transition: background 0.15s, color 0.15s;
+        }
+        .fd-logout i { width: 20px; min-width: 20px; font-size: 15px; text-align: center; }
+        .fd-logout:hover { background: #fee2e2; color: #dc2626; }
         .verified-state { background-color: transparent !important; color: #16a34a !important; border: 1px solid #16a34a; cursor: default; }
     </style>
 </head>
@@ -20,32 +64,40 @@
 
     <div class="flex min-h-screen">
         <!-- Sidebar -->
-        <div class="w-64 bg-[#3f39c5] text-white flex flex-col justify-between shrink-0">
-            <div>
-                <div class="p-6 flex items-center gap-3 border-b border-white/10">
-                    <div class="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center shrink-0">
-                        <img src="{% static 'images/home.png' %}" alt="Logo" class="w-5 h-5 object-contain">
-                    </div>
-                    <span class="font-bold text-lg tracking-wide">Dashboard</span>
+        <aside class="fd-sidebar">
+            <div class="fd-sidebar-inner">
+                <div class="fd-brand">
+                    <img src="{% static 'images/logo.png' %}" alt="DristiSewa Logo">
+                    <h1>DristiSewa</h1>
                 </div>
-                <nav class="mt-4">
-                    <a href="{% url 'accounts:frontdesk_dashboard' %}" class="nav-link sidebar-active flex items-center px-4 py-3 mx-3 my-0.5 rounded-lg transition-all">
-                        <i class="fas fa-user-graduate mr-3 w-5"></i> Student Management
-                    </a>
-                    <a href="{% url 'followups:followup_list' %}" class="nav-link flex items-center px-4 py-3 mx-3 my-0.5 rounded-lg transition-all">
-                        <i class="fas fa-tasks mr-3 w-5"></i> Followup Management
-                    </a>
-                    <a href="{% url 'students:archived_students' %}" class="nav-link flex items-center px-4 py-3 mx-3 my-0.5 rounded-lg transition-all">
-                        <i class="fas fa-archive mr-3 w-5"></i> Archived Students
-                    </a>
+                <nav class="fd-nav">
+                    <div class="fd-nav-group">
+                        <p class="fd-nav-label">Overview</p>
+                        <a href="{% url 'accounts:frontdesk_dashboard' %}" class="fd-nav-link active">
+                            <i class="fas fa-user-graduate"></i>
+                            <span>Student Management</span>
+                        </a>
+                    </div>
+                    <div class="fd-nav-group">
+                        <p class="fd-nav-label">Management</p>
+                        <a href="{% url 'followups:followup_list' %}" class="fd-nav-link">
+                            <i class="fas fa-tasks"></i>
+                            <span>Followup Management</span>
+                        </a>
+                        <a href="{% url 'students:archived_students' %}" class="fd-nav-link">
+                            <i class="fas fa-archive"></i>
+                            <span>Archived Students</span>
+                        </a>
+                    </div>
                 </nav>
             </div>
-            <a href="{% url 'accounts:logout' %}" class="block">
-                <div class="m-3 rounded-lg bg-white/10 p-3 flex items-center justify-center gap-3 cursor-pointer font-semibold hover:bg-orange-500 transition-all text-white text-sm">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </div>
-            </a>
-        </div>
+            <div class="fd-footer">
+                <a href="{% url 'accounts:logout' %}" class="fd-logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </aside>
 
         <!-- Main Content Area -->
         <div class="flex-1 p-8">
