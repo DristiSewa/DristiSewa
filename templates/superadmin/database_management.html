@@ -141,6 +141,9 @@
         {% endif %}
     </div>
 
+    <script>
+        const DELETE_RECORD_URL = "{% url 'superadmin:delete_record' %}";
+    </script>
     <script src="{% static 'js/pages/superadmin/database_management.js' %}"></script>
 </body>
 </html>

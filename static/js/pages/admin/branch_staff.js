@@ -59,7 +59,7 @@ function openDeletePrompt(deleteUrl, targetName) {
             return;
         }
 
-        fetch('{% url "branches:create_branch_json" %}', {
+        fetch(CREATE_BRANCH_URL, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

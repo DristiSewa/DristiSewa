@@ -405,5 +405,8 @@
 {% endblock %}
 
 {% block extra_js %}
-    <script src="{% static 'js/pages/admin/branch_staff.js' %}"></script>
+    <script>
+        const CREATE_BRANCH_URL = "{% url 'branches:create_branch_json' %}";
+    </script>
+    <script src="{% static 'js/pages/admin/branch_staff.js' %}?v=2"></script>
 {% endblock %}

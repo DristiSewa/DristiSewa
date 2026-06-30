@@ -3,9 +3,9 @@ function deleteRecord(recordId, recordType) {
                 const form = new FormData();
                 form.append('id', recordId);
                 form.append('type', recordType);
-                form.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+                form.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
 
-                fetch('{% url "superadmin:delete_record" %}', {
+                fetch(DELETE_RECORD_URL, {
                     method: 'POST',
                     body: form
                 })
