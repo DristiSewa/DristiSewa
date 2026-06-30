@@ -1,0 +1,4125 @@
+[
+{
+  "model": "sessions.session",
+  "pk": "51jfoys4t7dncjqm1k0zvc4hz51u2u6n",
+  "fields": {
+    "session_data": ".eJyNzDEOwjAMheG7eEYoKUWFTByBG0SmDamlxomSIIaqd8dh6tjRn_7nFZLjidjb7DyVmrFSZDArvCmXahmDAwPPT0kIJ1hwZyjDKugC0iKQ_pBaqpR6-MbnMQZJ0hy5be433eurHrpB8JWRx9nSBEZLgqV8Y5YDdHfpYTvwePsBeVU_RA:1wXcDp:c9UMV1TZflHc2KICFliIZYvFNOcQpc_dZSB14iFWKgw",
+    "expire_date": "2026-06-25T10:01:13.954Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "dwovjzb42u79dusa6vvhun2nvc0xv79x",
+  "fields": {
+    "session_data": ".eJyFjrtuwzAMRf-Fc2H4UdNupiJ7l6K7QEmUpdaWDElBhyD_XhoI0GbqRp57D8Er7BxtiIvKvIRSM9WQIpyu4EIuVUXaGE7wnnyo8AQr_bIPTzsJ443CKvvOuaRo0jZOr8vBGpkl36mU75Tt3wrc_vcUXapXl8JZhUPuH5km8yWvS2A_KS5JrFhz0M1Rae5pad6S5fV87z4c8FS82M-WZt33M3UaW-zs7IhbpM68uHmkkdH1LNHgcHS6dcMwGWQacDIt44Qabj8zBm31:1wXO7g:PknyJvbP1gTOdT-JJHIwTGH4__ltkba50rWeD6hOLB0",
+    "expire_date": "2026-06-24T18:57:56.116Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "f0x4n8xnv2rl0wlss0fce7pfkuo2mp3p",
+  "fields": {
+    "session_data": ".eJx9zTEOgzAMBdC7eEaVQqlomaoeoReIDARiNTjIDmJA3L2BpVtHv_-_vMHsuCcerbiRNAkmigzNBgOJJss4OWjgRSuqhwIC_vCNjK3HlNlNSCFTe_aoS8_xkEsXp5zOPvIxeNxNZW6mLuuMrSB33lIPjSlgkMjJ9k4_dlEnJ_MSQh6j6hol32DKawX7_2_7F9sxR0I:1wXrcH:D7c0xe_dUBO5IEt7KB03hVGBmdURW6rFgvLlwXqk4kk",
+    "expire_date": "2026-06-26T02:27:29.046Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "qcbbpthdgz438jcw5ohn0ohj6vkgvxx9",
+  "fields": {
+    "session_data": ".eJyNzDEOwjAMheG7eEYoKUWFTByBG0SmDamlxomSIIaqd8dh6tjRn_7nFZLjidjb7DyVmrFSZDArvCmXahmDAwPPT0kIJ1hwZyjDKugC0iKQ_pBaqpR6-MbnMQZJ0hy5be433eurHrpB8JWRx9nSBEZLgqV8Y5YDdHfpYTvwePsBeVU_RA:1wXcE3:nF43Pa3-5XOz6KsGTFwK3o9430FI2LuS4GUQ_2sPEqc",
+    "expire_date": "2026-06-25T10:01:27.978Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "u8gu2tv9mzmv3rizx65ak2gzlwqe7wp3",
+  "fields": {
+    "session_data": ".eJxVjMsOwiAQRf-FtSEMjxZcuvcbmoEZpGogKe3K-O_apAvd3nPOfYkJt7VMW-dlmkmchVbi9DtGTA-uO6E71luTqdV1maPcFXnQLq-N-Hk53L-Dgr18a_BqsAoITdAUIbuobMaYrU02MZPTIzrDYfCUlTMmsYfAGWH0ANGO4v0BCeA4KQ:1wePmx:XhMM2CevOydcpuU5A9hNCXi8wsKu6qWv3TIFDPqKSDw",
+    "expire_date": "2026-07-14T04:09:35.089Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "uoujh6jlp5jleyzaxr7md4dv6t86q981",
+  "fields": {
+    "session_data": ".eJx9zTEOgzAMBdC7eEaVQqlomaoeoReIDARiNTjIDmJA3L2BpVtHv_-_vMHsuCcerbiRNAkmigzNBgOJJss4OWjgRSuqhwIC_vCNjK3HlNlNSCFTe_aoS8_xkEsXp5zOPvIxeNxNZW6mLuuMrSB33lIPjSlgkMjJ9k4_dlEnJ_MSQh6j6hol32DKawX7_2_7F9sxR0I:1wXrcC:91vgfIjczRfBazSxwrecGd_IdUbY2RQ9nSVUcoNoNGc",
+    "expire_date": "2026-06-26T02:27:24.603Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "woupe9yg7nj1dt854x5tt3kn4uqbxmxm",
+  "fields": {
+    "session_data": ".eJxVjMsOwiAQRf-FtSE8ZECX7vsNZAYGqRqalHZl_HfbpAvd3nPOfYuI61Lj2nmOYxZXYcTpdyNMT247yA9s90mmqS3zSHJX5EG7HKbMr9vh_h1U7HWrzxkDGRNQEyjQORRkBajTpQSHjqEY3pAt4AqpYq1PwGjBJ8XggcTnC_W_OF8:1wbs34:2i4zruzWktmXsmP3MA4tMFmfbQ4CPE-SoMsTEq3wbFY",
+    "expire_date": "2026-07-07T03:43:42.500Z"
+  }
+},
+{
+  "model": "accounts.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$ZQ7J4yLkkOr5MCZqDtzjlM$CkRIK532i/kuDwr8fOHcha/BxuP0oNF0HceMrtLzUo0=",
+    "last_login": "2026-06-28T03:49:49.496Z",
+    "is_superuser": false,
+    "first_name": "Safal",
+    "last_name": "Thapa",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-06-11T17:17:49.241Z",
+    "email": "manager@dristisewa.com",
+    "role": "MANAGER",
+    "branch": 1,
+    "phone": "",
+    "experience_details": "",
+    "profile_pic": "profile_pics/default.png",
+    "last_seen": "2026-06-28T03:50:54.742Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "accounts.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$eiCMIx59zaNBrlNOwZQqNt$ZiVQiWh4N9ikiwGcqvzmqvXbB2w0POQmzsk+WJtwG08=",
+    "last_login": "2026-06-30T04:03:52.472Z",
+    "is_superuser": false,
+    "first_name": "Admin",
+    "last_name": "User",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-06-11T19:17:30.938Z",
+    "email": "admin@gmail.com",
+    "role": "ADMIN",
+    "branch": null,
+    "phone": "",
+    "experience_details": "",
+    "profile_pic": "profile_pics/default.png",
+    "last_seen": "2026-06-30T04:09:07.044Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "accounts.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$FJLl42voC1c9C5ej8VVYKp$KdBAvxSvDM6TVWfSUj0XMTXCBXyGaIxXqibRC89DCFM=",
+    "last_login": "2026-06-30T04:09:35.087Z",
+    "is_superuser": true,
+    "first_name": "Dristisewa3",
+    "last_name": "",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-06-15T01:24:40.796Z",
+    "email": "dristisewa3@gmail.com",
+    "role": "ADMIN",
+    "branch": null,
+    "phone": "",
+    "experience_details": "",
+    "profile_pic": "profile_pics/default.png",
+    "last_seen": "2026-06-30T04:09:35.098Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "accounts.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$Lsc8JoTjwpuUdBGWHtaeGI$8s/WeIyWPbhk2+o3Fnaq0lmPMkKnEcAFLIfRrLPddak=",
+    "last_login": "2026-06-29T16:24:59.141Z",
+    "is_superuser": false,
+    "first_name": "Nikita",
+    "last_name": "Thapa",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-06-28T03:50:49.065Z",
+    "email": "frontdesk@dristisewa.com",
+    "role": "FRONTDESK",
+    "branch": 1,
+    "phone": "",
+    "experience_details": "",
+    "profile_pic": "profile_pics/default.png",
+    "last_seen": "2026-06-29T16:24:59.149Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "accounts.otpverification",
+  "pk": 33,
+  "fields": {
+    "email": "rohitbicte@gmail.com",
+    "otp": "083256",
+    "purpose": "REGISTRATION",
+    "is_verified": false,
+    "created_at": "2026-06-11T08:20:13.172Z"
+  }
+},
+{
+  "model": "accounts.otpverification",
+  "pk": 34,
+  "fields": {
+    "email": "rohitbicte@gmail.com",
+    "otp": "629331",
+    "purpose": "REGISTRATION",
+    "is_verified": false,
+    "created_at": "2026-06-11T08:31:17.428Z"
+  }
+},
+{
+  "model": "accounts.otpverification",
+  "pk": 35,
+  "fields": {
+    "email": "rohitbicte@gmail.com",
+    "otp": "481396",
+    "purpose": "REGISTRATION",
+    "is_verified": false,
+    "created_at": "2026-06-11T08:31:22.072Z"
+  }
+},
+{
+  "model": "accounts.otpverification",
+  "pk": 36,
+  "fields": {
+    "email": "rohitbicte@gmail.com",
+    "otp": "149251",
+    "purpose": "REGISTRATION",
+    "is_verified": false,
+    "created_at": "2026-06-11T08:31:26.225Z"
+  }
+},
+{
+  "model": "accounts.otpverification",
+  "pk": 37,
+  "fields": {
+    "email": "rohitbicte@gmail.com",
+    "otp": "007663",
+    "purpose": "REGISTRATION",
+    "is_verified": true,
+    "created_at": "2026-06-11T08:32:28.025Z"
+  }
+},
+{
+  "model": "accounts.otpverification",
+  "pk": 38,
+  "fields": {
+    "email": "personcom57@gmail.com",
+    "otp": "112621",
+    "purpose": "REGISTRATION",
+    "is_verified": true,
+    "created_at": "2026-06-11T08:42:44.242Z"
+  }
+},
+{
+  "model": "accounts.otpverification",
+  "pk": 39,
+  "fields": {
+    "email": "panditpuspa000@gmail.com",
+    "otp": "650538",
+    "purpose": "REGISTRATION",
+    "is_verified": true,
+    "created_at": "2026-06-11T10:01:08.758Z"
+  }
+},
+{
+  "model": "accounts.otpverification",
+  "pk": 40,
+  "fields": {
+    "email": "panditpuspa000@gmail.com",
+    "otp": "802069",
+    "purpose": "REGISTRATION",
+    "is_verified": false,
+    "created_at": "2026-06-11T10:01:13.094Z"
+  }
+},
+{
+  "model": "accounts.otpverification",
+  "pk": 41,
+  "fields": {
+    "email": "panditpuspa000@gmail.com",
+    "otp": "519537",
+    "purpose": "REGISTRATION",
+    "is_verified": false,
+    "created_at": "2026-06-11T10:01:18.626Z"
+  }
+},
+{
+  "model": "accounts.otpverification",
+  "pk": 42,
+  "fields": {
+    "email": "nitumagar94@gmail.com",
+    "otp": "394706",
+    "purpose": "REGISTRATION",
+    "is_verified": true,
+    "created_at": "2026-06-11T10:25:08.957Z"
+  }
+},
+{
+  "model": "accounts.otpverification",
+  "pk": 43,
+  "fields": {
+    "email": "thapaanish895@gmail.com",
+    "otp": "771719",
+    "purpose": "REGISTRATION",
+    "is_verified": false,
+    "created_at": "2026-06-11T11:12:47.265Z"
+  }
+},
+{
+  "model": "accounts.otpverification",
+  "pk": 44,
+  "fields": {
+    "email": "aasthabicte@gmail.com",
+    "otp": "208078",
+    "purpose": "REGISTRATION",
+    "is_verified": true,
+    "created_at": "2026-06-11T11:37:28.983Z"
+  }
+},
+{
+  "model": "accounts.otpverification",
+  "pk": 45,
+  "fields": {
+    "email": "biwashict@gmail.com",
+    "otp": "572034",
+    "purpose": "REGISTRATION",
+    "is_verified": false,
+    "created_at": "2026-06-12T02:27:19.558Z"
+  }
+},
+{
+  "model": "accounts.otpverification",
+  "pk": 46,
+  "fields": {
+    "email": "biwashict@gmail.com",
+    "otp": "525431",
+    "purpose": "REGISTRATION",
+    "is_verified": false,
+    "created_at": "2026-06-12T02:27:24.078Z"
+  }
+},
+{
+  "model": "accounts.otpverification",
+  "pk": 47,
+  "fields": {
+    "email": "biwashict@gmail.com",
+    "otp": "315446",
+    "purpose": "REGISTRATION",
+    "is_verified": true,
+    "created_at": "2026-06-12T02:27:28.137Z"
+  }
+},
+{
+  "model": "accounts.otpverification",
+  "pk": 48,
+  "fields": {
+    "email": "salinabict@gmail.com",
+    "otp": "274895",
+    "purpose": "REGISTRATION",
+    "is_verified": false,
+    "created_at": "2026-06-12T03:48:31.925Z"
+  }
+},
+{
+  "model": "accounts.otpverification",
+  "pk": 49,
+  "fields": {
+    "email": "rohitbicte@gmail.com",
+    "otp": "419266",
+    "purpose": "REGISTRATION",
+    "is_verified": false,
+    "created_at": "2026-06-29T19:24:39.523Z"
+  }
+},
+{
+  "model": "accounts.otpverification",
+  "pk": 50,
+  "fields": {
+    "email": "rohitbicte@gmail.com",
+    "otp": "128877",
+    "purpose": "REGISTRATION",
+    "is_verified": false,
+    "created_at": "2026-06-29T19:24:56.037Z"
+  }
+},
+{
+  "model": "accounts.otpverification",
+  "pk": 51,
+  "fields": {
+    "email": "rohitbicte@gmail.com",
+    "otp": "958342",
+    "purpose": "REGISTRATION",
+    "is_verified": false,
+    "created_at": "2026-06-29T19:29:16.854Z"
+  }
+},
+{
+  "model": "accounts.otpverification",
+  "pk": 52,
+  "fields": {
+    "email": "rohitbicte@gmail.com",
+    "otp": "601725",
+    "purpose": "REGISTRATION",
+    "is_verified": false,
+    "created_at": "2026-06-29T19:29:20.554Z"
+  }
+},
+{
+  "model": "accounts.otpverification",
+  "pk": 53,
+  "fields": {
+    "email": "rohitbicte@gmail.com",
+    "otp": "317513",
+    "purpose": "REGISTRATION",
+    "is_verified": false,
+    "created_at": "2026-06-29T19:29:24.640Z"
+  }
+},
+{
+  "model": "accounts.otpverification",
+  "pk": 54,
+  "fields": {
+    "email": "rohitbicte@gmail.com",
+    "otp": "192297",
+    "purpose": "REGISTRATION",
+    "is_verified": false,
+    "created_at": "2026-06-29T19:40:27.960Z"
+  }
+},
+{
+  "model": "accounts.otpverification",
+  "pk": 55,
+  "fields": {
+    "email": "rohitbicte@gmail.com",
+    "otp": "256688",
+    "purpose": "REGISTRATION",
+    "is_verified": false,
+    "created_at": "2026-06-29T19:43:25.267Z"
+  }
+},
+{
+  "model": "accounts.otpverification",
+  "pk": 56,
+  "fields": {
+    "email": "rohitbicte@gmail.com",
+    "otp": "731632",
+    "purpose": "REGISTRATION",
+    "is_verified": false,
+    "created_at": "2026-06-29T19:43:27.216Z"
+  }
+},
+{
+  "model": "accounts.otpverification",
+  "pk": 57,
+  "fields": {
+    "email": "rohitbicte@gmail.com",
+    "otp": "233032",
+    "purpose": "REGISTRATION",
+    "is_verified": false,
+    "created_at": "2026-06-29T19:45:01.142Z"
+  }
+},
+{
+  "model": "accounts.otpverification",
+  "pk": 58,
+  "fields": {
+    "email": "rohitbicte@gmail.com",
+    "otp": "685902",
+    "purpose": "REGISTRATION",
+    "is_verified": false,
+    "created_at": "2026-06-29T19:45:29.252Z"
+  }
+},
+{
+  "model": "accounts.otpverification",
+  "pk": 59,
+  "fields": {
+    "email": "rohitbicte@gmail.com",
+    "otp": "672050",
+    "purpose": "REGISTRATION",
+    "is_verified": false,
+    "created_at": "2026-06-29T19:49:41.353Z"
+  }
+},
+{
+  "model": "accounts.otpverification",
+  "pk": 60,
+  "fields": {
+    "email": "rohitbicte@gmail.com",
+    "otp": "615688",
+    "purpose": "REGISTRATION",
+    "is_verified": false,
+    "created_at": "2026-06-29T19:55:19.882Z"
+  }
+},
+{
+  "model": "accounts.otpverification",
+  "pk": 61,
+  "fields": {
+    "email": "rohitbicte@gmail.com",
+    "otp": "765580",
+    "purpose": "REGISTRATION",
+    "is_verified": false,
+    "created_at": "2026-06-29T19:56:02.691Z"
+  }
+},
+{
+  "model": "accounts.otpverification",
+  "pk": 62,
+  "fields": {
+    "email": "rohitbicte@gmail.com",
+    "otp": "766614",
+    "purpose": "REGISTRATION",
+    "is_verified": false,
+    "created_at": "2026-06-29T19:57:04.244Z"
+  }
+},
+{
+  "model": "accounts.otpverification",
+  "pk": 63,
+  "fields": {
+    "email": "rohitbicte@gmail.com",
+    "otp": "649208",
+    "purpose": "REGISTRATION",
+    "is_verified": false,
+    "created_at": "2026-06-29T20:00:46.601Z"
+  }
+},
+{
+  "model": "accounts.otpverification",
+  "pk": 64,
+  "fields": {
+    "email": "rohitbicte@gmail.com",
+    "otp": "939000",
+    "purpose": "REGISTRATION",
+    "is_verified": false,
+    "created_at": "2026-06-29T20:00:54.557Z"
+  }
+},
+{
+  "model": "accounts.otpverification",
+  "pk": 65,
+  "fields": {
+    "email": "rohitbicte@gmail.com",
+    "otp": "048554",
+    "purpose": "REGISTRATION",
+    "is_verified": true,
+    "created_at": "2026-06-29T20:12:24.177Z"
+  }
+},
+{
+  "model": "branches.branch",
+  "pk": 1,
+  "fields": {
+    "created_at": "2026-06-11T07:54:11.031Z",
+    "updated_at": "2026-06-12T00:05:26.946Z",
+    "name": "DristiSewa Kathmandu",
+    "code": "33901",
+    "address": "Kathmandu, Nepal",
+    "phone": "",
+    "email": "",
+    "is_active": true
+  }
+},
+{
+  "model": "activity.activitylog",
+  "pk": 1,
+  "fields": {
+    "user": null,
+    "action": "STUDENT_PROFILE_CREATED",
+    "description": "Student profile created for rohitbicte@gmail.com.",
+    "created_at": "2026-06-10T17:19:59.583Z"
+  }
+},
+{
+  "model": "activity.activitylog",
+  "pk": 52,
+  "fields": {
+    "user": null,
+    "action": "STUDENT_PROFILE_CREATED",
+    "description": "Student profile created for rohitbicte@gmail.com.",
+    "created_at": "2026-06-29T20:13:26.192Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 1,
+  "fields": {
+    "user": [
+      "admin@gmail.com"
+    ],
+    "branch": null,
+    "action": "LOGOUT",
+    "description": "User admin@gmail.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-12T00:18:48.954Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 2,
+  "fields": {
+    "user": [
+      "manager@dristisewa.com"
+    ],
+    "branch": 1,
+    "action": "LOGIN",
+    "description": "User manager@dristisewa.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-12T00:19:31.913Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 3,
+  "fields": {
+    "user": [
+      "manager@dristisewa.com"
+    ],
+    "branch": 1,
+    "action": "LOGOUT",
+    "description": "User manager@dristisewa.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-12T00:20:38.671Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 4,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "LOGIN",
+    "description": "User frontdesk@dristisewa.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-12T00:21:05.825Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 5,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "FOLLOWUP_CREATE",
+    "description": "Follow-up created for aasthabicte@gmail.com",
+    "entity_type": "FollowUp",
+    "entity_id": "9",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-12T00:21:48.803Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 6,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "FOLLOWUP_CREATE",
+    "description": "Follow-up created for aasthabicte@gmail.com",
+    "entity_type": "FollowUp",
+    "entity_id": "10",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-12T00:22:00.912Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 7,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "LOGOUT",
+    "description": "User frontdesk@dristisewa.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-12T00:22:42.087Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 8,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "LOGIN",
+    "description": "User personcom57@gmail.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-12T00:27:02.767Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 9,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "LOGOUT",
+    "description": "User personcom57@gmail.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-12T01:30:08.828Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 10,
+  "fields": {
+    "user": [
+      "manager@dristisewa.com"
+    ],
+    "branch": 1,
+    "action": "LOGIN",
+    "description": "User manager@dristisewa.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-12T01:33:05.340Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 11,
+  "fields": {
+    "user": [
+      "manager@dristisewa.com"
+    ],
+    "branch": 1,
+    "action": "LOGOUT",
+    "description": "User manager@dristisewa.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-12T01:36:23.813Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 12,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "LOGIN",
+    "description": "User personcom57@gmail.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-12T01:36:38.789Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 13,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "LOGOUT",
+    "description": "User personcom57@gmail.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-12T01:39:41.072Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 14,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "LOGIN",
+    "description": "User frontdesk@dristisewa.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-12T01:39:55.751Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 15,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "LOGOUT",
+    "description": "User frontdesk@dristisewa.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-12T01:40:15.459Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 16,
+  "fields": {
+    "user": [
+      "manager@dristisewa.com"
+    ],
+    "branch": 1,
+    "action": "LOGIN",
+    "description": "User manager@dristisewa.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-12T01:42:11.408Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 17,
+  "fields": {
+    "user": [
+      "manager@dristisewa.com"
+    ],
+    "branch": 1,
+    "action": "LOGOUT",
+    "description": "User manager@dristisewa.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-12T02:09:36.979Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 18,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "LOGIN",
+    "description": "User frontdesk@dristisewa.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-12T02:10:18.008Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 19,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "LOGOUT",
+    "description": "User frontdesk@dristisewa.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-12T02:15:41.935Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 20,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "LOGIN",
+    "description": "User frontdesk@dristisewa.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-12T02:16:17.363Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 21,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "LOGOUT",
+    "description": "User frontdesk@dristisewa.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-12T02:16:32.081Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 22,
+  "fields": {
+    "user": [
+      "admin@gmail.com"
+    ],
+    "branch": null,
+    "action": "LOGIN",
+    "description": "User admin@gmail.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-12T02:24:25.452Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 23,
+  "fields": {
+    "user": [
+      "admin@gmail.com"
+    ],
+    "branch": null,
+    "action": "LOGOUT",
+    "description": "User admin@gmail.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-12T02:25:09.224Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 24,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "STUDENT_CREATE",
+    "description": "Student biwashict@gmail.com created",
+    "entity_type": "Student",
+    "entity_id": "10",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-12T02:28:51.615Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 25,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "LOGIN",
+    "description": "User biwashict@gmail.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-12T02:29:08.287Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 26,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "LOGOUT",
+    "description": "User biwashict@gmail.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-12T02:29:18.901Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 27,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "LOGIN",
+    "description": "User frontdesk@dristisewa.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-12T02:29:44.441Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 28,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "LOGOUT",
+    "description": "User frontdesk@dristisewa.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-12T02:29:52.338Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 29,
+  "fields": {
+    "user": [
+      "manager@dristisewa.com"
+    ],
+    "branch": 1,
+    "action": "LOGIN",
+    "description": "User manager@dristisewa.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-12T02:31:34.814Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 30,
+  "fields": {
+    "user": [
+      "manager@dristisewa.com"
+    ],
+    "branch": 1,
+    "action": "LOGOUT",
+    "description": "User manager@dristisewa.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-12T02:31:58.633Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 31,
+  "fields": {
+    "user": [
+      "admin@gmail.com"
+    ],
+    "branch": null,
+    "action": "LOGIN",
+    "description": "User admin@gmail.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-12T02:32:34.377Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 32,
+  "fields": {
+    "user": [
+      "admin@gmail.com"
+    ],
+    "branch": null,
+    "action": "LOGOUT",
+    "description": "User admin@gmail.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-12T02:57:15.244Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 33,
+  "fields": {
+    "user": [
+      "manager@dristisewa.com"
+    ],
+    "branch": 1,
+    "action": "LOGIN",
+    "description": "User manager@dristisewa.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-12T03:16:08.907Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 34,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "APPLICATION_CREATE",
+    "description": "Application created for biwashict@gmail.com",
+    "entity_type": "Application",
+    "entity_id": "3",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-12T03:16:26.582Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 35,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "APPLICATION_CREATE",
+    "description": "Application created for aasthabicte@gmail.com",
+    "entity_type": "Application",
+    "entity_id": "4",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-12T03:16:29.160Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 36,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "APPLICATION_UPDATE",
+    "description": "Application status updated to New",
+    "entity_type": "Application",
+    "entity_id": "4",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-12T03:16:32.153Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 37,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "APPLICATION_UPDATE",
+    "description": "Application status updated to New",
+    "entity_type": "Application",
+    "entity_id": "3",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-12T03:16:33.996Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 38,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "APPLICATION_UPDATE",
+    "description": "Application status updated to Offer Letter Received",
+    "entity_type": "Application",
+    "entity_id": "3",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-12T03:16:37.073Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 39,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "APPLICATION_CREATE",
+    "description": "Application created for personcom57@gmail.com",
+    "entity_type": "Application",
+    "entity_id": "5",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-12T03:16:40.295Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 40,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "APPLICATION_UPDATE",
+    "description": "Application status updated to Offer Letter Received",
+    "entity_type": "Application",
+    "entity_id": "4",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-12T03:16:54.753Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 41,
+  "fields": {
+    "user": [
+      "manager@dristisewa.com"
+    ],
+    "branch": 1,
+    "action": "LOGOUT",
+    "description": "User manager@dristisewa.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-12T03:21:33.019Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 42,
+  "fields": {
+    "user": [
+      "manager@dristisewa.com"
+    ],
+    "branch": 1,
+    "action": "LOGIN",
+    "description": "User manager@dristisewa.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-12T03:24:27.246Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 43,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "APPLICATION_UPDATE",
+    "description": "Application status updated to COE Received",
+    "entity_type": "Application",
+    "entity_id": "5",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-12T03:29:13.418Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 44,
+  "fields": {
+    "user": [
+      "manager@dristisewa.com"
+    ],
+    "branch": 1,
+    "action": "LOGOUT",
+    "description": "User manager@dristisewa.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-12T03:29:58.419Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 45,
+  "fields": {
+    "user": [
+      "admin@gmail.com"
+    ],
+    "branch": null,
+    "action": "LOGIN",
+    "description": "User admin@gmail.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-12T03:30:59.903Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 46,
+  "fields": {
+    "user": [
+      "admin@gmail.com"
+    ],
+    "branch": null,
+    "action": "LOGOUT",
+    "description": "User admin@gmail.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-12T03:44:03.852Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 47,
+  "fields": {
+    "user": [
+      "admin@gmail.com"
+    ],
+    "branch": null,
+    "action": "LOGIN",
+    "description": "User admin@gmail.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-12T04:07:24.642Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 48,
+  "fields": {
+    "user": [
+      "admin@gmail.com"
+    ],
+    "branch": null,
+    "action": "LOGOUT",
+    "description": "User admin@gmail.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-12T10:19:29.971Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 49,
+  "fields": {
+    "user": [
+      "manager@dristisewa.com"
+    ],
+    "branch": 1,
+    "action": "LOGIN",
+    "description": "User manager@dristisewa.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-12T10:45:29.012Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 50,
+  "fields": {
+    "user": [
+      "manager@dristisewa.com"
+    ],
+    "branch": 1,
+    "action": "LOGOUT",
+    "description": "User manager@dristisewa.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-12T12:53:46.401Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 51,
+  "fields": {
+    "user": [
+      "admin@gmail.com"
+    ],
+    "branch": null,
+    "action": "LOGIN",
+    "description": "User admin@gmail.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-12T13:01:41.014Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 52,
+  "fields": {
+    "user": [
+      "admin@gmail.com"
+    ],
+    "branch": null,
+    "action": "LOGOUT",
+    "description": "User admin@gmail.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-13T17:37:06.203Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 53,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "LOGIN",
+    "description": "User frontdesk@dristisewa.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-13T17:37:27.017Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 54,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "LOGOUT",
+    "description": "User frontdesk@dristisewa.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-13T17:37:46.204Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 55,
+  "fields": {
+    "user": [
+      "admin@gmail.com"
+    ],
+    "branch": null,
+    "action": "LOGIN",
+    "description": "User admin@gmail.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-14T09:19:39.205Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 56,
+  "fields": {
+    "user": [
+      "admin@gmail.com"
+    ],
+    "branch": null,
+    "action": "LOGOUT",
+    "description": "User admin@gmail.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-14T13:13:19.182Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 57,
+  "fields": {
+    "user": [
+      "admin@gmail.com"
+    ],
+    "branch": null,
+    "action": "LOGIN",
+    "description": "User admin@gmail.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-14T13:32:10.885Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 58,
+  "fields": {
+    "user": [
+      "admin@gmail.com"
+    ],
+    "branch": null,
+    "action": "LOGOUT",
+    "description": "User admin@gmail.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-14T13:34:41.442Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 59,
+  "fields": {
+    "user": [
+      "manager@dristisewa.com"
+    ],
+    "branch": 1,
+    "action": "LOGIN",
+    "description": "User manager@dristisewa.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-14T13:35:36.041Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 60,
+  "fields": {
+    "user": [
+      "manager@dristisewa.com"
+    ],
+    "branch": 1,
+    "action": "LOGOUT",
+    "description": "User manager@dristisewa.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-14T13:35:48.429Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 61,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "LOGIN",
+    "description": "User frontdesk@dristisewa.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-14T13:36:06.850Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 62,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "LOGOUT",
+    "description": "User frontdesk@dristisewa.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-14T13:36:19.780Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 63,
+  "fields": {
+    "user": [
+      "dristisewa3@gmail.com"
+    ],
+    "branch": null,
+    "action": "LOGIN",
+    "description": "User dristisewa3@gmail.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-15T01:31:23.418Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 64,
+  "fields": {
+    "user": [
+      "dristisewa3@gmail.com"
+    ],
+    "branch": null,
+    "action": "LOGOUT",
+    "description": "User dristisewa3@gmail.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-15T01:34:36.860Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 65,
+  "fields": {
+    "user": [
+      "dristisewa3@gmail.com"
+    ],
+    "branch": null,
+    "action": "LOGIN",
+    "description": "User dristisewa3@gmail.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-15T01:36:02.760Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 66,
+  "fields": {
+    "user": [
+      "dristisewa3@gmail.com"
+    ],
+    "branch": null,
+    "action": "LOGOUT",
+    "description": "User dristisewa3@gmail.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-15T01:40:30.210Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 67,
+  "fields": {
+    "user": [
+      "dristisewa3@gmail.com"
+    ],
+    "branch": null,
+    "action": "LOGIN",
+    "description": "User dristisewa3@gmail.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-15T01:41:55.680Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 68,
+  "fields": {
+    "user": [
+      "dristisewa3@gmail.com"
+    ],
+    "branch": null,
+    "action": "LOGIN",
+    "description": "User dristisewa3@gmail.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-15T02:16:25.191Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 69,
+  "fields": {
+    "user": [
+      "dristisewa3@gmail.com"
+    ],
+    "branch": null,
+    "action": "LOGOUT",
+    "description": "User dristisewa3@gmail.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-17T08:46:01.440Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 70,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "LOGIN",
+    "description": "User frontdesk@dristisewa.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-17T08:46:12.397Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 71,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "FOLLOWUP_CREATE",
+    "description": "Follow-up created for aasthabicte@gmail.com",
+    "entity_type": "FollowUp",
+    "entity_id": "11",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-17T08:47:35.619Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 72,
+  "fields": {
+    "user": [
+      "dristisewa3@gmail.com"
+    ],
+    "branch": null,
+    "action": "LOGOUT",
+    "description": "User dristisewa3@gmail.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-23T03:43:25.781Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 73,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "LOGIN",
+    "description": "User frontdesk@dristisewa.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-23T03:43:42.499Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 74,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "LOGOUT",
+    "description": "User frontdesk@dristisewa.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-23T03:44:43.008Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 75,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "LOGIN",
+    "description": "User rohitbicte@gmail.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-23T03:45:52.121Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 76,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "DOCUMENT_UPLOAD",
+    "description": "Document uploaded: Academic Transcript",
+    "entity_type": "Document",
+    "entity_id": "14",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-23T03:49:27.418Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 77,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "LOGOUT",
+    "description": "User rohitbicte@gmail.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-23T03:52:48.813Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 78,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "LOGIN",
+    "description": "User frontdesk@dristisewa.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-23T03:53:07.207Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 79,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "LOGOUT",
+    "description": "User frontdesk@dristisewa.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-23T03:54:40.955Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 80,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "LOGIN",
+    "description": "User frontdesk@dristisewa.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-23T03:54:53.392Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 81,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "LOGOUT",
+    "description": "User frontdesk@dristisewa.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-24T11:01:40.665Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 82,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "LOGIN",
+    "description": "User rohitbicte@gmail.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-24T11:06:21.720Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 83,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "LOGOUT",
+    "description": "User rohitbicte@gmail.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-24T11:22:52.741Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 84,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "LOGIN",
+    "description": "User rohitbicte@gmail.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-24T11:23:01.245Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 85,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "LOGOUT",
+    "description": "User rohitbicte@gmail.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-24T11:23:41.053Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 86,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "LOGIN",
+    "description": "User rohitbicte@gmail.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-24T11:25:30.185Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 87,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "LOGOUT",
+    "description": "User rohitbicte@gmail.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-24T11:31:17.288Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 88,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "LOGIN",
+    "description": "User frontdesk@dristisewa.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-24T11:31:36.969Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 89,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "FOLLOWUP_CREATE",
+    "description": "Follow-up created for nitumagar94@gmail.com",
+    "entity_type": "FollowUp",
+    "entity_id": "12",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-24T11:38:08.152Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 90,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "LOGOUT",
+    "description": "User frontdesk@dristisewa.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-24T14:08:21.534Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 91,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "LOGIN",
+    "description": "User rohitbicte@gmail.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-24T14:08:47.791Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 92,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "LOGOUT",
+    "description": "User rohitbicte@gmail.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-24T14:09:04.367Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 93,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "LOGIN",
+    "description": "User frontdesk@dristisewa.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-24T14:12:08.816Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 94,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "LOGOUT",
+    "description": "User frontdesk@dristisewa.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-25T01:58:17.593Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 95,
+  "fields": {
+    "user": [
+      "admin@gmail.com"
+    ],
+    "branch": null,
+    "action": "LOGIN",
+    "description": "User admin@gmail.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-25T01:59:11.637Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 96,
+  "fields": {
+    "user": [
+      "admin@gmail.com"
+    ],
+    "branch": null,
+    "action": "LOGOUT",
+    "description": "User admin@gmail.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-25T02:02:12.886Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 97,
+  "fields": {
+    "user": [
+      "manager@dristisewa.com"
+    ],
+    "branch": 1,
+    "action": "LOGIN",
+    "description": "User manager@dristisewa.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-25T02:02:26.522Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 98,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "APPLICATION_UPDATE",
+    "description": "Application status updated to New",
+    "entity_type": "Application",
+    "entity_id": "4",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-25T02:11:33.781Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 99,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "APPLICATION_UPDATE",
+    "description": "Application status updated to Applied for Offer Letter",
+    "entity_type": "Application",
+    "entity_id": "4",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-25T02:11:38.039Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 100,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "APPLICATION_UPDATE",
+    "description": "Application status updated to New",
+    "entity_type": "Application",
+    "entity_id": "4",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-25T02:12:16.942Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 101,
+  "fields": {
+    "user": [
+      "manager@dristisewa.com"
+    ],
+    "branch": 1,
+    "action": "LOGOUT",
+    "description": "User manager@dristisewa.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-25T02:18:15.667Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 102,
+  "fields": {
+    "user": [
+      "admin@gmail.com"
+    ],
+    "branch": null,
+    "action": "LOGIN",
+    "description": "User admin@gmail.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-25T02:18:37.799Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 103,
+  "fields": {
+    "user": [
+      "admin@gmail.com"
+    ],
+    "branch": null,
+    "action": "LOGOUT",
+    "description": "User admin@gmail.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-25T17:00:04.318Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 104,
+  "fields": {
+    "user": [
+      "manager@dristisewa.com"
+    ],
+    "branch": 1,
+    "action": "LOGIN",
+    "description": "User manager@dristisewa.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-25T17:00:15.878Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 105,
+  "fields": {
+    "user": [
+      "manager@dristisewa.com"
+    ],
+    "branch": 1,
+    "action": "LOGOUT",
+    "description": "User manager@dristisewa.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-25T17:19:53.662Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 106,
+  "fields": {
+    "user": [
+      "manager@dristisewa.com"
+    ],
+    "branch": 1,
+    "action": "LOGIN",
+    "description": "User manager@dristisewa.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-25T17:20:03.245Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 107,
+  "fields": {
+    "user": [
+      "manager@dristisewa.com"
+    ],
+    "branch": 1,
+    "action": "LOGOUT",
+    "description": "User manager@dristisewa.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-25T17:20:05.384Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 108,
+  "fields": {
+    "user": [
+      "admin@gmail.com"
+    ],
+    "branch": null,
+    "action": "LOGIN",
+    "description": "User admin@gmail.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-25T17:20:14.776Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 109,
+  "fields": {
+    "user": [
+      "admin@gmail.com"
+    ],
+    "branch": null,
+    "action": "LOGOUT",
+    "description": "User admin@gmail.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-25T17:20:27.832Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 110,
+  "fields": {
+    "user": [
+      "manager@dristisewa.com"
+    ],
+    "branch": 1,
+    "action": "LOGIN",
+    "description": "User manager@dristisewa.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-25T17:20:40.178Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 111,
+  "fields": {
+    "user": [
+      "manager@dristisewa.com"
+    ],
+    "branch": 1,
+    "action": "LOGOUT",
+    "description": "User manager@dristisewa.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-25T17:25:18.265Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 112,
+  "fields": {
+    "user": [
+      "manager@dristisewa.com"
+    ],
+    "branch": 1,
+    "action": "LOGIN",
+    "description": "User manager@dristisewa.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-25T17:25:27.387Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 113,
+  "fields": {
+    "user": [
+      "manager@dristisewa.com"
+    ],
+    "branch": 1,
+    "action": "LOGOUT",
+    "description": "User manager@dristisewa.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-25T17:25:42.009Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 114,
+  "fields": {
+    "user": [
+      "admin@gmail.com"
+    ],
+    "branch": null,
+    "action": "LOGIN",
+    "description": "User admin@gmail.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-25T17:25:51.247Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 115,
+  "fields": {
+    "user": [
+      "admin@gmail.com"
+    ],
+    "branch": null,
+    "action": "LOGOUT",
+    "description": "User admin@gmail.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-25T17:26:06.345Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 116,
+  "fields": {
+    "user": [
+      "manager@dristisewa.com"
+    ],
+    "branch": 1,
+    "action": "LOGIN",
+    "description": "User manager@dristisewa.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-25T17:26:15.227Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 117,
+  "fields": {
+    "user": [
+      "manager@dristisewa.com"
+    ],
+    "branch": 1,
+    "action": "LOGOUT",
+    "description": "User manager@dristisewa.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-28T03:31:25.298Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 118,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "LOGIN",
+    "description": "User rohitbicte@gmail.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-28T03:40:15.907Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 119,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "LOGOUT",
+    "description": "User rohitbicte@gmail.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-28T03:40:19.764Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 120,
+  "fields": {
+    "user": [
+      "manager@dristisewa.com"
+    ],
+    "branch": 1,
+    "action": "LOGIN",
+    "description": "User manager@dristisewa.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-28T03:47:27.738Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 121,
+  "fields": {
+    "user": [
+      "manager@dristisewa.com"
+    ],
+    "branch": 1,
+    "action": "LOGOUT",
+    "description": "User manager@dristisewa.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-28T03:47:29.414Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 122,
+  "fields": {
+    "user": [
+      "manager@dristisewa.com"
+    ],
+    "branch": 1,
+    "action": "LOGIN",
+    "description": "User manager@dristisewa.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-28T03:49:49.497Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 123,
+  "fields": {
+    "user": [
+      "manager@dristisewa.com"
+    ],
+    "branch": 1,
+    "action": "LOGOUT",
+    "description": "User manager@dristisewa.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-28T03:50:54.746Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 124,
+  "fields": {
+    "user": [
+      "frontdesk@dristisewa.com"
+    ],
+    "branch": 1,
+    "action": "LOGIN",
+    "description": "User frontdesk@dristisewa.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-28T03:51:03.429Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 125,
+  "fields": {
+    "user": [
+      "frontdesk@dristisewa.com"
+    ],
+    "branch": 1,
+    "action": "LOGOUT",
+    "description": "User frontdesk@dristisewa.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-28T03:57:28.177Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 126,
+  "fields": {
+    "user": [
+      "frontdesk@dristisewa.com"
+    ],
+    "branch": 1,
+    "action": "LOGIN",
+    "description": "User frontdesk@dristisewa.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-29T16:24:59.141Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 127,
+  "fields": {
+    "user": [
+      "frontdesk@dristisewa.com"
+    ],
+    "branch": 1,
+    "action": "LOGOUT",
+    "description": "User frontdesk@dristisewa.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-29T16:25:08.823Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 128,
+  "fields": {
+    "user": [
+      "admin@gmail.com"
+    ],
+    "branch": null,
+    "action": "LOGIN",
+    "description": "User admin@gmail.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-29T16:25:19.473Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 129,
+  "fields": {
+    "user": [
+      "admin@gmail.com"
+    ],
+    "branch": null,
+    "action": "LOGOUT",
+    "description": "User admin@gmail.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-29T16:26:02.159Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 130,
+  "fields": {
+    "user": [
+      "admin@gmail.com"
+    ],
+    "branch": null,
+    "action": "LOGIN",
+    "description": "User admin@gmail.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-29T17:26:11.553Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 131,
+  "fields": {
+    "user": [
+      "admin@gmail.com"
+    ],
+    "branch": null,
+    "action": "LOGOUT",
+    "description": "User admin@gmail.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-29T19:23:54.604Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 132,
+  "fields": {
+    "user": [
+      "dristisewa3@gmail.com"
+    ],
+    "branch": null,
+    "action": "LOGIN",
+    "description": "User dristisewa3@gmail.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-29T19:35:44.408Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 133,
+  "fields": {
+    "user": [
+      "dristisewa3@gmail.com"
+    ],
+    "branch": null,
+    "action": "LOGOUT",
+    "description": "User dristisewa3@gmail.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-29T19:39:28.652Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 134,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "STUDENT_CREATE",
+    "description": "Student rohitbicte@gmail.com created",
+    "entity_type": "Student",
+    "entity_id": "11",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-29T20:13:26.192Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 135,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "LOGIN",
+    "description": "User rohitbicte@gmail.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-29T20:13:34.496Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 136,
+  "fields": {
+    "user": null,
+    "branch": 1,
+    "action": "LOGOUT",
+    "description": "User rohitbicte@gmail.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-29T20:13:40.860Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 137,
+  "fields": {
+    "user": [
+      "dristisewa3@gmail.com"
+    ],
+    "branch": null,
+    "action": "LOGIN",
+    "description": "User dristisewa3@gmail.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-29T20:14:35.527Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 138,
+  "fields": {
+    "user": [
+      "dristisewa3@gmail.com"
+    ],
+    "branch": null,
+    "action": "LOGOUT",
+    "description": "User dristisewa3@gmail.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-30T03:42:44.792Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 139,
+  "fields": {
+    "user": [
+      "admin@gmail.com"
+    ],
+    "branch": null,
+    "action": "LOGIN",
+    "description": "User admin@gmail.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-30T03:43:03.620Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 140,
+  "fields": {
+    "user": [
+      "dristisewa3@gmail.com"
+    ],
+    "branch": null,
+    "action": "LOGIN",
+    "description": "User dristisewa3@gmail.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-30T03:44:49.916Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 141,
+  "fields": {
+    "user": [
+      "dristisewa3@gmail.com"
+    ],
+    "branch": null,
+    "action": "LOGOUT",
+    "description": "User dristisewa3@gmail.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-30T04:03:29.272Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 142,
+  "fields": {
+    "user": [
+      "admin@gmail.com"
+    ],
+    "branch": null,
+    "action": "LOGIN",
+    "description": "User admin@gmail.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-30T04:03:52.473Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 143,
+  "fields": {
+    "user": [
+      "admin@gmail.com"
+    ],
+    "branch": null,
+    "action": "LOGOUT",
+    "description": "User admin@gmail.com logged out",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": null,
+    "user_agent": "",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-30T04:09:13.920Z"
+  }
+},
+{
+  "model": "analytics.detailedactivitylog",
+  "pk": 144,
+  "fields": {
+    "user": [
+      "dristisewa3@gmail.com"
+    ],
+    "branch": null,
+    "action": "LOGIN",
+    "description": "User dristisewa3@gmail.com logged in",
+    "entity_type": "",
+    "entity_id": "",
+    "ip_address": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5 Safari/605.1.15",
+    "status": "SUCCESS",
+    "changes": null,
+    "created_at": "2026-06-30T04:09:35.088Z"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 1,
+  "fields": {
+    "action_time": "2026-06-29T18:30:29.463Z",
+    "user": [
+      "admin@gmail.com"
+    ],
+    "content_type": [
+      "activity",
+      "activitylog"
+    ],
+    "object_id": "51",
+    "object_repr": "APPLICATION_UPDATED (2026-06-25 02:12)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 2,
+  "fields": {
+    "action_time": "2026-06-29T18:30:29.463Z",
+    "user": [
+      "admin@gmail.com"
+    ],
+    "content_type": [
+      "activity",
+      "activitylog"
+    ],
+    "object_id": "50",
+    "object_repr": "APPLICATION_UPDATED (2026-06-25 02:11)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 3,
+  "fields": {
+    "action_time": "2026-06-29T18:30:29.463Z",
+    "user": [
+      "admin@gmail.com"
+    ],
+    "content_type": [
+      "activity",
+      "activitylog"
+    ],
+    "object_id": "49",
+    "object_repr": "APPLICATION_UPDATED (2026-06-25 02:11)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 4,
+  "fields": {
+    "action_time": "2026-06-29T18:30:29.463Z",
+    "user": [
+      "admin@gmail.com"
+    ],
+    "content_type": [
+      "activity",
+      "activitylog"
+    ],
+    "object_id": "48",
+    "object_repr": "FOLLOWUP_CREATED (2026-06-24 11:38)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 5,
+  "fields": {
+    "action_time": "2026-06-29T18:30:29.463Z",
+    "user": [
+      "admin@gmail.com"
+    ],
+    "content_type": [
+      "activity",
+      "activitylog"
+    ],
+    "object_id": "47",
+    "object_repr": "DOCUMENT_UPLOADED (2026-06-23 03:49)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 6,
+  "fields": {
+    "action_time": "2026-06-29T18:30:29.463Z",
+    "user": [
+      "admin@gmail.com"
+    ],
+    "content_type": [
+      "activity",
+      "activitylog"
+    ],
+    "object_id": "46",
+    "object_repr": "FOLLOWUP_CREATED (2026-06-17 08:47)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 7,
+  "fields": {
+    "action_time": "2026-06-29T18:30:29.463Z",
+    "user": [
+      "admin@gmail.com"
+    ],
+    "content_type": [
+      "activity",
+      "activitylog"
+    ],
+    "object_id": "45",
+    "object_repr": "APPLICATION_UPDATED (2026-06-12 03:29)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 8,
+  "fields": {
+    "action_time": "2026-06-29T18:30:29.463Z",
+    "user": [
+      "admin@gmail.com"
+    ],
+    "content_type": [
+      "activity",
+      "activitylog"
+    ],
+    "object_id": "44",
+    "object_repr": "APPLICATION_UPDATED (2026-06-12 03:16)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 9,
+  "fields": {
+    "action_time": "2026-06-29T18:30:29.463Z",
+    "user": [
+      "admin@gmail.com"
+    ],
+    "content_type": [
+      "activity",
+      "activitylog"
+    ],
+    "object_id": "43",
+    "object_repr": "APPLICATION_CREATED (2026-06-12 03:16)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 10,
+  "fields": {
+    "action_time": "2026-06-29T18:30:29.463Z",
+    "user": [
+      "admin@gmail.com"
+    ],
+    "content_type": [
+      "activity",
+      "activitylog"
+    ],
+    "object_id": "42",
+    "object_repr": "APPLICATION_UPDATED (2026-06-12 03:16)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 11,
+  "fields": {
+    "action_time": "2026-06-29T18:30:29.463Z",
+    "user": [
+      "admin@gmail.com"
+    ],
+    "content_type": [
+      "activity",
+      "activitylog"
+    ],
+    "object_id": "41",
+    "object_repr": "APPLICATION_UPDATED (2026-06-12 03:16)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 12,
+  "fields": {
+    "action_time": "2026-06-29T18:30:29.463Z",
+    "user": [
+      "admin@gmail.com"
+    ],
+    "content_type": [
+      "activity",
+      "activitylog"
+    ],
+    "object_id": "40",
+    "object_repr": "APPLICATION_UPDATED (2026-06-12 03:16)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 13,
+  "fields": {
+    "action_time": "2026-06-29T18:30:29.463Z",
+    "user": [
+      "admin@gmail.com"
+    ],
+    "content_type": [
+      "activity",
+      "activitylog"
+    ],
+    "object_id": "39",
+    "object_repr": "APPLICATION_CREATED (2026-06-12 03:16)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 14,
+  "fields": {
+    "action_time": "2026-06-29T18:30:29.463Z",
+    "user": [
+      "admin@gmail.com"
+    ],
+    "content_type": [
+      "activity",
+      "activitylog"
+    ],
+    "object_id": "38",
+    "object_repr": "APPLICATION_CREATED (2026-06-12 03:16)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 15,
+  "fields": {
+    "action_time": "2026-06-29T18:30:29.463Z",
+    "user": [
+      "admin@gmail.com"
+    ],
+    "content_type": [
+      "activity",
+      "activitylog"
+    ],
+    "object_id": "37",
+    "object_repr": "STUDENT_PROFILE_CREATED (2026-06-12 02:28)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 16,
+  "fields": {
+    "action_time": "2026-06-29T18:30:29.463Z",
+    "user": [
+      "admin@gmail.com"
+    ],
+    "content_type": [
+      "activity",
+      "activitylog"
+    ],
+    "object_id": "36",
+    "object_repr": "FOLLOWUP_CREATED (2026-06-12 00:22)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 17,
+  "fields": {
+    "action_time": "2026-06-29T18:30:29.463Z",
+    "user": [
+      "admin@gmail.com"
+    ],
+    "content_type": [
+      "activity",
+      "activitylog"
+    ],
+    "object_id": "35",
+    "object_repr": "FOLLOWUP_CREATED (2026-06-12 00:21)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 18,
+  "fields": {
+    "action_time": "2026-06-29T18:30:29.463Z",
+    "user": [
+      "admin@gmail.com"
+    ],
+    "content_type": [
+      "activity",
+      "activitylog"
+    ],
+    "object_id": "34",
+    "object_repr": "DOCUMENT_UPDATED (2026-06-11 17:48)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 19,
+  "fields": {
+    "action_time": "2026-06-29T18:30:29.463Z",
+    "user": [
+      "admin@gmail.com"
+    ],
+    "content_type": [
+      "activity",
+      "activitylog"
+    ],
+    "object_id": "33",
+    "object_repr": "DOCUMENT_UPDATED (2026-06-11 17:48)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 20,
+  "fields": {
+    "action_time": "2026-06-29T18:30:29.463Z",
+    "user": [
+      "admin@gmail.com"
+    ],
+    "content_type": [
+      "activity",
+      "activitylog"
+    ],
+    "object_id": "32",
+    "object_repr": "FOLLOWUP_CREATED (2026-06-11 17:01)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 21,
+  "fields": {
+    "action_time": "2026-06-29T18:30:29.463Z",
+    "user": [
+      "admin@gmail.com"
+    ],
+    "content_type": [
+      "activity",
+      "activitylog"
+    ],
+    "object_id": "31",
+    "object_repr": "FOLLOWUP_CREATED (2026-06-11 17:01)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 22,
+  "fields": {
+    "action_time": "2026-06-29T18:30:29.463Z",
+    "user": [
+      "admin@gmail.com"
+    ],
+    "content_type": [
+      "activity",
+      "activitylog"
+    ],
+    "object_id": "30",
+    "object_repr": "FOLLOWUP_CREATED (2026-06-11 16:59)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 23,
+  "fields": {
+    "action_time": "2026-06-29T18:30:29.463Z",
+    "user": [
+      "admin@gmail.com"
+    ],
+    "content_type": [
+      "activity",
+      "activitylog"
+    ],
+    "object_id": "29",
+    "object_repr": "FOLLOWUP_CREATED (2026-06-11 16:50)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 24,
+  "fields": {
+    "action_time": "2026-06-29T18:30:29.463Z",
+    "user": [
+      "admin@gmail.com"
+    ],
+    "content_type": [
+      "activity",
+      "activitylog"
+    ],
+    "object_id": "28",
+    "object_repr": "FOLLOWUP_CREATED (2026-06-11 16:50)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 25,
+  "fields": {
+    "action_time": "2026-06-29T18:30:29.463Z",
+    "user": [
+      "admin@gmail.com"
+    ],
+    "content_type": [
+      "activity",
+      "activitylog"
+    ],
+    "object_id": "27",
+    "object_repr": "FOLLOWUP_CREATED (2026-06-11 16:50)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 26,
+  "fields": {
+    "action_time": "2026-06-29T18:30:29.463Z",
+    "user": [
+      "admin@gmail.com"
+    ],
+    "content_type": [
+      "activity",
+      "activitylog"
+    ],
+    "object_id": "26",
+    "object_repr": "STUDENT_PROFILE_CREATED (2026-06-11 11:38)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 27,
+  "fields": {
+    "action_time": "2026-06-29T18:30:29.463Z",
+    "user": [
+      "admin@gmail.com"
+    ],
+    "content_type": [
+      "activity",
+      "activitylog"
+    ],
+    "object_id": "25",
+    "object_repr": "DOCUMENT_UPLOADED (2026-06-11 10:28)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 28,
+  "fields": {
+    "action_time": "2026-06-29T18:30:29.463Z",
+    "user": [
+      "admin@gmail.com"
+    ],
+    "content_type": [
+      "activity",
+      "activitylog"
+    ],
+    "object_id": "24",
+    "object_repr": "DOCUMENT_UPLOADED (2026-06-11 10:27)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 29,
+  "fields": {
+    "action_time": "2026-06-29T18:30:29.463Z",
+    "user": [
+      "admin@gmail.com"
+    ],
+    "content_type": [
+      "activity",
+      "activitylog"
+    ],
+    "object_id": "23",
+    "object_repr": "STUDENT_PROFILE_CREATED (2026-06-11 10:25)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 30,
+  "fields": {
+    "action_time": "2026-06-29T18:30:29.463Z",
+    "user": [
+      "admin@gmail.com"
+    ],
+    "content_type": [
+      "activity",
+      "activitylog"
+    ],
+    "object_id": "22",
+    "object_repr": "FOLLOWUP_CREATED (2026-06-11 10:20)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 31,
+  "fields": {
+    "action_time": "2026-06-29T18:30:29.463Z",
+    "user": [
+      "admin@gmail.com"
+    ],
+    "content_type": [
+      "activity",
+      "activitylog"
+    ],
+    "object_id": "21",
+    "object_repr": "FOLLOWUP_CREATED (2026-06-11 10:08)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 32,
+  "fields": {
+    "action_time": "2026-06-29T18:30:29.463Z",
+    "user": [
+      "admin@gmail.com"
+    ],
+    "content_type": [
+      "activity",
+      "activitylog"
+    ],
+    "object_id": "20",
+    "object_repr": "DOCUMENT_UPLOADED (2026-06-11 10:03)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 33,
+  "fields": {
+    "action_time": "2026-06-29T18:30:29.463Z",
+    "user": [
+      "admin@gmail.com"
+    ],
+    "content_type": [
+      "activity",
+      "activitylog"
+    ],
+    "object_id": "19",
+    "object_repr": "STUDENT_PROFILE_CREATED (2026-06-11 10:01)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 34,
+  "fields": {
+    "action_time": "2026-06-29T18:30:29.463Z",
+    "user": [
+      "admin@gmail.com"
+    ],
+    "content_type": [
+      "activity",
+      "activitylog"
+    ],
+    "object_id": "18",
+    "object_repr": "DOCUMENT_UPLOADED (2026-06-11 09:01)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 35,
+  "fields": {
+    "action_time": "2026-06-29T18:30:29.463Z",
+    "user": [
+      "admin@gmail.com"
+    ],
+    "content_type": [
+      "activity",
+      "activitylog"
+    ],
+    "object_id": "17",
+    "object_repr": "DOCUMENT_UPLOADED (2026-06-11 09:01)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 36,
+  "fields": {
+    "action_time": "2026-06-29T18:30:29.463Z",
+    "user": [
+      "admin@gmail.com"
+    ],
+    "content_type": [
+      "activity",
+      "activitylog"
+    ],
+    "object_id": "16",
+    "object_repr": "DOCUMENT_UPLOADED (2026-06-11 09:00)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 37,
+  "fields": {
+    "action_time": "2026-06-29T18:30:29.463Z",
+    "user": [
+      "admin@gmail.com"
+    ],
+    "content_type": [
+      "activity",
+      "activitylog"
+    ],
+    "object_id": "15",
+    "object_repr": "STUDENT_PROFILE_CREATED (2026-06-11 08:43)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 38,
+  "fields": {
+    "action_time": "2026-06-29T18:30:29.463Z",
+    "user": [
+      "admin@gmail.com"
+    ],
+    "content_type": [
+      "activity",
+      "activitylog"
+    ],
+    "object_id": "14",
+    "object_repr": "STUDENT_PROFILE_CREATED (2026-06-11 08:33)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 39,
+  "fields": {
+    "action_time": "2026-06-29T18:30:29.464Z",
+    "user": [
+      "admin@gmail.com"
+    ],
+    "content_type": [
+      "activity",
+      "activitylog"
+    ],
+    "object_id": "13",
+    "object_repr": "DOCUMENT_UPLOADED (2026-06-11 08:03)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 40,
+  "fields": {
+    "action_time": "2026-06-29T18:30:29.464Z",
+    "user": [
+      "admin@gmail.com"
+    ],
+    "content_type": [
+      "activity",
+      "activitylog"
+    ],
+    "object_id": "12",
+    "object_repr": "DOCUMENT_UPLOADED (2026-06-11 08:02)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 41,
+  "fields": {
+    "action_time": "2026-06-29T18:30:29.464Z",
+    "user": [
+      "admin@gmail.com"
+    ],
+    "content_type": [
+      "activity",
+      "activitylog"
+    ],
+    "object_id": "11",
+    "object_repr": "STUDENT_PROFILE_CREATED (2026-06-11 08:01)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 42,
+  "fields": {
+    "action_time": "2026-06-29T18:30:29.464Z",
+    "user": [
+      "admin@gmail.com"
+    ],
+    "content_type": [
+      "activity",
+      "activitylog"
+    ],
+    "object_id": "10",
+    "object_repr": "APPLICATION_CREATED (2026-06-11 07:46)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 43,
+  "fields": {
+    "action_time": "2026-06-29T18:30:29.464Z",
+    "user": [
+      "admin@gmail.com"
+    ],
+    "content_type": [
+      "activity",
+      "activitylog"
+    ],
+    "object_id": "9",
+    "object_repr": "DOCUMENT_UPLOADED (2026-06-11 07:46)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 44,
+  "fields": {
+    "action_time": "2026-06-29T18:30:29.464Z",
+    "user": [
+      "admin@gmail.com"
+    ],
+    "content_type": [
+      "activity",
+      "activitylog"
+    ],
+    "object_id": "8",
+    "object_repr": "STUDENT_PROFILE_CREATED (2026-06-11 07:46)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 45,
+  "fields": {
+    "action_time": "2026-06-29T18:30:29.464Z",
+    "user": [
+      "admin@gmail.com"
+    ],
+    "content_type": [
+      "activity",
+      "activitylog"
+    ],
+    "object_id": "7",
+    "object_repr": "APPLICATION_CREATED (2026-06-11 02:42)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 46,
+  "fields": {
+    "action_time": "2026-06-29T18:30:29.464Z",
+    "user": [
+      "admin@gmail.com"
+    ],
+    "content_type": [
+      "activity",
+      "activitylog"
+    ],
+    "object_id": "6",
+    "object_repr": "DOCUMENT_UPLOADED (2026-06-11 02:38)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 47,
+  "fields": {
+    "action_time": "2026-06-29T18:30:29.464Z",
+    "user": [
+      "admin@gmail.com"
+    ],
+    "content_type": [
+      "activity",
+      "activitylog"
+    ],
+    "object_id": "5",
+    "object_repr": "STUDENT_PROFILE_CREATED (2026-06-11 02:38)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 48,
+  "fields": {
+    "action_time": "2026-06-29T18:30:29.464Z",
+    "user": [
+      "admin@gmail.com"
+    ],
+    "content_type": [
+      "activity",
+      "activitylog"
+    ],
+    "object_id": "4",
+    "object_repr": "DOCUMENT_UPLOADED (2026-06-11 00:32)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 49,
+  "fields": {
+    "action_time": "2026-06-29T18:30:29.464Z",
+    "user": [
+      "admin@gmail.com"
+    ],
+    "content_type": [
+      "activity",
+      "activitylog"
+    ],
+    "object_id": "3",
+    "object_repr": "DOCUMENT_UPLOADED (2026-06-11 00:31)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 50,
+  "fields": {
+    "action_time": "2026-06-29T18:30:29.464Z",
+    "user": [
+      "admin@gmail.com"
+    ],
+    "content_type": [
+      "activity",
+      "activitylog"
+    ],
+    "object_id": "2",
+    "object_repr": "DOCUMENT_UPLOADED (2026-06-10 20:34)",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 51,
+  "fields": {
+    "action_time": "2026-06-29T19:36:42.525Z",
+    "user": [
+      "dristisewa3@gmail.com"
+    ],
+    "content_type": [
+      "accounts",
+      "user"
+    ],
+    "object_id": "12",
+    "object_repr": "Yubaraj Dulal",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 52,
+  "fields": {
+    "action_time": "2026-06-29T19:36:53.162Z",
+    "user": [
+      "dristisewa3@gmail.com"
+    ],
+    "content_type": [
+      "accounts",
+      "user"
+    ],
+    "object_id": "11",
+    "object_repr": "rohitey456@gmail.com",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 53,
+  "fields": {
+    "action_time": "2026-06-29T19:37:20.115Z",
+    "user": [
+      "dristisewa3@gmail.com"
+    ],
+    "content_type": [
+      "accounts",
+      "user"
+    ],
+    "object_id": "19",
+    "object_repr": "Prabin Thapa",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 54,
+  "fields": {
+    "action_time": "2026-06-29T20:14:50.436Z",
+    "user": [
+      "dristisewa3@gmail.com"
+    ],
+    "content_type": [
+      "accounts",
+      "user"
+    ],
+    "object_id": "22",
+    "object_repr": "Rohit Thapa",
+    "action_flag": 3,
+    "change_message": ""
+  }
+}
+]
