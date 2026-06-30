@@ -223,17 +223,22 @@ function openDeletePrompt(deleteUrl, targetName) {
         if (!currentEditBranchId) return;
 
         const name = document.getElementById('editBranchName').value.trim();
-        const code = document.getElementById('editBranchCode').value.trim();
+        let code = document.getElementById('editBranchCode').value.trim();
         const address = document.getElementById('editBranchAddress').value.trim();
         const phone = document.getElementById('editBranchPhone').value.trim();
         const email = document.getElementById('editBranchEmail').value.trim();
         const isActive = document.getElementById('editBranchActive').checked;
         const errorEl = document.getElementById('editBranchError');
 
-        if (!name || !code) {
-            errorEl.textContent = 'Branch name and code are required.';
+        if (!name) {
+            errorEl.textContent = 'Branch name is required.';
             errorEl.classList.remove('hidden');
             return;
+        }
+
+        // Auto-generate a code from the name if it's missing
+        if (!code) {
+            code = name.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8) || 'BR';
         }
 
         const modal = document.getElementById('editBranchModalWrapper');
