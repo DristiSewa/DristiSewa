@@ -1,0 +1,26 @@
+#branchDrawer select, .update-form-row select,
+    #branchDrawer input[type="text"], .update-form-row input[type="text"],
+    #branchDrawer input[type="email"], .update-form-row input[type="email"],
+    #branchDrawer input[type="password"], .update-form-row input[type="password"],
+    #branchDrawer textarea, .update-form-row textarea {
+        width: 100% !important;
+        box-sizing: border-box !important;
+        padding: 10px 14px !important;
+        background-color: #f8fafc !important;
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 10px !important;
+        font-size: 15px !important;
+        color: #1e293b !important;
+        outline: none !important;
+        transition: all 0.2s ease;
+    }
+    
+    #branchDrawer input[type="email"] { padding-left: 42px !important; }
+    #branchDrawer input[type="password"] { padding-left: 42px !important; padding-right: 42px !important; }
+    
+    #branchDrawer select:focus, .update-form-row select:focus,
+    #branchDrawer input:focus, .update-form-row input:focus {
+        border-color: #2563eb !important;
+        background-color: #ffffff !important;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1) !important;
+    }

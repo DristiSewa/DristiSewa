@@ -1,3 +1,5 @@
+import re
+
 from django import forms
 from django.contrib.auth import get_user_model
 
@@ -58,11 +60,40 @@ class RegisterForm(forms.Form):
                 role=User.Role.FRONTDESK, branch_id=branch_id, is_active=True
             )
 
+    def clean_first_name(self):
+        value = self.cleaned_data["first_name"].strip()
+        if not value:
+            raise forms.ValidationError("First name is required.")
+        if not re.match(r"^[A-Za-z\s\-']+$", value):
+            raise forms.ValidationError("First name must contain only letters.")
+        return value.title()
+
+    def clean_last_name(self):
+        value = self.cleaned_data["last_name"].strip()
+        if not value:
+            raise forms.ValidationError("Last name is required.")
+        if not re.match(r"^[A-Za-z\s\-']+$", value):
+            raise forms.ValidationError("Last name must contain only letters.")
+        return value.title()
+
+    def clean_phone(self):
+        value = self.cleaned_data.get("phone", "").strip()
+        if value:
+            if not re.match(r"^\+?[0-9]{7,15}$", value):
+                raise forms.ValidationError("Enter a valid phone number (digits only, 7–15 characters).")
+        return value
+
     def clean_email(self):
         email = self.cleaned_data["email"].lower().strip()
         if User.objects.filter(email=email).exists():
             raise forms.ValidationError("An account with this email already exists.")
         return email
+
+    def clean_password(self):
+        password = self.cleaned_data.get("password", "")
+        if len(password) < 8:
+            raise forms.ValidationError("Password must be at least 8 characters.")
+        return password
 
     def clean(self):
         cleaned = super().clean()

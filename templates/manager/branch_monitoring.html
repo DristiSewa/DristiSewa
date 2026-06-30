@@ -1,13 +1,12 @@
 {% extends 'manager/base.html' %}
+{% load static %}
 
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/pages/manager/branch_monitoring.css' %}">
+{% endblock %}
 {% block title %}Branch Monitoring Hub | DristiSewa{% endblock %}
 
 {% block content %}
-<style>
-    /* Stack the Branch Student Tracker and Front Desk Performance Overview
-       full-width, one above the other, instead of the default side-by-side grid. */
-    .bm-grid-reversed { grid-template-columns: 1fr; }
-</style>
 <div class="monitoring-container">
 
     <div class="header-panel"

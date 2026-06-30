@@ -1,0 +1,3 @@
+/* Stack the Branch Student Tracker and Front Desk Performance Overview
+       full-width, one above the other, instead of the default side-by-side grid. */
+    .bm-grid-reversed { grid-template-columns: 1fr; }

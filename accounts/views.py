@@ -104,7 +104,7 @@ def register(request):
                 messages.error(request, error)
         return render(request, "registration/register.html", {"form": form, "branches": branches})
 
-    return render(request, "registration/register.html", {"branches": branches})
+    return render(request, "registration/register.html", {"form": RegisterForm(), "branches": branches})
 
 
 def verify_otp(request):

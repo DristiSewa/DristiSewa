@@ -1,5 +1,9 @@
-{% extends 'admin/base.html' %}
+{% extends 'admin/dristisewa_base.html' %}
+{% load static %}
 
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/pages/admin/create_staff.css' %}">
+{% endblock %}
 {% block title %}Create Staff Account - DristiSewa{% endblock %}
 
 {% block content %}
@@ -85,42 +89,6 @@
     </form>
 </div>
 
-<style>
-    #content input[type="text"], #content input[type="email"], #content input[type="password"],
-    .max-w-3xl select, .max-w-3xl textarea,
-    .max-w-3xl input[type="text"], .max-w-3xl input[type="email"], .max-w-3xl input[type="password"] {
-        width: 100%;
-        box-sizing: border-box;
-        padding: 10px 14px;
-        background-color: #f8fafc;
-        border: 1px solid #e2e8f0;
-        border-radius: 10px;
-        font-size: 13px;
-        color: #1e293b;
-        outline: none;
-        transition: all 0.2s ease;
-    }
 
-    .max-w-3xl select:focus, .max-w-3xl textarea:focus,
-    .max-w-3xl input:focus {
-        border-color: #2563eb;
-        background-color: #ffffff;
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-    }
-</style>
-
-<script>
-    function generatePassword(fieldId) {
-        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%';
-        let password = '';
-        for (let i = 0; i < 10; i++) {
-            password += chars.charAt(Math.floor(Math.random() * chars.length));
-        }
-        const field = document.getElementById(fieldId);
-        if (field) {
-            field.value = password;
-            field.type = 'text';
-        }
-    }
-</script>
 {% endblock %}
+    <script src="{% static 'js/pages/admin/create_staff.js' %}"></script>

@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,24 +7,7 @@
     <title>Student Management UI - Complete Version</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-        * { font-family: 'Inter', sans-serif; }
-
-        .active-tab { background-color: #64748b !important; color: white !important; }
-        .inactive-tab { background-color: #dbeafe !important; color: black !important; }
-
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .new-row { animation: fadeInDown 0.4s ease-out; }
-
-        .modal-overlay {
-            background-color: rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(4px);
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'css/pages/dashboards/student_profile.css' %}">
 </head>
 <body class="bg-gray-50 text-slate-800">
 
@@ -260,59 +244,6 @@
         </div>
     </div>
 
-    <script>
-        function switchTab(tabName) {
-            const docContent = document.getElementById('documentContent');
-            const remContent = document.getElementById('remarksContent');
-            const docTab = document.getElementById('docTab');
-            const remTab = document.getElementById('remTab');
-            const uploadBtn = document.getElementById('uploadActionSection');
-
-            docContent.classList.add('hidden');
-            remContent.classList.add('hidden');
-            uploadBtn.classList.add('hidden');
-            docTab.classList.remove('active-tab');
-            remTab.classList.remove('active-tab');
-
-            if (tabName === 'document') {
-                docContent.classList.remove('hidden');
-                uploadBtn.classList.remove('hidden');
-                docTab.classList.add('active-tab');
-            } else {
-                remContent.classList.remove('hidden');
-                remTab.classList.add('active-tab');
-            }
-        }
-
-        if (new URLSearchParams(window.location.search).get('tab') === 'remarks') {
-            switchTab('remarks');
-        }
-
-        function toggleRemarkBox() {
-            const box = document.getElementById('remarkInputBox');
-            box.classList.toggle('hidden');
-            if (!box.classList.contains('hidden')) {
-                box.querySelector('textarea').focus();
-            }
-        }
-
-        function toggleUploadModal(show) {
-            const modal = document.getElementById('uploadDocumentModal');
-            if (show) {
-                modal.classList.remove('hidden');
-            } else {
-                modal.classList.add('hidden');
-            }
-        }
-
-        function toggleEditProfileModal(show) {
-            const modal = document.getElementById('editProfileModal');
-            if (show) {
-                modal.classList.remove('hidden');
-            } else {
-                modal.classList.add('hidden');
-            }
-        }
-    </script>
+    <script src="{% static 'js/pages/dashboards/student_profile.js' %}"></script>
 </body>
 </html>

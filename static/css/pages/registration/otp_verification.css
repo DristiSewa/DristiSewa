@@ -1,0 +1,92 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap');
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:'Poppins',sans-serif;
+        }
+
+        body{
+            background:#b5c0f7;
+            height:100vh;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+        }
+
+        .otp-container{
+            background:#fffaf7;
+            width:500px;
+            padding:40px;
+            border-radius:15px;
+            text-align:center;
+            box-shadow:0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .title{
+            color:#2e3192;
+            font-size:24px;
+            margin-bottom:10px;
+        }
+
+        .instruction{
+            font-size:14px;
+            margin-bottom:25px;
+            color:#444;
+        }
+
+        input{
+            width:100%;
+            padding:12px;
+            margin-bottom:15px;
+            border-radius:8px;
+            border:1px solid #ccc;
+            font-size:15px;
+            text-align:center;
+            letter-spacing:2px;
+        }
+
+        input:focus{
+            border-color:#4a4ae0;
+            outline:none;
+            box-shadow:0 0 5px rgba(74,74,224,0.3);
+        }
+
+        .btn{
+            width:100%;
+            padding:12px;
+            background:#4a4ae0;
+            color:white;
+            border:none;
+            border-radius:10px;
+            font-size:16px;
+            cursor:pointer;
+            transition:0.3s;
+        }
+
+        .btn:hover{
+            background:#3535c2;
+            transform:translateY(-2px);
+        }
+
+        .msg{
+            margin-bottom:10px;
+            font-size:14px;
+            color:red;
+        }
+
+        .success{
+            color:green;
+        }
+
+        .resend{
+            margin-top:15px;
+            font-size:13px;
+        }
+
+        .resend a{
+            color:#2e3192;
+            text-decoration:none;
+            font-weight:600;
+        }
