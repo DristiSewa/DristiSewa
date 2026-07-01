@@ -258,6 +258,9 @@ def logout_view(request):
         User.Role.MANAGER,
         User.Role.FRONTDESK,
     )
+    # Clear any pending messages so they don't appear on the login page
+    storage = messages.get_messages(request)
+    storage.used = True
     logout(request)
     if is_staff_user:
         return redirect("accounts:staff_login")
