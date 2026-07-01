@@ -14,4 +14,5 @@ urlpatterns = [
     path("management/<int:pk>/verify/", views.student_verify, name="student_verify"),
     path("archived/", views.archived_students, name="archived_students"),
     path("archived/<int:pk>/unarchive/", views.student_unarchive, name="student_unarchive"),
+    path("profile/upload-pic/", views.upload_profile_pic, name="upload_profile_pic"),
 ]

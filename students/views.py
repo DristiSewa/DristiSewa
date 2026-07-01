@@ -1,8 +1,10 @@
 from django.contrib import messages
 from django.contrib.auth import get_user_model
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
+from django.views.decorators.http import require_POST
 
 from accounts.permissions import role_required
 from core.services import filter_by_branch
@@ -244,3 +246,18 @@ def student_edit(request, pk):
         form = StudentEditForm(instance=student)
 
     return render(request, "students/student_form.html", {"form": form, "mode": "edit", "student": student})
+
+
+@require_POST
+@role_required("STUDENT")
+def upload_profile_pic(request):
+    student, _ = Student.objects.get_or_create(user=request.user)
+    pic = request.FILES.get("profile_pic")
+    if not pic:
+        return JsonResponse({"success": False, "error": "No file provided."})
+    allowed = ["image/jpeg", "image/png", "image/webp", "image/gif"]
+    if pic.content_type not in allowed:
+        return JsonResponse({"success": False, "error": "Only JPG, PNG, WEBP or GIF allowed."})
+    student.profile_pic = pic
+    student.save(update_fields=["profile_pic"])
+    return JsonResponse({"success": True, "url": student.profile_pic.url})

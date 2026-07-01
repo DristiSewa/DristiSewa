@@ -20,17 +20,74 @@
     <div class="w-72 bg-slate-950 flex flex-col justify-between border-r border-slate-900 sidebar-glow relative z-10">
         <div>
             <div class="p-8 text-center border-b border-slate-900 bg-slate-900/40">
-                <a href="{% url 'students:profile' %}" class="group block text-center">
-                    <div class="w-20 h-20 rounded-full mx-auto overflow-hidden border-2 border-blue-500/50 group-hover:border-blue-400 transition mb-3 bg-slate-900 flex items-center justify-center cursor-pointer">
+                <!-- Facebook-style profile picture upload -->
+                <input type="file" id="picInput" accept="image/*" class="hidden">
+                <div class="relative w-20 h-20 mx-auto mb-3 group cursor-pointer" onclick="document.getElementById('picInput').click()">
+                    <div class="w-20 h-20 rounded-full overflow-hidden border-2 border-blue-500/50 group-hover:border-blue-400 transition bg-slate-900 flex items-center justify-center">
                         {% if request.user.student.profile_pic and request.user.student.profile_pic.url != '/media/default.png' %}
-                            <img src="{{ request.user.student.profile_pic.url }}" class="w-full h-full object-cover">
+                            <img id="profilePicImg" src="{{ request.user.student.profile_pic.url }}" class="w-full h-full object-cover">
                         {% else %}
-                            <i class="fa-solid fa-circle-user text-5xl text-slate-400"></i>
+                            <img id="profilePicImg" src="" class="w-full h-full object-cover hidden">
+                            <i id="profilePicIcon" class="fa-solid fa-circle-user text-5xl text-slate-400"></i>
                         {% endif %}
                     </div>
-                    <p class="font-extrabold text-sm text-slate-200 group-hover:text-blue-400 transition tracking-wide uppercase">Student Portal</p>
+                    <!-- Camera overlay like Facebook -->
+                    <div class="absolute inset-0 rounded-full bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+                        <i class="fa-solid fa-camera text-white text-lg"></i>
+                    </div>
+                    <!-- Upload spinner -->
+                    <div id="picSpinner" class="absolute inset-0 rounded-full bg-black/70 flex items-center justify-center hidden">
+                        <i class="fa-solid fa-spinner fa-spin text-white text-lg"></i>
+                    </div>
+                </div>
+                <a href="{% url 'students:profile' %}" class="group block text-center">
+                    <p class="font-extrabold text-sm text-slate-200 group-hover:text-blue-400 transition tracking-wide uppercase">{{ request.user.get_full_name|default:"Student" }}</p>
                     <p class="text-[10px] text-blue-400 font-bold tracking-widest mt-0.5">DristiSewa Systems</p>
+                    {% if request.user.branch %}
+                    <p class="text-[10px] text-slate-400 mt-1"><i class="fa-solid fa-location-dot mr-1"></i>{{ request.user.branch.name }}</p>
+                    {% endif %}
                 </a>
+                <p id="picMsg" class="text-xs mt-1 hidden"></p>
+
+                <script>
+                document.getElementById('picInput').addEventListener('change', function() {
+                    const file = this.files[0];
+                    if (!file) return;
+                    const spinner = document.getElementById('picSpinner');
+                    const msg = document.getElementById('picMsg');
+                    spinner.classList.remove('hidden');
+                    msg.classList.add('hidden');
+                    const fd = new FormData();
+                    fd.append('profile_pic', file);
+                    fd.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+                    fetch('{% url "students:upload_profile_pic" %}', { method: 'POST', body: fd })
+                        .then(r => r.json())
+                        .then(data => {
+                            spinner.classList.add('hidden');
+                            if (data.success) {
+                                const img = document.getElementById('profilePicImg');
+                                const icon = document.getElementById('profilePicIcon');
+                                img.src = data.url;
+                                img.classList.remove('hidden');
+                                if (icon) icon.classList.add('hidden');
+                                msg.textContent = 'Photo updated!';
+                                msg.className = 'text-xs mt-1 text-green-400';
+                                msg.classList.remove('hidden');
+                                setTimeout(() => msg.classList.add('hidden'), 3000);
+                            } else {
+                                msg.textContent = data.error || 'Upload failed.';
+                                msg.className = 'text-xs mt-1 text-red-400';
+                                msg.classList.remove('hidden');
+                            }
+                        })
+                        .catch(() => {
+                            spinner.classList.add('hidden');
+                            msg.textContent = 'Upload failed.';
+                            msg.className = 'text-xs mt-1 text-red-400';
+                            msg.classList.remove('hidden');
+                        });
+                });
+                </script>
             </div>
 
             <div class="p-4 space-y-1.5 mt-4">

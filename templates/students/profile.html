@@ -3,7 +3,7 @@
 {% block title %}My Profile - DristiSewa{% endblock %}
 
 {% block content %}
-<div class="max-w-3xl mx-auto">
+<div class="max-w-3xl mx-auto px-4 py-10">
     <div class="luxury-glass-card rounded-3xl p-8">
         <form method="POST" enctype="multipart/form-data" class="grid grid-cols-1 sm:grid-cols-2 gap-5">
             {% csrf_token %}
@@ -26,7 +26,7 @@
                     <h1 class="text-xl font-black text-white">{{ request.user.get_full_name|default:request.user.email }}</h1>
                     <p class="text-sm text-slate-400">{{ request.user.email }}</p>
                     {% if student.profile_pic %}
-                        <a href="{{ student.profile_pic.url }}" target="_blank" class="text-xs font-bold text-blue-400 hover:underline uppercase tracking-wide">View Photo</a>
+                        <button type="button" onclick="document.getElementById('photoModal').classList.remove('hidden')" class="text-xs font-bold text-blue-400 hover:underline uppercase tracking-wide">View Photo</button>
                     {% endif %}
                 </div>
             </div>
@@ -68,6 +68,18 @@
         </form>
     </div>
 </div>
+
+<!-- Photo Viewer Modal -->
+{% if student.profile_pic %}
+<div id="photoModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm" onclick="this.classList.add('hidden')">
+    <div class="relative max-w-lg w-full mx-4" onclick="event.stopPropagation()">
+        <img src="{{ student.profile_pic.url }}" class="w-full rounded-2xl shadow-2xl object-contain max-h-[80vh]">
+        <button onclick="document.getElementById('photoModal').classList.add('hidden')" class="absolute top-3 right-3 w-9 h-9 bg-black/60 hover:bg-black/80 rounded-full flex items-center justify-center text-white transition">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+    </div>
+</div>
+{% endif %}
 
 {% endblock %}
     <script src="{% static 'js/pages/students/profile.js' %}"></script>

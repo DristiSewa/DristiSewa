@@ -88,12 +88,15 @@
                                     <i class="fas fa-file-image text-blue-500 text-lg"></i>
                                 {% endif %}
                                 <span class="text-xs text-gray-700 font-medium">
-                                    {% if doc.file %}<a href="{{ doc.file.url }}" target="_blank" class="hover:underline">{{ doc.file.name|default:doc.get_doc_type_display }}</a>{% else %}{{ doc.get_doc_type_display }}{% endif %}
+                                    {% if doc.file %}
+                                        <button type="button" onclick="openDocModal('{{ doc.file.url }}', '{{ doc.file.name|default:doc.get_doc_type_display }}')" class="hover:underline text-blue-600">{{ doc.file.name|default:doc.get_doc_type_display }}</button>
+                                    {% else %}{{ doc.get_doc_type_display }}{% endif %}
                                 </span>
                             </div>
                             <form method="post" class="inline">
                                 {% csrf_token %}
                                 <input type="hidden" name="document_id" value="{{ doc.pk }}">
+                                <input type="hidden" name="update_doc_status" value="1">
                                 <select name="status" onchange="this.form.submit()"
                                         class="text-[11px] border border-gray-300 rounded p-1.5 font-bold cursor-pointer
                                         {% if doc.status == 'APPROVED' %}text-green-600 bg-green-50{% elif doc.status == 'REJECTED' %}text-red-600 bg-red-50{% else %}text-orange-600 bg-orange-50{% endif %}">
@@ -101,7 +104,6 @@
                                         <option value="{{ value }}" {% if doc.status == value %}selected{% endif %}>{{ label }}</option>
                                     {% endfor %}
                                 </select>
-                                <button type="submit" name="update_doc_status" value="1" class="hidden"></button>
                             </form>
                         </div>
                         {% empty %}
@@ -245,5 +247,42 @@
     </div>
 
     <script src="{% static 'js/pages/dashboards/student_profile.js' %}"></script>
+
+<!-- Document Viewer Modal -->
+<div id="docModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm" onclick="closeDocModal()">
+    <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-3xl mx-4 max-h-[90vh] flex flex-col" onclick="event.stopPropagation()">
+        <div class="flex items-center justify-between px-5 py-3 border-b border-gray-200">
+            <p id="docModalTitle" class="text-sm font-bold text-gray-700 truncate"></p>
+            <button onclick="closeDocModal()" class="text-gray-400 hover:text-gray-600 ml-4"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="overflow-auto flex-1 p-2">
+            <img id="docModalImg" src="" class="hidden max-w-full mx-auto rounded">
+            <iframe id="docModalPdf" src="" class="hidden w-full h-[75vh] rounded border-0"></iframe>
+        </div>
+    </div>
+</div>
+
+<script>
+function openDocModal(url, name) {
+    document.getElementById('docModalTitle').textContent = name;
+    const img = document.getElementById('docModalImg');
+    const pdf = document.getElementById('docModalPdf');
+    const isPdf = url.toLowerCase().endsWith('.pdf') || name.toLowerCase().endsWith('.pdf');
+    if (isPdf) {
+        pdf.src = url;
+        pdf.classList.remove('hidden');
+        img.classList.add('hidden');
+    } else {
+        img.src = url;
+        img.classList.remove('hidden');
+        pdf.classList.add('hidden');
+    }
+    document.getElementById('docModal').classList.remove('hidden');
+}
+function closeDocModal() {
+    document.getElementById('docModal').classList.add('hidden');
+    document.getElementById('docModalPdf').src = '';
+}
+</script>
 </body>
 </html>
