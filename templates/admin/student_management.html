@@ -40,7 +40,7 @@
     <div class="flex flex-wrap items-center gap-3">
         <div class="relative flex-1 min-w-[180px]">
             <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-            <input type="text" name="q" value="{{ query }}" placeholder="Search by name or email..."
+            <input type="text" name="q" value="{{ query }}" placeholder="Search by name..."
                    class="w-full bg-white border border-slate-100 rounded-xl pl-11 pr-4 py-3 text-sm font-medium placeholder-slate-400 focus:outline-none focus:border-blue-500 shadow-sm transition-all">
         </div>
         <div class="relative min-w-[160px]">
@@ -103,12 +103,12 @@
         </thead>
         <tbody class="divide-y divide-slate-50">
             {% for student in students %}
-            <tr class="hover:bg-slate-50/40 transition-colors">
+            <tr class="hover:bg-slate-50/40 transition-colors" data-name="{{ student.user.get_full_name|lower }}">
                 <td class="py-5 px-8 flex items-center gap-4">
                     <div class="w-10 h-10 bg-sky-100 rounded-xl flex items-center justify-center font-bold text-sm text-sky-700">
                         {{ student.user.get_full_name|slice:":1"|upper }}
                     </div>
-                    <span class="font-bold text-slate-800 text-sm tracking-tight">{{ student.user.get_full_name }}</span>
+                    <span class="font-bold text-slate-800 text-sm tracking-tight hover:text-blue-600 transition">{{ student.user.get_full_name }}</span>
                 </td>
                 <td class="py-5 px-6 text-sm text-slate-600">{{ student.user.branch.name|default:"—" }}</td>
                 <td class="py-5 px-6 font-bold text-slate-900 text-sm tracking-tight">{{ student.phone_number }}</td>
@@ -148,8 +148,12 @@
 </div>
 
 <div class="flex justify-between items-center mt-6">
-    <span class="text-slate-400 text-[11px] font-bold uppercase tracking-wider">
-        Showing {{ students|length }} of {{ total_students }} students
+    <span class="text-slate-400 text-[11px] font-bold uppercase tracking-wider showing-counter">
+        {% if status_filter or query or selected_branch or phone_query %}
+            Showing {{ students|length }} of {{ total_filtered }} matching · {{ total_students }} total
+        {% else %}
+            Showing {{ students|length }} of {{ total_students }} students
+        {% endif %}
     </span>
 </div>
 
@@ -157,4 +161,33 @@
 
 {% block extra_js %}
     <script src="{% static 'js/pages/admin/student_management.js' %}"></script>
+    <script>
+    (function () {
+        const searchInput = document.querySelector('input[name="q"]');
+        const tbody = document.querySelector('tbody');
+        if (!searchInput || !tbody) return;
+
+        searchInput.addEventListener('input', function () {
+            const query = this.value.trim().toLowerCase();
+            const rows = tbody.querySelectorAll('tr[data-name]');
+            let visible = 0;
+
+            rows.forEach(function (row) {
+                const name = row.getAttribute('data-name');
+                // Match every word in the query against the name
+                const match = !query || query.split(/\s+/).every(word => name.includes(word));
+                row.style.display = match ? '' : 'none';
+                if (match) visible++;
+            });
+
+            // Update the "Showing X" footer
+            const counter = document.querySelector('.showing-counter');
+            if (counter) {
+                counter.textContent = query
+                    ? 'Showing ' + visible + ' of {{ students|length }} students'
+                    : 'Showing {{ students|length }} of {{ total_students }} students';
+            }
+        });
+    })();
+    </script>
 {% endblock %}

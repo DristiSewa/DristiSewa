@@ -1150,16 +1150,18 @@ def student_management(request):
     from branches.models import Branch
     from students.models import Student
 
-    students_qs = Student.objects.select_related("user", "user__branch").filter(is_archived=False)
+    students_qs = Student.objects.select_related("user", "user__branch").prefetch_related("followups").filter(is_archived=False)
 
     query = request.GET.get("q", "").strip()
     if query:
-        students_qs = students_qs.filter(
-            Q(user__first_name__icontains=query)
-            | Q(user__last_name__icontains=query)
-            | Q(user__email__icontains=query)
-            | Q(user__phone__icontains=query)
-        )
+        # Match each word against first/last name so "Rohit Thapa" finds the right student
+        for word in query.split():
+            students_qs = students_qs.filter(
+                Q(user__first_name__icontains=word)
+                | Q(user__last_name__icontains=word)
+                | Q(user__email__icontains=word)
+                | Q(user__phone__icontains=word)
+            )
 
     branch_id = request.GET.get("branch", "").strip()
     if branch_id:
@@ -1194,6 +1196,7 @@ def student_management(request):
 
         students_data.append(
             {
+                "pk": student.pk,
                 "user": student.user,
                 "phone_number": student.user.phone or "—",
                 "is_active": student.user.is_active,
@@ -1201,12 +1204,15 @@ def student_management(request):
             }
         )
 
+    total_filtered = counts["due"] + counts["upcoming"] + counts["completed"]
+
     return render(
         request,
         "admin/student_management.html",
         {
             "students": students_data,
             "total_students": Student.objects.filter(is_archived=False).count(),
+            "total_filtered": total_filtered,
             "branches": Branch.objects.filter(is_active=True),
             "selected_branch": branch_id,
             "query": query,
