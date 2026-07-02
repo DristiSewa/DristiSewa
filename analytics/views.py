@@ -102,17 +102,51 @@ def advanced_analytics(request):
 
     visa_success_rate = round((visa_granted / decided_apps * 100), 1) if decided_apps else 0
 
-    # Trend data for charts
+    # Trend data — built directly from real records (daily buckets)
+    from django.db.models.functions import TruncDate
+    from core.models import TimeStampedModel
+
+    # Determine bucket size: daily for ≤30 days, else weekly
+    if days <= 30:
+        date_list = [start_date + timedelta(days=i) for i in range(days + 1)]
+    else:
+        date_list = [start_date + timedelta(weeks=i) for i in range((days // 7) + 1)]
+
+    # Students registered per bucket
+    student_registrations = (
+        Student.objects.filter(
+            user__branch__in=branches_qs,
+            created_at__date__gte=start_date,
+        )
+        .annotate(day=TruncDate('created_at'))
+        .values('day')
+        .annotate(count=Count('id'))
+    )
+    student_by_date = {item['day']: item['count'] for item in student_registrations}
+
+    # Visa grants per bucket (use updated_at as proxy for grant date)
+    visa_grants = (
+        Application.objects.filter(
+            student__user__branch__in=branches_qs,
+            status=Application.Status.VISA_GRANTED,
+            updated_at__date__gte=start_date,
+        )
+        .annotate(day=TruncDate('updated_at'))
+        .values('day')
+        .annotate(count=Count('id'))
+    )
+    visa_by_date = {item['day']: item['count'] for item in visa_grants}
+
     trend_labels = []
     student_trend = []
-    application_trend = []
     visa_trend = []
 
-    for analytics in analytics_data:
-        trend_labels.append(analytics.date.strftime('%b %d'))
-        student_trend.append(analytics.total_students)
-        application_trend.append(analytics.total_applications)
-        visa_trend.append(analytics.applications_visa_granted)
+    for d in date_list:
+        trend_labels.append(d.strftime('%b %d'))
+        student_trend.append(student_by_date.get(d, 0))
+        visa_trend.append(visa_by_date.get(d, 0))
+
+    application_trend = []  # kept for template compat
 
     # Branch comparison
     branch_stats = []
@@ -144,15 +178,15 @@ def advanced_analytics(request):
 
     # Document status breakdown
     document_status = {
-        'pending': Document.objects.filter(
+        'Pending': Document.objects.filter(
             student__user__branch__in=branches_qs,
             status=Document.Status.PENDING
         ).count(),
-        'approved': Document.objects.filter(
+        'Approved': Document.objects.filter(
             student__user__branch__in=branches_qs,
             status=Document.Status.APPROVED
         ).count(),
-        'rejected': Document.objects.filter(
+        'Rejected': Document.objects.filter(
             student__user__branch__in=branches_qs,
             status=Document.Status.REJECTED
         ).count(),
@@ -179,7 +213,9 @@ def advanced_analytics(request):
         'visa_trend': json.dumps(visa_trend),
         'branch_stats': branch_stats,
         'document_status': document_status,
+        'document_status_json': json.dumps(document_status),
         'application_status': application_status,
+        'application_status_json': json.dumps(application_status),
         'recent_activities': recent_activities,
         'branches': branches,
         'selected_branch': branch_id,

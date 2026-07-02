@@ -1,15 +1,14 @@
-const chartFont = { family: 'ui-sans-serif, system-ui, sans-serif' };
-Chart.defaults.font.family = chartFont.family;
+Chart.defaults.font.family = 'ui-sans-serif, system-ui, sans-serif';
 Chart.defaults.color = '#64748b';
 
 // Student Growth Trend
 new Chart(document.getElementById('studentTrendChart').getContext('2d'), {
     type: 'line',
     data: {
-        labels: {{ trend_labels|safe }},
+        labels: TREND_LABELS,
         datasets: [{
-            label: 'Student Count',
-            data: {{ student_trend|safe }},
+            label: 'New Students',
+            data: STUDENT_TREND,
             borderColor: '#2563eb',
             backgroundColor: 'rgba(37, 99, 235, 0.08)',
             tension: 0.4,
@@ -21,8 +20,14 @@ new Chart(document.getElementById('studentTrendChart').getContext('2d'), {
     options: {
         responsive: true,
         maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
-        scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' } }, x: { grid: { display: false } } }
+        plugins: {
+            legend: { display: false },
+            tooltip: { callbacks: { label: ctx => ` ${ctx.parsed.y} students` } }
+        },
+        scales: {
+            y: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: '#f1f5f9' } },
+            x: { grid: { display: false } }
+        }
     }
 });
 
@@ -30,49 +35,59 @@ new Chart(document.getElementById('studentTrendChart').getContext('2d'), {
 new Chart(document.getElementById('applicationStatusChart').getContext('2d'), {
     type: 'doughnut',
     data: {
-        labels: Object.keys({{ application_status|safe }}),
+        labels: Object.keys(APP_STATUS),
         datasets: [{
-            data: Object.values({{ application_status|safe }}),
+            data: Object.values(APP_STATUS),
             backgroundColor: ['#2563eb', '#38bdf8', '#f59e0b', '#10b981', '#f43f5e', '#94a3b8'],
-            borderWidth: 0,
+            borderWidth: 2,
+            borderColor: '#fff',
         }]
     },
     options: {
         responsive: true,
         maintainAspectRatio: false,
-        plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, padding: 16 } } }
+        plugins: {
+            legend: { position: 'bottom', labels: { boxWidth: 12, padding: 16 } },
+            tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed}` } }
+        }
     }
 });
 
-// Document Status Distribution
+// Document Status Overview
 new Chart(document.getElementById('documentStatusChart').getContext('2d'), {
     type: 'bar',
     data: {
-        labels: Object.keys({{ document_status|safe }}),
+        labels: Object.keys(DOC_STATUS),
         datasets: [{
-            label: 'Document Count',
-            data: Object.values({{ document_status|safe }}),
+            label: 'Documents',
+            data: Object.values(DOC_STATUS),
             backgroundColor: ['#f59e0b', '#10b981', '#f43f5e'],
-            borderRadius: 6,
+            borderRadius: 8,
         }]
     },
     options: {
         responsive: true,
         maintainAspectRatio: false,
         indexAxis: 'y',
-        plugins: { legend: { display: false } },
-        scales: { x: { beginAtZero: true, grid: { color: '#f1f5f9' } }, y: { grid: { display: false } } }
+        plugins: {
+            legend: { display: false },
+            tooltip: { callbacks: { label: ctx => ` ${ctx.parsed.x} documents` } }
+        },
+        scales: {
+            x: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: '#f1f5f9' } },
+            y: { grid: { display: false } }
+        }
     }
 });
 
-// Visa Grant Trend
+// Visa Grants Trend
 new Chart(document.getElementById('visaTrendChart').getContext('2d'), {
     type: 'line',
     data: {
-        labels: {{ trend_labels|safe }},
+        labels: TREND_LABELS,
         datasets: [{
             label: 'Visas Granted',
-            data: {{ visa_trend|safe }},
+            data: VISA_TREND,
             borderColor: '#10b981',
             backgroundColor: 'rgba(16, 185, 129, 0.12)',
             tension: 0.4,
@@ -84,7 +99,13 @@ new Chart(document.getElementById('visaTrendChart').getContext('2d'), {
     options: {
         responsive: true,
         maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
-        scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' } }, x: { grid: { display: false } } }
+        plugins: {
+            legend: { display: false },
+            tooltip: { callbacks: { label: ctx => ` ${ctx.parsed.y} visas granted` } }
+        },
+        scales: {
+            y: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: '#f1f5f9' } },
+            x: { grid: { display: false } }
+        }
     }
 });

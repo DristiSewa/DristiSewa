@@ -123,6 +123,18 @@ def delete_branch_json(request, branch_id):
 
 
 @role_required("ADMIN")
+def reactivate_branch(request, branch_id):
+    """Simple POST to set a branch back to active."""
+    branch = get_object_or_404(Branch, pk=branch_id)
+    branch.is_active = True
+    branch.save(update_fields=["is_active"])
+    from django.contrib import messages
+    messages.success(request, f"'{branch.name}' has been reactivated.")
+    from django.shortcuts import redirect
+    return redirect("accounts:branch_staff")
+
+
+@role_required("ADMIN")
 def create_branch(request):
     branches = Branch.objects.all()
 

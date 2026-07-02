@@ -11,4 +11,5 @@ urlpatterns = [
     path("create-json/", views.create_branch_json, name="create_branch_json"),
     path("update-json/<int:branch_id>/", views.update_branch_json, name="update_branch_json"),
     path("delete-json/<int:branch_id>/", views.delete_branch_json, name="delete_branch_json"),
+    path("reactivate/<int:branch_id>/", views.reactivate_branch, name="reactivate_branch"),
 ]

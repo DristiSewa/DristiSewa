@@ -2,161 +2,225 @@
 {% load static %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/pages/manager/student_document.css' %}">
+    <link rel="stylesheet" href="{% static 'css/pages/dashboards/student_profile.css' %}">
 {% endblock %}
-{% block title %}{{ student.name }} — Documents | DristiSewa{% endblock %}
+{% block title %}{{ student.user.get_full_name }} — Documents | DristiSewa{% endblock %}
 
 {% block content %}
 
-<div class="doc-page-container">
-    <div class="doc-page-title">Student document check</div>
+<div class="w-full px-6 py-4 flex items-center justify-between bg-white border-b border-gray-100 mb-4">
+    <a href="{{ back_url }}" class="text-blue-600 font-bold hover:text-blue-800 flex items-center gap-2 text-sm">
+        <i class="fas fa-arrow-left border p-1.5 rounded bg-blue-50"></i>
+        <span>Back to Dashboard</span>
+    </a>
+</div>
 
-    <div class="doc-split-layout">
+<div class="w-full px-6 flex flex-col md:flex-row gap-6 pb-8 items-stretch">
 
-        <!-- Left: Student profile -->
-        <div class="profile-sidebar">
-            <a href="{{ back_url }}" class="back-arrow-link" title="Go back">
-                <i class="fa-solid fa-arrow-left"></i>
-            </a>
-
-            <div class="profile-avatar-circle"></div>
-
-            <div class="student-display-name">{{ student.name }}</div>
-            <span class="student-status-badge {% if student.status != 'Verified' %}is-pending{% endif %}">
-                <i class="fa-solid {% if student.status == 'Verified' %}fa-circle-check{% else %}fa-clock{% endif %}"></i>
-                {{ student.status }}
-            </span>
-
-            <div class="profile-info-card">
-                <div class="profile-info-row">
-                    <div class="profile-info-icon"><i class="fa-solid fa-phone"></i></div>
-                    <div class="profile-info-text">
-                        <span class="profile-info-label">Phone</span>
-                        <span class="profile-info-value">{{ student.phone }}</span>
-                    </div>
-                </div>
-                <div class="profile-info-row">
-                    <div class="profile-info-icon"><i class="fa-solid fa-envelope"></i></div>
-                    <div class="profile-info-text">
-                        <span class="profile-info-label">Email</span>
-                        <span class="profile-info-value" title="{{ student.email }}">{{ student.email }}</span>
-                    </div>
-                </div>
-                <div class="profile-info-row">
-                    <div class="profile-info-icon"><i class="fa-solid fa-globe"></i></div>
-                    <div class="profile-info-text">
-                        <span class="profile-info-label">Country</span>
-                        <span class="profile-info-value">{{ student.country }}</span>
-                    </div>
+    <!-- Left sidebar -->
+    <div class="w-full md:w-1/4 bg-white p-5 rounded-lg border border-gray-200 shadow-sm text-center flex flex-col justify-between min-h-[580px]">
+        <div>
+            <div class="mb-3 flex justify-center">
+                <div class="w-24 h-24 bg-black rounded-full overflow-hidden flex items-center justify-center text-white shadow-sm">
+                    {% if student.profile_pic %}
+                        <img src="{{ student.profile_pic.url }}" alt="Profile photo" class="w-full h-full object-cover">
+                    {% else %}
+                        <i class="fas fa-user text-4xl"></i>
+                    {% endif %}
                 </div>
             </div>
+            <h2 class="text-blue-600 text-lg font-bold mb-1.5">{{ student.user.get_full_name|default:student.user.email }}</h2>
+            <p class="text-blue-800 font-medium mb-0.5 text-xs">Phone : <span class="text-gray-600 font-normal">{{ student.user.phone|default:"-" }}</span></p>
+            <p class="text-blue-800 font-medium mb-5 text-xs">Email : <span class="text-gray-600 font-normal">{{ student.user.email }}</span></p>
 
-            <div class="assigned-tag"><i class="fa-solid fa-user-tie"></i> Assigned By: {{ student.assigned_by }}</div>
+
         </div>
 
-        <!-- Right: Tabs -->
-        <div class="documents-main-panel">
-            <div class="doc-tab-bar">
-                <div class="tab-item tab-active" id="tabDocBtn">Documents</div>
-                <div class="tab-item" id="tabRemarksBtn">Remarks</div>
-            </div>
+        <div class="text-left mt-4 pt-4 border-t border-gray-200">
+            <p class="text-blue-600 font-bold text-xs mb-1">Assigned By:</p>
+            {% if student.assigned_by %}
+                <p class="text-gray-700 text-sm font-semibold flex items-center gap-2">
+                    <i class="fas fa-user-tie text-blue-400"></i>
+                    {{ student.assigned_by.get_full_name|default:student.assigned_by.email }}
+                </p>
+                {% if student.assigned_by.branch %}
+                <p class="text-gray-400 text-xs mt-0.5 ml-5">
+                    <i class="fas fa-building text-gray-300 mr-1"></i>
+                    {{ student.assigned_by.branch.name }}
+                </p>
+                {% endif %}
+            {% else %}
+                <p class="text-gray-400 text-sm italic flex items-center gap-2">
+                    <i class="fas fa-user-slash text-gray-300"></i> Not yet assigned
+                </p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Right panel -->
+    <div class="flex-1 flex flex-col">
+        <div class="flex">
+            <button id="docTab" onclick="switchTab('document')" class="flex-1 active-tab py-3 rounded-tl-md font-bold text-sm shadow-sm transition-all">Document Upload</button>
+            <button id="remTab" onclick="switchTab('remarks')" class="flex-1 inactive-tab py-3 rounded-tr-md font-bold text-sm shadow-sm transition-all">Remarks</button>
+        </div>
+
+        <div class="bg-white border border-gray-200 rounded-b-lg p-6 shadow-sm min-h-[520px] flex flex-col justify-between relative">
 
             <!-- Documents tab -->
-            <div class="content-pane pane-active" id="paneDocuments">
-                {% if student.documents %}
-                <table class="doc-grid-table">
-                    <colgroup>
-                        <col style="width:46%;">
-                        <col style="width:18%;">
-                        <col style="width:18%;">
-                        <col style="width:18%;">
-                    </colgroup>
-                    <thead>
-                        <tr>
-                            <th class="col-doc-name">Document Name</th>
-                            <th>Verified</th>
-                            <th>Download</th>
-                            <th>Delete</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for doc in student.documents %}
-                        <tr>
-                            <td class="col-doc-name">
-                                <span class="doc-name-label">{{ doc.get_doc_type_display }}</span>
-                                <span class="doc-status-tag doc-status-{{ doc.status }}">{{ doc.get_status_display }}</span>
-                            </td>
-                            <td>
-                                <form method="post" action="{% url 'accounts:manager_document_toggle_verify' student.id doc.id %}" class="verify-checkbox-form">
-                                    {% csrf_token %}
-                                    <input type="checkbox" class="verify-checkbox" title="Mark as approved"
-                                           {% if doc.status == 'APPROVED' %}checked{% endif %}
-                                           onchange="this.form.submit()">
-                                </form>
-                            </td>
-                            <td>
-                                {% if doc.file %}
-                                <a href="{{ doc.file.url }}" target="_blank" class="icon-action-link" title="Download">
-                                    <i class="fa-solid fa-cloud-arrow-down"></i>
-                                </a>
-                                {% else %}
-                                —
-                                {% endif %}
-                            </td>
-                            <td>
-                                <form method="post" action="{% url 'accounts:manager_document_delete' student.id doc.id %}" onsubmit="return confirm('Delete this document?');">
-                                    {% csrf_token %}
-                                    <button type="submit" class="icon-action-link delete-red" style="background:none; border:none; cursor:pointer;" title="Delete">
-                                        <i class="fa-solid fa-trash-can"></i>
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-                {% else %}
-                <div class="empty-state-box">
-                    <i class="fa-solid fa-folder-open"></i>
-                    <p>No documents uploaded for this student yet.</p>
+            <div id="documentContent" class="w-full">
+                <div class="flex justify-between border-b border-gray-200 pb-2 mb-4 text-[11px] font-bold text-gray-400 uppercase tracking-wider">
+                    <span>Document</span>
+                    <span>Update Status</span>
                 </div>
-                {% endif %}
+
+                <div class="space-y-3 mb-6">
+                    {% for doc in documents %}
+                    <div class="flex items-center justify-between border border-gray-200 p-3 rounded bg-white hover:bg-gray-50 transition">
+                        <div class="flex items-center gap-3">
+                            {% if doc.file.name|slice:"-4:" == ".pdf" %}
+                                <i class="fas fa-file-pdf text-red-500 text-lg"></i>
+                            {% else %}
+                                <i class="fas fa-file-image text-blue-500 text-lg"></i>
+                            {% endif %}
+                            <span class="text-xs text-gray-700 font-medium">
+                                {% if doc.file %}
+                                    <button type="button" onclick="openDocModal('{{ doc.file.url }}', '{{ doc.file.name|default:doc.get_doc_type_display }}')" class="hover:underline text-blue-600">{{ doc.file.name|default:doc.get_doc_type_display }}</button>
+                                {% else %}{{ doc.get_doc_type_display }}{% endif %}
+                            </span>
+                        </div>
+                        <form method="post" class="inline">
+                            {% csrf_token %}
+                            <input type="hidden" name="document_id" value="{{ doc.pk }}">
+                            <input type="hidden" name="update_doc_status" value="1">
+                            <select name="status" onchange="this.form.submit()"
+                                    class="text-[11px] border border-gray-300 rounded p-1.5 font-bold cursor-pointer
+                                    {% if doc.status == 'APPROVED' %}text-green-600 bg-green-50{% elif doc.status == 'REJECTED' %}text-red-600 bg-red-50{% else %}text-orange-600 bg-orange-50{% endif %}">
+                                {% for value, label in doc_statuses %}
+                                    <option value="{{ value }}" {% if doc.status == value %}selected{% endif %}>{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </form>
+                    </div>
+                    {% empty %}
+                    <p class="text-xs text-gray-400 text-center py-6">No documents uploaded yet.</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div id="uploadActionSection" class="flex justify-end w-full mt-auto">
+                <button type="button" onclick="toggleUploadModal(true)" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md inline-flex items-center gap-2 shadow-sm transition-all duration-150">
+                    <i class="fas fa-plus text-xs"></i>
+                    <span class="text-xs">Upload Document</span>
+                </button>
             </div>
 
             <!-- Remarks tab -->
-            <div class="content-pane" id="paneRemarks">
-                <div class="remarks-wrapper">
-                    <h3 class="remarks-section-title">Follow Up History</h3>
+            <div id="remarksContent" class="hidden w-full">
+                <form method="post" class="bg-blue-50/50 border border-blue-100 rounded-lg p-3 mb-5 shadow-sm">
+                    {% csrf_token %}
+                    <div class="flex flex-wrap items-center justify-between gap-4">
+                        <div class="flex items-center gap-2">
+                            <label class="font-bold text-xs text-gray-700">Assign Date:</label>
+                            <input type="date" name="scheduled_date" value="{{ today|date:'Y-m-d' }}" class="border border-gray-300 rounded-md px-2 py-1.5 text-xs text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                        </div>
+                        <button type="button" onclick="toggleRemarkBox()" class="bg-blue-800 text-white px-5 py-1.5 rounded-md font-bold text-xs hover:bg-blue-900 transition flex items-center gap-1.5 shadow-md">
+                            <i class="fas fa-plus-circle"></i> Add New Remark
+                        </button>
+                    </div>
+                    <div id="remarkInputBox" class="hidden mt-3 flex gap-2 items-start">
+                        <textarea name="note" rows="2" placeholder="Type your remark..." class="flex-1 border border-gray-300 rounded-md px-3 py-2 text-xs text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500"></textarea>
+                        <button type="submit" name="add_remark" value="1" class="bg-blue-600 text-white px-4 py-2 rounded-md text-xs font-bold hover:bg-blue-700 transition">Save</button>
+                    </div>
+                </form>
 
-                    {% if student.remarks %}
-                        {% for remark in student.remarks %}
-                        <div class="history-card-box">
-                            <div class="history-timestamp">{{ remark.date }}</div>
-                            <p class="history-text">{{ remark.text }}</p>
+                <div class="space-y-3">
+                    {% for f in followups %}
+                    <div class="border border-gray-200 rounded p-3 bg-gray-50 {% if not f.is_done %}border-l-4 border-l-blue-600{% endif %} flex items-start justify-between gap-3">
+                        <div>
+                            <p class="font-bold text-xs text-gray-800 mb-0.5">
+                                {{ f.assigned_to.get_full_name|default:f.assigned_to.email|default:"Unassigned" }}
+                                <span class="font-normal text-gray-400 text-[10px] italic ml-2">on {{ f.created_at|date:"d M Y" }}</span>
+                            </p>
+                            <p class="text-xs text-gray-600">{{ f.note }}</p>
                         </div>
-                        {% endfor %}
-                    {% else %}
-                        <div class="empty-state-box" style="padding:30px 20px; margin-bottom:20px;">
-                            <i class="fa-solid fa-comment-slash"></i>
-                            <p>No remarks recorded yet.</p>
-                        </div>
-                    {% endif %}
-
-                    <h3 class="remarks-section-title" style="margin-top:28px;">Add Remark</h3>
-                    <form method="POST" action="{% url 'accounts:student_remark' student.id %}">
-                        {% csrf_token %}
-                        <textarea class="remarks-textarea" name="student_remark"
-                            placeholder="Type checking remarks or progress notes here..."></textarea>
-                        <div class="remarks-footer-actions">
-                            <button type="submit" class="btn-remarks-save">Save</button>
-                        </div>
-                    </form>
+                        <form method="post" onsubmit="return confirm('Remove this activity?');">
+                            {% csrf_token %}
+                            <input type="hidden" name="followup_id" value="{{ f.pk }}">
+                            <button type="submit" name="remove_remark" value="1" class="text-gray-400 hover:text-red-500 transition text-xs" title="Remove">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </form>
+                    </div>
+                    {% empty %}
+                    <p class="text-xs text-gray-400 text-center py-6">No follow-up notes yet.</p>
+                    {% endfor %}
                 </div>
             </div>
-        </div>
 
+        </div>
     </div>
 </div>
 
+<!-- Upload Document Modal -->
+<div id="uploadDocumentModal" class="fixed inset-0 z-50 flex items-center justify-center modal-overlay hidden">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-[420px] mx-4 overflow-hidden border border-gray-100 p-6">
+        <div class="text-[#94a3b8] font-bold text-xs uppercase tracking-wider mb-4">Upload Document</div>
+        <form method="post" enctype="multipart/form-data" class="space-y-4">
+            {% csrf_token %}
+            <div class="flex flex-col">
+                <label class="text-xs font-bold text-slate-700 mb-2">Document Type</label>
+                {{ upload_form.doc_type }}
+            </div>
+            <div class="flex flex-col">
+                <label class="text-xs font-bold text-slate-700 mb-2">File</label>
+                {{ upload_form.file }}
+            </div>
+            <div class="flex justify-end items-center gap-4 pt-2">
+                <button type="button" onclick="toggleUploadModal(false)" class="text-sm font-semibold text-slate-500 hover:text-slate-800 transition">Cancel</button>
+                <button type="submit" name="upload_document" value="1" class="bg-blue-600 text-white px-5 py-2 rounded-md text-sm font-semibold hover:bg-blue-700 transition shadow-sm">
+                    Upload
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Document Viewer Modal -->
+<div id="docModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm" onclick="closeDocModal()">
+    <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-3xl mx-4 max-h-[90vh] flex flex-col" onclick="event.stopPropagation()">
+        <div class="flex items-center justify-between px-5 py-3 border-b border-gray-200">
+            <p id="docModalTitle" class="text-sm font-bold text-gray-700 truncate"></p>
+            <button onclick="closeDocModal()" class="text-gray-400 hover:text-gray-600 ml-4"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="overflow-auto flex-1 p-2">
+            <img id="docModalImg" src="" class="hidden max-w-full mx-auto rounded">
+            <iframe id="docModalPdf" src="" class="hidden w-full h-[75vh] rounded border-0"></iframe>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'js/pages/dashboards/student_profile.js' %}"></script>
+<script>
+function openDocModal(url, name) {
+    document.getElementById('docModalTitle').textContent = name;
+    const img = document.getElementById('docModalImg');
+    const pdf = document.getElementById('docModalPdf');
+    const isPdf = url.toLowerCase().endsWith('.pdf') || name.toLowerCase().endsWith('.pdf');
+    if (isPdf) {
+        pdf.src = url;
+        pdf.classList.remove('hidden');
+        img.classList.add('hidden');
+    } else {
+        img.src = url;
+        img.classList.remove('hidden');
+        pdf.classList.add('hidden');
+    }
+    document.getElementById('docModal').classList.remove('hidden');
+}
+function closeDocModal() {
+    document.getElementById('docModal').classList.add('hidden');
+    document.getElementById('docModalPdf').src = '';
+}
+</script>
+
 {% endblock %}
-    <script src="{% static 'js/pages/manager/student_document.js' %}"></script>

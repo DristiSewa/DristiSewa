@@ -546,6 +546,46 @@ function openDeletePrompt(deleteUrl, targetName) {
         }
     }
 
+    function reactivateBranch(btn) {
+        const url     = btn.dataset.reactivateUrl;
+        const name    = btn.dataset.branchName;
+        let   code    = btn.dataset.branchCode;
+        const address = btn.dataset.branchAddress;
+        const phone   = btn.dataset.branchPhone;
+        const email   = btn.dataset.branchEmail;
+
+        if (!code) {
+            code = name.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8) || 'BR';
+        }
+
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Reactivating…';
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify({ name, code, address, phone, email, is_active: true })
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-rotate-right"></i> Reactivate';
+                alert(data.error || 'Failed to reactivate branch.');
+            }
+        })
+        .catch(() => {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-rotate-right"></i> Reactivate';
+            alert('Network error — could not reactivate branch.');
+        });
+    }
+
     window.addEventListener('DOMContentLoaded', () => {
         if (window.location.hash === "#create-branch") {
             toggleBranchDrawer();

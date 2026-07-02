@@ -22,6 +22,13 @@ class Student(TimeStampedModel):
         blank=True,
         related_name="assigned_students",
     )
+    assigned_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="assigned_by_students",
+    )
     date_of_birth = models.DateField(null=True, blank=True)
     college = models.CharField(max_length=200, blank=True)
     passed_year = models.PositiveIntegerField(null=True, blank=True)

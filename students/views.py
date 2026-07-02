@@ -81,11 +81,13 @@ def student_profile_view(request, pk):
         if assignee_id:
             assignee = get_object_or_404(User, pk=assignee_id, branch=student.user.branch)
             student.assigned_to = assignee
-            student.save(update_fields=["assigned_to"])
+            student.assigned_by = request.user  # record who made the assignment
+            student.save(update_fields=["assigned_to", "assigned_by"])
             messages.success(request, f"Assigned {assignee.get_full_name() or assignee.email} to this student.")
         else:
             student.assigned_to = None
-            student.save(update_fields=["assigned_to"])
+            student.assigned_by = None
+            student.save(update_fields=["assigned_to", "assigned_by"])
             messages.success(request, "Removed user assignment.")
         return redirect("students:student_profile", pk=student.pk)
 
@@ -148,8 +150,9 @@ def student_profile_view(request, pk):
     followups = student.followups.all() if hasattr(student, "followups") else []
     appointments = student.appointments.all() if hasattr(student, "appointments") else []
 
+    # Frontdesk assigns student to a Manager only
     assignable_users = User.objects.filter(
-        branch=student.user.branch, role__in=[User.Role.FRONTDESK, User.Role.MANAGER]
+        branch=student.user.branch, role=User.Role.MANAGER
     ).order_by("first_name", "last_name")
 
     return render(

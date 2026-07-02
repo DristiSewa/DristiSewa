@@ -225,4 +225,14 @@
 </div>
 
 {% endblock %}
-    <script src="{% static 'js/pages/analytics/advanced_dashboard.js' %}"></script>
+
+{% block extra_js %}
+<script>
+    const TREND_LABELS  = {{ trend_labels|safe }};
+    const STUDENT_TREND = {{ student_trend|safe }};
+    const VISA_TREND    = {{ visa_trend|safe }};
+    const APP_STATUS    = {{ application_status_json|safe }};
+    const DOC_STATUS    = {{ document_status_json|safe }};
+</script>
+<script src="{% static 'js/pages/analytics/advanced_dashboard.js' %}"></script>
+{% endblock %}

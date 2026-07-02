@@ -1002,6 +1002,7 @@ def branch_staff(request):
             )
 
     active_branches = Branch.objects.filter(is_active=True).order_by("name")
+    inactive_branches = Branch.objects.filter(is_active=False).order_by("name")
 
     branches_for_summary = active_branches
     if selected_branch:
@@ -1041,6 +1042,7 @@ def branch_staff(request):
             "selected_branch": selected_branch,
             "branch_summary": branch_summary,
             "branch_count": active_branches.count(),
+            "inactive_branches": inactive_branches,
             "total_managers": total_managers,
             "total_frontdesk": total_frontdesk,
             "form": form,
@@ -1163,8 +1165,16 @@ def student_management(request):
     if branch_id:
         students_qs = students_qs.filter(user__branch_id=branch_id)
 
+    phone_query = request.GET.get("phone", "").strip()
+    if phone_query:
+        students_qs = students_qs.filter(user__phone__icontains=phone_query)
+
+    status_filter = request.GET.get("status", "").strip()
+
     today = timezone.localdate()
     students_data = []
+    counts = {"due": 0, "upcoming": 0, "completed": 0}
+
     for student in students_qs.order_by("user__first_name", "user__last_name").distinct():
         next_followup = student.followups.filter(is_done=False).order_by("scheduled_date").first()
         if next_followup and next_followup.scheduled_date:
@@ -1176,6 +1186,11 @@ def student_management(request):
                 follow_up_status = "completed"
         else:
             follow_up_status = "completed"
+
+        counts[follow_up_status] += 1
+
+        if status_filter and follow_up_status != status_filter:
+            continue
 
         students_data.append(
             {
@@ -1195,6 +1210,9 @@ def student_management(request):
             "branches": Branch.objects.filter(is_active=True),
             "selected_branch": branch_id,
             "query": query,
+            "phone_query": phone_query,
+            "status_filter": status_filter,
+            "counts": counts,
         },
     )
 
@@ -2030,36 +2048,91 @@ def complete_followups(request):
 @role_required("MANAGER")
 def student_document(request, student_id):
     from core.services import filter_by_branch
+    from documents.forms import DocumentUploadForm
+    from documents.models import Document
+    from followups.models import FollowUp
     from students.models import Student
+    from django.utils import timezone
 
     student = get_object_or_404(
         filter_by_branch(
             request.user,
-            Student.objects.select_related("user", "user__branch", "assigned_to"),
+            Student.objects.select_related("user", "user__branch", "assigned_to", "assigned_by", "assigned_by__branch"),
             branch_field="user__branch",
         ),
         pk=student_id,
     )
 
-    documents = student.documents.all()
-    followups = student.followups.all()
+    if request.method == "POST":
+        # Update document status
+        if "update_doc_status" in request.POST:
+            doc_id = request.POST.get("document_id")
+            new_status = request.POST.get("status")
+            try:
+                doc = Document.objects.get(pk=doc_id, student=student)
+                doc.status = new_status
+                doc.save(update_fields=["status"])
+            except Document.DoesNotExist:
+                pass
+            return redirect("accounts:student_document", student_id=student.pk)
 
-    student_context = {
-        "id": student.id,
-        "name": student.user.get_full_name() or student.user.email,
-        "phone": student.user.phone or "—",
-        "email": student.user.email,
-        "country": student.preferred_country or "—",
-        "status": "Verified" if student.is_verified else "Pending Verification",
-        "assigned_by": student.assigned_to.get_full_name() if student.assigned_to else "Unassigned",
-        "documents": documents,
-        "remarks": [{"date": f.created_at.strftime("%d %b %Y"), "text": f.note} for f in followups],
-    }
+        # Upload document
+        if "upload_document" in request.POST:
+            form = DocumentUploadForm(request.POST, request.FILES)
+            if form.is_valid():
+                doc = form.save(commit=False)
+                doc.student = student
+                doc.save()
+                messages.success(request, "Document uploaded.")
+            return redirect("accounts:student_document", student_id=student.pk)
+
+        # Assign user
+        if "assign_user" in request.POST:
+            assignee_id = request.POST.get("assigned_to")
+            if assignee_id:
+                try:
+                    assignee = User.objects.get(pk=assignee_id)
+                    student.assigned_to = assignee
+                    student.save(update_fields=["assigned_to"])
+                except User.DoesNotExist:
+                    pass
+            else:
+                student.assigned_to = None
+                student.save(update_fields=["assigned_to"])
+            return redirect("accounts:student_document", student_id=student.pk)
+
+        # Add remark
+        if "add_remark" in request.POST:
+            note = request.POST.get("note", "").strip()
+            if note:
+                FollowUp.objects.create(student=student, assigned_to=request.user, note=note)
+            return redirect(f"{reverse('accounts:student_document', kwargs={'student_id': student.pk})}#remarks")
+
+        # Remove remark
+        if "remove_remark" in request.POST:
+            followup_id = request.POST.get("followup_id")
+            FollowUp.objects.filter(pk=followup_id, student=student).delete()
+            return redirect(f"{reverse('accounts:student_document', kwargs={'student_id': student.pk})}#remarks")
+
+    documents = student.documents.all()
+    followups = student.followups.select_related("assigned_to").all()
+    assignable_users = User.objects.filter(
+        branch=student.user.branch, role__in=[User.Role.FRONTDESK, User.Role.MANAGER]
+    ).order_by("first_name", "last_name")
 
     return render(
         request,
         "manager/student_document.html",
-        {"student": student_context, "back_url": reverse("accounts:branch_monitoring")},
+        {
+            "student": student,
+            "documents": documents,
+            "followups": followups,
+            "assignable_users": assignable_users,
+            "doc_statuses": Document.Status.choices,
+            "upload_form": DocumentUploadForm(),
+            "today": timezone.localdate(),
+            "back_url": reverse("accounts:branch_monitoring"),
+        },
     )
 
 
