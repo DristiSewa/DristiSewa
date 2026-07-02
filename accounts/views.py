@@ -1379,7 +1379,9 @@ def branch_monitoring(request):
     from students.models import Student
 
     user_branch = request.user.branch
-    students = Student.objects.select_related("user", "user__branch", "assigned_to").prefetch_related(
+    students = Student.objects.select_related(
+        "user", "user__branch", "assigned_to", "assigned_by"
+    ).prefetch_related(
         "applications", "documents"
     ).filter(is_archived=False, user__branch=user_branch)
 
@@ -1419,7 +1421,7 @@ def branch_monitoring(request):
             )
 
     branch_students = []
-    for student in students.filter(assigned_to__isnull=False).order_by("user__first_name", "user__last_name"):
+    for student in students.order_by("user__first_name", "user__last_name"):
         tracking_status = "completed" if student.is_verified else "pending"
         documents = list(student.documents.all())
         latest_document = documents[0] if documents else None
@@ -1435,7 +1437,7 @@ def branch_monitoring(request):
                 "name": student.user.get_full_name() or student.user.email,
                 "email": student.user.email,
                 "phone": student.user.phone or "—",
-                "assigned_by": student.assigned_to.get_full_name() if student.assigned_to else "Unassigned",
+                "assigned_by": student.assigned_by.get_full_name() if student.assigned_by else "—",
                 "country": student.preferred_country or "N/A",
                 "tracking": tracking_status,
                 "document_label": document_label,
@@ -1443,7 +1445,7 @@ def branch_monitoring(request):
         )
 
     total_students_count = students.count()
-    assigned_students_count = len(branch_students)
+    assigned_students_count = students.filter(assigned_to__isnull=False).count()
 
     return render(
         request,

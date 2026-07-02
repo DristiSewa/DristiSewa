@@ -7,73 +7,34 @@
 {% block title %}Followup Management | DristiSewa{% endblock %}
 
 {% block content %}
-<div class="header-panel"
-     style="display:flex;justify-content:space-between;align-items:center;background:#fff;padding:18px 24px;border-radius:16px;box-shadow:0 2px 10px rgba(0,0,0,.05);margin-bottom:25px;">
+<!-- Stats cards -->
+<div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">
 
-    <div style="display:flex;gap:18px;flex-wrap:wrap;">
-
-        <!-- Total Students -->
-        <div style="background:#dbeafe;border:1px solid #bfdbfe;border-radius:16px;padding:16px 20px;display:flex;align-items:center;gap:15px;min-width:220px;">
-
-            <div style="width:55px;height:55px;background:white;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#2563eb;font-size:20px;">
-                <i class="fas fa-users"></i>
-            </div>
-
-            <div>
-                <p style="margin:0;font-size:14px;font-weight:600;color:#374151;">
-                    Total Students
-                </p>
-
-                <p style="margin:4px 0 0;font-size:28px;font-weight:800;color:#111827;">
-                    {{ total_branch_students }}
-                </p>
-            </div>
-
-        </div>
-
-        <!-- Pending -->
-        <a href="{% url 'accounts:pending_followups' %}"
-           style="background:#fef3c7;border:1px solid #fde68a;border-radius:16px;padding:16px 20px;display:flex;align-items:center;gap:15px;min-width:220px;text-decoration:none;">
-
-            <div style="width:55px;height:55px;background:white;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#d97706;font-size:20px;">
-                <i class="fas fa-list-ul"></i>
-            </div>
-
-            <div>
-                <p style="margin:0;font-size:14px;font-weight:600;color:#374151;">
-                    Pending Followups
-                </p>
-
-                <p style="margin:4px 0 0;font-size:28px;font-weight:800;color:#111827;">
-                    {{ pending_trackers }}
-                </p>
-            </div>
-
-        </a>
-
-        <!-- Completed -->
-        <a href="{% url 'accounts:complete_followups' %}"
-           style="background:#fce7f3;border:1px solid #fbcfe8;border-radius:16px;padding:16px 20px;display:flex;align-items:center;gap:15px;min-width:220px;text-decoration:none;">
-
-            <div style="width:55px;height:55px;background:white;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#db2777;font-size:20px;">
-                <i class="fas fa-file-alt"></i>
-            </div>
-
-            <div>
-                <p style="margin:0;font-size:14px;font-weight:600;color:#374151;">
-                    Completed Followups
-                </p>
-
-                <p style="margin:4px 0 0;font-size:28px;font-weight:800;color:#111827;">
-                    {{ completed_trackers }}
-                </p>
-            </div>
-
-        </a>
-
+    <!-- Total Students -->
+    <div class="bg-white border border-slate-100 rounded-2xl p-4 shadow-sm">
+        <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">
+            <i class="fas fa-users mr-1"></i> Total Students
+        </p>
+        <p class="text-3xl font-black text-slate-800">{{ total_branch_students }}</p>
     </div>
 
+    <!-- Pending Followups -->
+    <a href="{% url 'accounts:pending_followups' %}" class="bg-white border border-slate-100 rounded-2xl p-4 shadow-sm hover:shadow-md transition">
+        <p class="text-[10px] font-bold uppercase tracking-widest text-amber-500 mb-1">
+            <i class="fas fa-clock mr-1"></i> Pending Followups
+        </p>
+        <p class="text-3xl font-black text-amber-600">{{ pending_trackers }}</p>
+        <p class="text-[10px] text-slate-400 mt-1">Requires attention</p>
+    </a>
 
+    <!-- Completed Followups -->
+    <a href="{% url 'accounts:complete_followups' %}" class="bg-white border border-slate-100 rounded-2xl p-4 shadow-sm hover:shadow-md transition">
+        <p class="text-[10px] font-bold uppercase tracking-widest text-emerald-500 mb-1">
+            <i class="fas fa-circle-check mr-1"></i> Completed Followups
+        </p>
+        <p class="text-3xl font-black text-emerald-600">{{ completed_trackers }}</p>
+        <p class="text-[10px] text-slate-400 mt-1">No pending follow-up</p>
+    </a>
 
 </div>
 
