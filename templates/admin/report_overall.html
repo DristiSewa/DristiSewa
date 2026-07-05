@@ -4,7 +4,7 @@
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'css/pages/admin/report_overall.css' %}">
 {% endblock %}
-{% block title %}Network-Wide Report | DristiSewa{% endblock %}
+{% block title %}Overall Report | DristiSewa{% endblock %}
 
 {% block content %}
 
@@ -13,7 +13,7 @@
   <div class="rpt-actions">
     <a href="{% url 'accounts:admin_dashboard' %}" class="btn-back"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</a>
     <a href="{% url 'accounts:admin_download_report' %}" class="btn-dl"><i class="fa-solid fa-file-arrow-down"></i> Download PDF</a>
-    <button onclick="window.print()" class="btn-dl" style="background:#475569;border:none;cursor:pointer;"><i class="fa-solid fa-print"></i> Print</button>
+   
   </div>
 
   <!-- Letterhead -->
@@ -22,7 +22,7 @@
     <span class="rpt-date">Report Date: {{ today|date:"d F Y" }}</span>
   </div>
   <hr class="rpt-rule">
-  <h1 class="rpt-title">Network-Wide Performance Report</h1>
+  <h1 class="rpt-title">Overall Performance Report</h1>
   <p class="rpt-meta">
     Prepared by: {{ prepared_by }} &nbsp;|&nbsp;
     Managers: {{ total_managers }} &nbsp;|&nbsp;
@@ -67,7 +67,7 @@
   </div>
 
   <!-- Application Pipeline -->
-  <div class="rpt-section">Application Pipeline (Network-Wide)</div>
+  <div class="rpt-section">Application Pipeline (Overall)</div>
   <table class="rpt-table">
     <thead><tr><th>Stage</th><th>Count</th></tr></thead>
     <tbody>
@@ -113,7 +113,7 @@
 
   <!-- Top Destinations -->
   {% if top_destinations %}
-  <div class="rpt-section">Top Destination Countries (Network-Wide)</div>
+  <div class="rpt-section">Top Destination Countries (Overall)</div>
   <table class="rpt-table">
     <thead><tr><th>#</th><th>Country</th><th>Students</th></tr></thead>
     <tbody>
@@ -131,7 +131,7 @@
   <!-- Footer -->
   <div class="rpt-footer">
     <span>Confidential — DristiSewa Consultancy</span>
-    <span>Network-Wide Report &nbsp;|&nbsp; Generated {{ today|date:"d F Y" }}</span>
+    <span>Overall &nbsp;|&nbsp; Generated {{ today|date:"d F Y" }}</span>
   </div>
 </div>
 {% endblock %}
