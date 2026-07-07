@@ -105,7 +105,6 @@
                         <th class="px-6 py-4 cursor-pointer select-none hover:text-slate-700 transition" onclick="sortManagerTable(3, this)">Staff Name <i class="fa-solid fa-sort text-xs text-slate-300 ml-1"></i></th>
                         <th class="px-6 py-4 cursor-pointer select-none hover:text-slate-700 transition" onclick="sortManagerTable(4, this)">Email <i class="fa-solid fa-sort text-xs text-slate-300 ml-1"></i></th>
                         <th class="px-6 py-4">Experience Details</th>
-                        <th class="px-6 py-4">Status</th>
                         <th class="px-6 py-4">Actions</th>
                     </tr>
                 </thead>
@@ -155,24 +154,6 @@
 
                         <td class="px-6 py-4 text-base text-slate-600 max-w-xs truncate" title="{{ manager.experience_details }}">
                             {{ manager.experience_details|default:"—" }}
-                        </td>
-                        <td class="px-6 py-4">
-                            <form method="post" action="{% url 'accounts:toggle_user' manager.id %}">
-                                {% csrf_token %}
-                                {% if manager.is_active %}
-                                    <button type="submit"
-                                            onclick="return confirm('Suspend {{ manager.get_full_name|escapejs }}?')"
-                                            class="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition">
-                                        <i class="fa-solid fa-circle-check"></i> Active
-                                    </button>
-                                {% else %}
-                                    <button type="submit"
-                                            onclick="return confirm('Reactivate {{ manager.get_full_name|escapejs }}?')"
-                                            class="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-red-50 text-red-600 border border-red-200 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200 transition">
-                                        <i class="fa-solid fa-ban"></i> Suspended
-                                    </button>
-                                {% endif %}
-                            </form>
                         </td>
                         <td class="px-6 py-4">
                             <form method="post" action="{% url 'accounts:delete_user' manager.id %}">
@@ -478,5 +459,5 @@
     <script>
         const CREATE_BRANCH_URL = "{% url 'branches:create_branch_json' %}";
     </script>
-    <script src="{% static 'js/pages/admin/branch_staff.js' %}?v=2"></script>
+    <script src="{% static 'js/pages/admin/branch_staff.js' %}?v=4"></script>
 {% endblock %}

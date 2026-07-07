@@ -30,7 +30,7 @@ def create_branch_json(request):
         return JsonResponse({"success": False, "error": "Branch name is required."}, status=400)
 
     if Branch.objects.filter(name__iexact=name).exists():
-        return JsonResponse({"success": False, "error": "A branch with this name already exists."}, status=400)
+        return JsonResponse({"success": False, "error": "Branch already exists."}, status=400)
 
     base_code = "".join(ch for ch in name.upper() if ch.isalnum())[:8] or "BR"
     code = base_code

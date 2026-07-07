@@ -11,9 +11,14 @@ from students.models import Student
 from .forms import ApplicationStatusUpdateForm
 
 
-def _get_branch_scoped_student(request, pk):
-    """Fetch a single student, scoped to the front-desk user's branch."""
+def _get_branch_scoped_student(request, pk, prefetch=None):
+    """Fetch a single student, scoped to the front-desk user's branch.
+
+    Pass `prefetch` as a list of related names to prefetch in one go.
+    """
     queryset = Student.objects.select_related("user", "user__branch")
+    if prefetch:
+        queryset = queryset.prefetch_related(*prefetch)
     queryset = filter_by_branch(request.user, queryset, branch_field="user__branch")
     return get_object_or_404(queryset, pk=pk)
 
@@ -66,18 +71,22 @@ def student_list(request):
 @role_required("FRONTDESK")
 def student_detail(request, pk):
     """View a single student's full profile (Front Desk)."""
-    student = _get_branch_scoped_student(request, pk)
+    student = _get_branch_scoped_student(
+        request, pk, prefetch=["applications", "documents", "followups", "appointments"]
+    )
 
+    # Use the prefetched cache — avoids extra DB hits for each related manager call
+    applications = list(student.applications.all())
     return render(
         request,
         "frontdesk/student_detail.html",
         {
             "student": student,
-            "applications": student.applications.all(),
+            "applications": applications,
             "documents": student.documents.all(),
             "followups": student.followups.all(),
             "appointments": student.appointments.all(),
-            "latest_application": student.applications.first(),
+            "latest_application": applications[0] if applications else None,
         },
     )
 

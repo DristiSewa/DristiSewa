@@ -72,7 +72,13 @@ def archived_students(request):
 @role_required("ADMIN", "MANAGER", "FRONTDESK")
 def student_profile_view(request, pk):
     student = get_object_or_404(
-        filter_by_branch(request.user, Student.objects.select_related("user", "user__branch"), branch_field="user__branch"),
+        filter_by_branch(
+            request.user,
+            Student.objects.select_related("user", "user__branch").prefetch_related(
+                "documents", "followups", "appointments"
+            ),
+            branch_field="user__branch",
+        ),
         pk=pk,
     )
 

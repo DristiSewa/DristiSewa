@@ -148,27 +148,37 @@ def advanced_analytics(request):
 
     application_trend = []  # kept for template compat
 
-    # Branch comparison
+    # Branch comparison — batched into 3 queries instead of N*4
+    _b_student_map = {
+        row["user__branch_id"]: row["cnt"]
+        for row in Student.objects.filter(user__branch__in=branches_qs, is_archived=False)
+        .values("user__branch_id")
+        .annotate(cnt=Count("id"))
+    }
+    _b_app_map = {
+        row["student__user__branch_id"]: row
+        for row in Application.objects.filter(student__user__branch__in=branches_qs)
+        .values("student__user__branch_id")
+        .annotate(
+            total=Count("id"),
+            visas=Count("id", filter=Q(status=Application.Status.VISA_GRANTED)),
+            decided=Count(
+                "id",
+                filter=Q(status__in=[Application.Status.VISA_GRANTED, Application.Status.REJECTED]),
+            ),
+        )
+    }
     branch_stats = []
-    for branch in branches_qs.order_by('name'):
-        branch_students = Student.objects.filter(
-            user__branch=branch,
-            is_archived=False
-        ).count()
-
-        branch_apps = Application.objects.filter(student__user__branch=branch)
-        branch_visa_granted = branch_apps.filter(status=Application.Status.VISA_GRANTED).count()
-        branch_decided = branch_apps.filter(
-            status__in=[Application.Status.VISA_GRANTED, Application.Status.REJECTED]
-        ).count()
-        branch_visa_rate = round((branch_visa_granted / branch_decided * 100), 1) if branch_decided else 0
-
+    for branch in branches_qs.order_by("name"):
+        bmap = _b_app_map.get(branch.pk, {})
+        visa_granted = bmap.get("visas", 0)
+        decided = bmap.get("decided", 0)
         branch_stats.append({
-            'name': branch.name,
-            'students': branch_students,
-            'applications': branch_apps.count(),
-            'visas_granted': branch_visa_granted,
-            'visa_rate': branch_visa_rate,
+            "name": branch.name,
+            "students": _b_student_map.get(branch.pk, 0),
+            "applications": bmap.get("total", 0),
+            "visas_granted": visa_granted,
+            "visa_rate": round((visa_granted / decided * 100), 1) if decided else 0,
         })
 
     # Recent activity
@@ -176,30 +186,22 @@ def advanced_analytics(request):
         branch__in=branches_qs
     ).select_related('user', 'branch')[:20]
 
-    # Document status breakdown
+    # Document status breakdown — 1 query with conditional counts
+    _doc_counts = Document.objects.filter(student__user__branch__in=branches_qs).aggregate(
+        pending=Count("id", filter=Q(status=Document.Status.PENDING)),
+        approved=Count("id", filter=Q(status=Document.Status.APPROVED)),
+        rejected=Count("id", filter=Q(status=Document.Status.REJECTED)),
+    )
     document_status = {
-        'Pending': Document.objects.filter(
-            student__user__branch__in=branches_qs,
-            status=Document.Status.PENDING
-        ).count(),
-        'Approved': Document.objects.filter(
-            student__user__branch__in=branches_qs,
-            status=Document.Status.APPROVED
-        ).count(),
-        'Rejected': Document.objects.filter(
-            student__user__branch__in=branches_qs,
-            status=Document.Status.REJECTED
-        ).count(),
+        "Pending": _doc_counts["pending"],
+        "Approved": _doc_counts["approved"],
+        "Rejected": _doc_counts["rejected"],
     }
 
-    # Application status breakdown
-    application_status = {}
-    for status_val, status_label in Application.Status.choices:
-        count = Application.objects.filter(
-            student__user__branch__in=branches_qs,
-            status=status_val
-        ).count()
-        application_status[status_label] = count
+    # Application status breakdown — 1 query with conditional counts
+    _status_filters = {label: Count("id", filter=Q(status=val)) for val, label in Application.Status.choices}
+    _app_counts = Application.objects.filter(student__user__branch__in=branches_qs).aggregate(**_status_filters)
+    application_status = {label: _app_counts[label] for label in _app_counts}
 
     return render(request, 'analytics/advanced_dashboard.html', {
         'total_students': total_students,
@@ -310,35 +312,44 @@ def user_performance_analytics(request):
         is_active=True
     )
 
-    staff_performance = []
-    for user in staff_users.order_by('first_name', 'last_name'):
-        metrics = UserEngagementMetrics.objects.filter(
-            user=user,
-            date__gte=start_date
-        ).aggregate(
-            total_logins=Sum('login_count'),
-            total_actions=Sum('total_actions'),
-            students_processed=Sum('students_processed'),
-            documents_reviewed=Sum('documents_reviewed'),
-            followups_completed=Sum('followups_completed'),
-            avg_response_time=Avg('average_response_time_hours'),
+    # Batch all engagement metrics in 2 queries instead of 2N
+    _metrics_map = {
+        row["user_id"]: row
+        for row in UserEngagementMetrics.objects.filter(
+            user__in=staff_users, date__gte=start_date
         )
+        .values("user_id")
+        .annotate(
+            total_logins=Sum("login_count"),
+            total_actions=Sum("total_actions"),
+            students_processed=Sum("students_processed"),
+            documents_reviewed=Sum("documents_reviewed"),
+            followups_completed=Sum("followups_completed"),
+            avg_response_time=Avg("average_response_time_hours"),
+        )
+    }
+    _activity_map = {
+        row["user_id"]: row["cnt"]
+        for row in DetailedActivityLog.objects.filter(
+            user__in=staff_users, created_at__date__gte=start_date
+        )
+        .values("user_id")
+        .annotate(cnt=Count("id"))
+    }
 
-        # Also get from activity logs
-        actions = DetailedActivityLog.objects.filter(
-            user=user,
-            created_at__date__gte=start_date
-        ).count()
-
+    staff_performance = []
+    for user in staff_users.order_by("first_name", "last_name"):
+        m = _metrics_map.get(user.pk, {})
+        actions = m.get("total_actions") or _activity_map.get(user.pk, 0)
         staff_performance.append({
-            'user': user,
-            'logins': metrics['total_logins'] or 0,
-            'actions': metrics['total_actions'] or actions or 0,
-            'students_processed': metrics['students_processed'] or 0,
-            'documents_reviewed': metrics['documents_reviewed'] or 0,
-            'followups_completed': metrics['followups_completed'] or 0,
-            'avg_response_time': round(metrics['avg_response_time'] or 0, 1),
-            'is_online': user.is_online,
+            "user": user,
+            "logins": m.get("total_logins") or 0,
+            "actions": actions or 0,
+            "students_processed": m.get("students_processed") or 0,
+            "documents_reviewed": m.get("documents_reviewed") or 0,
+            "followups_completed": m.get("followups_completed") or 0,
+            "avg_response_time": round(m.get("avg_response_time") or 0, 1),
+            "is_online": user.is_online,
         })
 
     # Sort by most active

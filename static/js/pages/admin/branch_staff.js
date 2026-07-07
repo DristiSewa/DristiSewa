@@ -54,8 +54,8 @@ function openDeletePrompt(deleteUrl, targetName) {
         const branchName = nameInput.value.trim();
         const location = locInput.value.trim();
 
-        if (!branchName || !location) {
-            alert('Please fill out both Branch Name and Location fields.');
+        if (!branchName) {
+            alert('Branch name is required.');
             return;
         }
 
@@ -68,32 +68,24 @@ function openDeletePrompt(deleteUrl, targetName) {
             body: JSON.stringify({ 'branch_name': branchName, 'location': location })
         })
         .then(response => {
-            if (!response.ok) throw new Error('Network error setup.');
-            return response.json();
+            const contentType = response.headers.get('content-type') || '';
+            if (contentType.includes('application/json')) {
+                return response.json();
+            }
+            return response.text().then(text => {
+                throw new Error('Server returned non-JSON response (status ' + response.status + '). Check console for details.\n\n' + text.slice(0, 200));
+            });
         })
         .then(data => {
             if (data.success) {
-                const selectElement = document.querySelector('#branchSelectWrapper select');
-                if (selectElement) {
-                    const newOption = document.createElement('option');
-                    newOption.value = data.branch_id;
-                    newOption.text = `${branchName} (${location})`;
-                    newOption.selected = true;
-                    selectElement.add(newOption);
-                }
-
-                addBranchToPage(data.branch_id, data.name, data.address || location, data.code);
-
-                nameInput.value = '';
-                locInput.value = '';
-                toggleQuickBranchForm();
+                window.location.reload();
             } else {
-                alert('Error creating branch: ' + (data.error || 'Unknown event.'));
+                alert(data.error || 'Error creating branch.');
             }
         })
         .catch(err => {
-            console.error(err);
-            alert('Failed to save branch configuration record.');
+            console.error('Branch creation error:', err);
+            alert('Error: ' + err.message);
         });
     }
 

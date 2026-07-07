@@ -304,62 +304,140 @@ def _student_growth_trend():
 
 @role_required("ADMIN")
 def admin_dashboard(request):
+    from django.db.models import Count, Q
     from branches.models import Branch
     from followups.models import FollowUp
     from students.models import Student
 
     try:
         from activity.models import ActivityLog
-
         recent_activity = ActivityLog.objects.select_related("user")[:5]
     except Exception:
         recent_activity = []
 
-    active_branches = Branch.objects.filter(is_active=True)
-    branch_counts = []
-    for branch in active_branches:
-        branch_counts.append((branch, Student.objects.filter(user__branch=branch).count()))
-    max_count = max((count for _, count in branch_counts), default=0)
-
-    branch_performance = []
-    for branch, count in sorted(branch_counts, key=lambda item: item[1], reverse=True)[:5]:
-        percent = round((count / max_count) * 100) if max_count else 0
-        branch_performance.append({"name": branch.name, "count": count, "percent": percent})
-
-    branch_staff_summary = []
-    for branch in active_branches.order_by("name"):
-        manager_count = User.objects.filter(branch=branch, role=User.Role.MANAGER).count()
-        frontdesk_count = User.objects.filter(branch=branch, role=User.Role.FRONTDESK).count()
-        branch_staff_summary.append(
-            {
-                "id": branch.id,
-                "name": branch.name,
-                "manager_count": manager_count,
-                "frontdesk_count": frontdesk_count,
-                "total_staff": manager_count + frontdesk_count,
-            }
+    # Single query: active branches annotated with student + staff counts
+    active_branches = list(
+        Branch.objects.filter(is_active=True)
+        .annotate(
+            student_count=Count("staff__student", distinct=True, filter=Q(staff__role=User.Role.STUDENT)),
+            manager_count=Count("staff", distinct=True, filter=Q(staff__role=User.Role.MANAGER)),
+            frontdesk_count=Count("staff", distinct=True, filter=Q(staff__role=User.Role.FRONTDESK)),
         )
+        .order_by("name")
+    )
+
+    # Student counts per branch via one query
+    student_counts_qs = (
+        Student.objects.filter(user__branch__in=active_branches)
+        .values("user__branch_id")
+        .annotate(cnt=Count("id"))
+    )
+    student_count_map = {row["user__branch_id"]: row["cnt"] for row in student_counts_qs}
+
+    branch_counts = [(b, student_count_map.get(b.id, 0)) for b in active_branches]
+    max_count = max((c for _, c in branch_counts), default=0)
+
+    branch_performance = [
+        {"name": b.name, "count": c, "percent": round((c / max_count) * 100) if max_count else 0}
+        for b, c in sorted(branch_counts, key=lambda x: x[1], reverse=True)[:5]
+    ]
+
+    branch_staff_summary = [
+        {
+            "id": b.id,
+            "name": b.name,
+            "manager_count": b.manager_count,
+            "frontdesk_count": b.frontdesk_count,
+            "total_staff": b.manager_count + b.frontdesk_count,
+        }
+        for b in active_branches
+    ]
+
+    total_managers = sum(b.manager_count for b in active_branches)
+    total_frontdesk = sum(b.frontdesk_count for b in active_branches)
 
     return render(
         request,
         "admin/overview.html",
         {
             "student_count": Student.objects.count(),
-            "branch_count": active_branches.count(),
+            "branch_count": len(active_branches),
             "pending_followups": FollowUp.objects.filter(is_done=False).count(),
             "growth_trend": _student_growth_trend(),
             "branch_performance": branch_performance,
             "recent_activity": recent_activity,
             "branch_staff_summary": branch_staff_summary,
-            "total_managers": User.objects.filter(role=User.Role.MANAGER).count(),
-            "total_frontdesk": User.objects.filter(role=User.Role.FRONTDESK).count(),
+            "total_managers": total_managers,
+            "total_frontdesk": total_frontdesk,
         },
     )
 
 
+def _staff_performance_for_branch(branch, students_qs, applications_qs):
+    """Return staff-performance list for a branch using batched queries (no N+1)."""
+    from django.db.models import Count, Q
+    from applications.models import Application
+    from followups.models import FollowUp
+
+    offer_or_beyond = [
+        Application.Status.OFFER_LETTER_RECEIVED,
+        Application.Status.COE_APPLIED,
+        Application.Status.COE_RECEIVED,
+        Application.Status.VISA_GRANTED,
+    ]
+    coe_or_beyond = [Application.Status.COE_RECEIVED, Application.Status.VISA_GRANTED]
+
+    frontdesk_users = list(
+        User.objects.filter(branch=branch, role=User.Role.FRONTDESK)
+    ) if branch else []
+    if not frontdesk_users:
+        return []
+
+    fd_ids = [u.pk for u in frontdesk_users]
+
+    # Assigned student counts per staff — 1 query
+    assigned_map = {
+        row["assigned_to_id"]: row["cnt"]
+        for row in students_qs.filter(assigned_to_id__in=fd_ids)
+        .values("assigned_to_id").annotate(cnt=Count("id"))
+    }
+
+    # Application status counts per staff — 1 query with conditional aggregation
+    app_stats = {
+        row["student__assigned_to_id"]: row
+        for row in applications_qs.filter(student__assigned_to_id__in=fd_ids)
+        .values("student__assigned_to_id")
+        .annotate(
+            offers=Count("id", filter=Q(status__in=offer_or_beyond)),
+            coe=Count("id", filter=Q(status__in=coe_or_beyond)),
+            visas=Count("id", filter=Q(status=Application.Status.VISA_GRANTED)),
+        )
+    }
+
+    result = []
+    for staff_user in frontdesk_users:
+        assigned = assigned_map.get(staff_user.pk, 0)
+        stats = app_stats.get(staff_user.pk, {})
+        visas = stats.get("visas", 0)
+        result.append({
+            "name": staff_user.get_full_name() or staff_user.email,
+            "assigned": assigned,
+            "assigned_cases": assigned,
+            "offers": stats.get("offers", 0),
+            "offers_secured": stats.get("offers", 0),
+            "coe": stats.get("coe", 0),
+            "coe_issued": stats.get("coe", 0),
+            "visas": visas,
+            "visas_granted": visas,
+            "conv": round((visas / assigned) * 100, 1) if assigned else 0,
+            "conversion": round((visas / assigned) * 100, 1) if assigned else 0,
+        })
+    return result
+
+
 def _build_overall_report_data(user):
     """Shared data builder for overall admin report (view + PDF)."""
-    from django.db.models import Count
+    from django.db.models import Count, Q
     from django.utils import timezone
     from applications.models import Application
     from branches.models import Branch
@@ -393,17 +471,36 @@ def _build_overall_report_data(user):
         .order_by("-total")[:5]
     )
 
+    # Batch all per-branch stats in 3 queries instead of 4N
+    b_student_map = {
+        row["user__branch_id"]: row["cnt"]
+        for row in all_students.values("user__branch_id").annotate(cnt=Count("id"))
+    }
+    b_app_map = {
+        row["student__user__branch_id"]: row
+        for row in all_applications.values("student__user__branch_id").annotate(
+            apps=Count("id"),
+            visas=Count("id", filter=Q(status=Application.Status.VISA_GRANTED)),
+        )
+    }
+    b_manager_map = {
+        row["branch_id"]: row["cnt"]
+        for row in User.objects.filter(role=User.Role.MANAGER, branch__in=active_branches)
+        .values("branch_id").annotate(cnt=Count("id"))
+    }
+
     branch_summary = []
     for branch in active_branches.order_by("name"):
-        b_students = all_students.filter(user__branch=branch).count()
-        b_apps     = all_applications.filter(student__user__branch=branch).count()
-        b_visas    = all_applications.filter(student__user__branch=branch, status=Application.Status.VISA_GRANTED).count()
-        b_managers = User.objects.filter(branch=branch, role=User.Role.MANAGER).count()
-        b_success  = round((b_visas / b_apps) * 100, 1) if b_apps else 0
+        b_apps  = b_app_map.get(branch.id, {}).get("apps", 0)
+        b_visas = b_app_map.get(branch.id, {}).get("visas", 0)
+        b_success = round((b_visas / b_apps) * 100, 1) if b_apps else 0
         branch_summary.append({
             "id": branch.id, "name": branch.name,
-            "students": b_students, "applications": b_apps,
-            "visas": b_visas, "managers": b_managers, "success_rate": b_success,
+            "students": b_student_map.get(branch.id, 0),
+            "applications": b_apps,
+            "visas": b_visas,
+            "managers": b_manager_map.get(branch.id, 0),
+            "success_rate": b_success,
         })
 
     return {
@@ -648,24 +745,9 @@ def _build_branch_report_data(branch, user):
         .order_by("-total")[:5]
     )
 
-    offer_or_beyond = [
-        Application.Status.OFFER_LETTER_RECEIVED, Application.Status.COE_APPLIED,
-        Application.Status.COE_RECEIVED, Application.Status.VISA_GRANTED,
-    ]
-    coe_or_beyond = [Application.Status.COE_RECEIVED, Application.Status.VISA_GRANTED]
-    staff_performance = []
-    for staff_user in frontdesk_qs:
-        staff_apps = applications_qs.filter(student__assigned_to=staff_user)
-        assigned = students_qs.filter(assigned_to=staff_user).count()
-        offers  = staff_apps.filter(status__in=offer_or_beyond).count()
-        coe     = staff_apps.filter(status__in=coe_or_beyond).count()
-        visas   = staff_apps.filter(status=Application.Status.VISA_GRANTED).count()
-        conv    = round((visas / assigned) * 100, 1) if assigned else 0
-        staff_performance.append({
-            "name": staff_user.get_full_name() or staff_user.email,
-            "assigned": assigned, "offers": offers,
-            "coe": coe, "visas": visas, "conv": conv,
-        })
+    staff_performance = _staff_performance_for_branch(branch, students_qs, applications_qs)
+    manager_count = managers_qs.count()
+    frontdesk_count = frontdesk_qs.count()
 
     return {
         "today": today,
@@ -680,8 +762,8 @@ def _build_branch_report_data(branch, user):
         "offer_letter": offer_letter,
         "coe_applied": coe_applied,
         "pending_fups": pending_fups,
-        "manager_count": managers_qs.count(),
-        "frontdesk_count": frontdesk_qs.count(),
+        "manager_count": manager_count,
+        "frontdesk_count": frontdesk_count,
         "top_destinations": top_destinations,
         "staff_performance": staff_performance,
     }
@@ -746,23 +828,10 @@ def admin_download_branch_report(request, branch_id):
         .order_by("-total")[:5]
     )
 
-    offer_or_beyond = [
-        Application.Status.OFFER_LETTER_RECEIVED, Application.Status.COE_APPLIED,
-        Application.Status.COE_RECEIVED, Application.Status.VISA_GRANTED,
+    staff_rows = [
+        [s["name"], str(s["assigned"]), str(s["offers"]), str(s["coe"]), str(s["visas"]), f"{s['conv']}%"]
+        for s in _staff_performance_for_branch(branch, students_qs, applications_qs)
     ]
-    coe_or_beyond = [Application.Status.COE_RECEIVED, Application.Status.VISA_GRANTED]
-    staff_rows = []
-    for staff_user in frontdesk_users:
-        staff_apps = applications_qs.filter(student__assigned_to=staff_user)
-        assigned = students_qs.filter(assigned_to=staff_user).count()
-        offers  = staff_apps.filter(status__in=offer_or_beyond).count()
-        coe     = staff_apps.filter(status__in=coe_or_beyond).count()
-        visas   = staff_apps.filter(status=Application.Status.VISA_GRANTED).count()
-        conv    = round((visas / assigned) * 100, 1) if assigned else 0
-        staff_rows.append([
-            staff_user.get_full_name() or staff_user.email,
-            str(assigned), str(offers), str(coe), str(visas), f"{conv}%",
-        ])
 
     # ── Colours & styles ────────────────────────────────────────────────────
     PRIMARY    = colors.HexColor("#2b35d2")
@@ -1001,38 +1070,57 @@ def branch_staff(request):
                 require_password=False,
             )
 
-    active_branches = Branch.objects.filter(is_active=True).order_by("name")
+    from django.db.models import Count, Q
+
+    active_branches = list(Branch.objects.filter(is_active=True).order_by("name"))
     inactive_branches = Branch.objects.filter(is_active=False).order_by("name")
 
     branches_for_summary = active_branches
     if selected_branch:
-        branches_for_summary = active_branches.filter(pk=selected_branch)
+        branches_for_summary = [b for b in active_branches if str(b.pk) == selected_branch]
+
+    branch_ids = [b.pk for b in branches_for_summary]
+
+    # Fetch all managers and frontdesk in 2 queries instead of 2 per branch
+    all_staff = User.objects.filter(
+        branch_id__in=branch_ids,
+        role__in=[User.Role.MANAGER, User.Role.FRONTDESK],
+    ).order_by("first_name", "last_name")
+
+    managers_by_branch = {}
+    frontdesk_by_branch = {}
+    for staff_user in all_staff:
+        if staff_user.role == User.Role.MANAGER:
+            managers_by_branch.setdefault(staff_user.branch_id, []).append(staff_user)
+        else:
+            frontdesk_by_branch.setdefault(staff_user.branch_id, []).append(staff_user)
+
+    # Fetch all student counts in 1 query instead of 1 per branch
+    student_counts = {
+        row["user__branch_id"]: row["count"]
+        for row in Student.objects.filter(user__branch_id__in=branch_ids)
+        .values("user__branch_id")
+        .annotate(count=Count("id"))
+    }
 
     branch_summary = []
     for branch in branches_for_summary:
-        branch_managers = list(User.objects.filter(branch=branch, role=User.Role.MANAGER))
-        branch_frontdesk = list(User.objects.filter(branch=branch, role=User.Role.FRONTDESK))
-        manager_count = len(branch_managers)
-        frontdesk_count = len(branch_frontdesk)
-        student_count = Student.objects.filter(user__branch=branch).count()
+        branch_managers = managers_by_branch.get(branch.pk, [])
+        branch_frontdesk = frontdesk_by_branch.get(branch.pk, [])
         branch_summary.append(
             {
                 "branch": branch,
                 "managers": branch_managers,
                 "frontdesk_staff": branch_frontdesk,
-                "manager_count": manager_count,
-                "frontdesk_count": frontdesk_count,
-                "total_staff": manager_count + frontdesk_count,
-                "student_count": student_count,
+                "manager_count": len(branch_managers),
+                "frontdesk_count": len(branch_frontdesk),
+                "total_staff": len(branch_managers) + len(branch_frontdesk),
+                "student_count": student_counts.get(branch.pk, 0),
             }
         )
 
-    if selected_branch:
-        total_managers = sum(item["manager_count"] for item in branch_summary)
-        total_frontdesk = sum(item["frontdesk_count"] for item in branch_summary)
-    else:
-        total_managers = User.objects.filter(role=User.Role.MANAGER).count()
-        total_frontdesk = User.objects.filter(role=User.Role.FRONTDESK).count()
+    total_managers = sum(item["manager_count"] for item in branch_summary)
+    total_frontdesk = sum(item["frontdesk_count"] for item in branch_summary)
 
     return render(
         request,
@@ -1041,7 +1129,7 @@ def branch_staff(request):
             "branches": active_branches,
             "selected_branch": selected_branch,
             "branch_summary": branch_summary,
-            "branch_count": active_branches.count(),
+            "branch_count": len(active_branches),
             "inactive_branches": inactive_branches,
             "total_managers": total_managers,
             "total_frontdesk": total_frontdesk,
@@ -1150,7 +1238,11 @@ def student_management(request):
     from branches.models import Branch
     from students.models import Student
 
-    students_qs = Student.objects.select_related("user", "user__branch").prefetch_related("followups").filter(is_archived=False)
+    from django.db.models import Prefetch
+    from followups.models import FollowUp as _FollowUp
+    students_qs = Student.objects.select_related("user", "user__branch").prefetch_related(
+        Prefetch("followups", queryset=_FollowUp.objects.filter(is_done=False).order_by("scheduled_date"), to_attr="open_followups")
+    ).filter(is_archived=False)
 
     query = request.GET.get("q", "").strip()
     if query:
@@ -1178,7 +1270,7 @@ def student_management(request):
     counts = {"due": 0, "upcoming": 0, "completed": 0}
 
     for student in students_qs.order_by("user__first_name", "user__last_name").distinct():
-        next_followup = student.followups.filter(is_done=False).order_by("scheduled_date").first()
+        next_followup = student.open_followups[0] if student.open_followups else None
         if next_followup and next_followup.scheduled_date:
             if next_followup.scheduled_date < today:
                 follow_up_status = "due"
@@ -1394,28 +1486,45 @@ def branch_monitoring(request):
 
     front_desk_staff = []
     if user_branch is not None:
-        frontdesk_users = User.objects.filter(branch=user_branch, role=User.Role.FRONTDESK)
-        for staff_user in frontdesk_users:
-            assigned_students = Student.objects.filter(
-                assigned_to=staff_user, user__branch=user_branch
+        from django.db.models import Count, Q
+        frontdesk_users = list(User.objects.filter(branch=user_branch, role=User.Role.FRONTDESK))
+        fd_ids = [u.pk for u in frontdesk_users]
+
+        # Batch student counts per frontdesk user — 2 queries instead of 2N
+        assigned_counts = {
+            row["assigned_to_id"]: row["cnt"]
+            for row in Student.objects.filter(
+                assigned_to_id__in=fd_ids, user__branch=user_branch
+            ).values("assigned_to_id").annotate(cnt=Count("id"))
+        }
+        verified_counts = {
+            row["assigned_to_id"]: row["cnt"]
+            for row in Student.objects.filter(
+                assigned_to_id__in=fd_ids, user__branch=user_branch, is_verified=True
+            ).values("assigned_to_id").annotate(cnt=Count("id"))
+        }
+        # Batch followup counts — 1 query with conditional aggregation
+        followup_counts = {
+            row["assigned_to_id"]: row
+            for row in FollowUp.objects.filter(
+                assigned_to_id__in=fd_ids, student__user__branch=user_branch
+            ).values("assigned_to_id").annotate(
+                pending=Count("id", filter=Q(is_done=False)),
+                completed=Count("id", filter=Q(is_done=True)),
             )
-            staff_students = assigned_students.count()
-            verified = assigned_students.filter(is_verified=True).count()
-            pending = FollowUp.objects.filter(
-                assigned_to=staff_user, student__user__branch=user_branch, is_done=False
-            ).count()
-            completed = FollowUp.objects.filter(
-                assigned_to=staff_user, student__user__branch=user_branch, is_done=True
-            ).count()
+        }
+
+        for staff_user in frontdesk_users:
+            fup = followup_counts.get(staff_user.pk, {})
             front_desk_staff.append(
                 {
                     "name": staff_user.get_full_name() or staff_user.email,
                     "email": staff_user.email,
                     "profile_pic": staff_user.profile_pic.url if staff_user.profile_pic else "",
-                    "students": staff_students,
-                    "verified": verified,
-                    "pending": pending,
-                    "completed": completed,
+                    "students": assigned_counts.get(staff_user.pk, 0),
+                    "verified": verified_counts.get(staff_user.pk, 0),
+                    "pending": fup.get("pending", 0),
+                    "completed": fup.get("completed", 0),
                     "status": "Active" if staff_user.is_online else "Inactive",
                 }
             )
@@ -1701,26 +1810,7 @@ def reports(request):
     ]
     coe_or_beyond = [Application.Status.COE_RECEIVED, Application.Status.VISA_GRANTED]
 
-    staff_performance = []
-    if user_branch is not None:
-        frontdesk_users = User.objects.filter(branch=user_branch, role=User.Role.FRONTDESK)
-        for staff_user in frontdesk_users:
-            staff_apps = applications_qs.filter(student__assigned_to=staff_user)
-            assigned_cases = students_qs.filter(assigned_to=staff_user).count()
-            offers_secured = staff_apps.filter(status__in=offer_or_beyond).count()
-            coe_issued = staff_apps.filter(status__in=coe_or_beyond).count()
-            visas_granted = staff_apps.filter(status=Application.Status.VISA_GRANTED).count()
-            conversion = round((visas_granted / assigned_cases) * 100, 1) if assigned_cases else 0
-            staff_performance.append(
-                {
-                    "name": staff_user.get_full_name() or staff_user.email,
-                    "assigned_cases": assigned_cases,
-                    "offers_secured": offers_secured,
-                    "coe_issued": coe_issued,
-                    "visas_granted": visas_granted,
-                    "conversion": conversion,
-                }
-            )
+    staff_performance = _staff_performance_for_branch(user_branch, students_qs, applications_qs)
 
     return render(
         request,
@@ -1777,20 +1867,7 @@ def manager_view_report(request):
         Application.Status.COE_RECEIVED, Application.Status.VISA_GRANTED,
     ]
     coe_or_beyond = [Application.Status.COE_RECEIVED, Application.Status.VISA_GRANTED]
-    frontdesk_users = User.objects.filter(branch=user_branch, role=User.Role.FRONTDESK) if user_branch else []
-    staff_performance = []
-    for staff_user in frontdesk_users:
-        staff_apps = applications_qs.filter(student__assigned_to=staff_user)
-        assigned = students_qs.filter(assigned_to=staff_user).count()
-        offers   = staff_apps.filter(status__in=offer_or_beyond).count()
-        coe      = staff_apps.filter(status__in=coe_or_beyond).count()
-        visas    = staff_apps.filter(status=Application.Status.VISA_GRANTED).count()
-        conv     = round((visas / assigned) * 100, 1) if assigned else 0
-        staff_performance.append({
-            "name": staff_user.get_full_name() or staff_user.email,
-            "assigned": assigned, "offers": offers,
-            "coe": coe, "visas": visas, "conv": conv,
-        })
+    staff_performance = _staff_performance_for_branch(user_branch, students_qs, applications_qs)
 
     ctx = {
         "today": today,
@@ -1861,24 +1938,7 @@ def download_report(request):
     offer_or_beyond = [Application.Status.OFFER_LETTER_RECEIVED, Application.Status.COE_APPLIED, Application.Status.COE_RECEIVED, Application.Status.VISA_GRANTED]
     coe_or_beyond = [Application.Status.COE_RECEIVED, Application.Status.VISA_GRANTED]
 
-    staff_performance = []
-    if user_branch is not None:
-        frontdesk_users = User.objects.filter(branch=user_branch, role=User.Role.FRONTDESK)
-        for staff_user in frontdesk_users:
-            staff_apps = applications_qs.filter(student__assigned_to=staff_user)
-            assigned_cases = students_qs.filter(assigned_to=staff_user).count()
-            offers_secured = staff_apps.filter(status__in=offer_or_beyond).count()
-            coe_issued = staff_apps.filter(status__in=coe_or_beyond).count()
-            visas_granted = staff_apps.filter(status=Application.Status.VISA_GRANTED).count()
-            conversion = round((visas_granted / assigned_cases) * 100, 1) if assigned_cases else 0
-            staff_performance.append({
-                "name": staff_user.get_full_name() or staff_user.email,
-                "assigned_cases": assigned_cases,
-                "offers_secured": offers_secured,
-                "coe_issued": coe_issued,
-                "visas_granted": visas_granted,
-                "conversion": conversion,
-            })
+    staff_performance = _staff_performance_for_branch(user_branch, students_qs, applications_qs)
 
     # --- Build PDF ---
     buffer = io.BytesIO()

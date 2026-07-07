@@ -13,7 +13,6 @@
   <div class="rpt-actions">
     <a href="{% url 'accounts:admin_dashboard' %}" class="btn-back"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</a>
     <a href="{% url 'accounts:admin_download_report' %}" class="btn-dl"><i class="fa-solid fa-file-arrow-down"></i> Download PDF</a>
-   
   </div>
 
   <!-- Letterhead -->
@@ -131,7 +130,7 @@
   <!-- Footer -->
   <div class="rpt-footer">
     <span>Confidential — DristiSewa Consultancy</span>
-    <span>Overall &nbsp;|&nbsp; Generated {{ today|date:"d F Y" }}</span>
+    <span>Overall Report &nbsp;|&nbsp; Generated {{ today|date:"d F Y" }}</span>
   </div>
 </div>
 {% endblock %}
