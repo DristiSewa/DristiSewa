@@ -3,6 +3,8 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 from accounts.permissions import role_required
 from core.services import filter_by_branch, pipeline_counts
+from documents.forms import DocumentUploadForm
+from documents.models import Document
 from students.models import Student
 from .forms import ApplicationCreateForm, ApplicationForm, ApplicationStudentForm
 from .models import Application
@@ -12,23 +14,24 @@ from .models import Application
 def app_status(request):
     student, _ = Student.objects.get_or_create(user=request.user)
     applications = student.applications.all()
+    documents = student.documents.all()
 
     if request.method == "POST":
-        form = ApplicationStudentForm(request.POST)
-        if form.is_valid():
-            application = form.save(commit=False)
-            application.student = student
-            application.save()
-            messages.success(request, "Application submitted successfully.")
+        doc_form = DocumentUploadForm(request.POST, request.FILES)
+        if doc_form.is_valid():
+            doc = doc_form.save(commit=False)
+            doc.student = student
+            doc.save()
+            messages.success(request, "Document uploaded successfully.")
             return redirect("applications:app_status")
         messages.error(request, "Please correct the errors below.")
     else:
-        form = ApplicationStudentForm()
+        doc_form = DocumentUploadForm()
 
     return render(
         request,
         "applications/app_status.html",
-        {"applications": applications, "form": form},
+        {"applications": applications, "documents": documents, "doc_form": doc_form},
     )
 
 

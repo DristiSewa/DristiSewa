@@ -199,9 +199,10 @@ def advanced_analytics(request):
     }
 
     # Application status breakdown — 1 query with conditional counts
-    _status_filters = {label: Count("id", filter=Q(status=val)) for val, label in Application.Status.choices}
+    # Use DB values (no spaces) as aggregate aliases, then remap to display labels
+    _status_filters = {val: Count("id", filter=Q(status=val)) for val, label in Application.Status.choices}
     _app_counts = Application.objects.filter(student__user__branch__in=branches_qs).aggregate(**_status_filters)
-    application_status = {label: _app_counts[label] for label in _app_counts}
+    application_status = {label: _app_counts.get(val, 0) for val, label in Application.Status.choices}
 
     return render(request, 'analytics/advanced_dashboard.html', {
         'total_students': total_students,

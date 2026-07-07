@@ -4,6 +4,7 @@
 {% block content %}
 <div class="max-w-3xl mx-auto space-y-8">
 
+    <!-- My Applications -->
     <div class="luxury-glass-card rounded-3xl p-8">
         <h2 class="text-lg font-black text-white mb-4 uppercase tracking-wide">My Applications</h2>
         <div class="overflow-x-auto">
@@ -26,6 +27,70 @@
                     </tr>
                     {% empty %}
                     <tr><td colspan="4" class="py-4 text-center text-slate-500">No applications submitted yet.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Upload Document -->
+    <div class="luxury-glass-card rounded-3xl p-8">
+        <h2 class="text-lg font-black text-white mb-6 uppercase tracking-wide">Upload Document</h2>
+        <form method="post" enctype="multipart/form-data" class="space-y-4">
+            {% csrf_token %}
+            <div>
+                <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Document Type</label>
+                <select name="doc_type" required class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white text-sm outline-none focus:border-blue-500 transition">
+                    {% for value, label in doc_form.fields.doc_type.choices %}
+                        <option value="{{ value }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">File</label>
+                <input type="file" name="file" required class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-slate-300 text-sm outline-none focus:border-blue-500 transition file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-700">
+            </div>
+            <button type="submit" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm rounded-xl transition">
+                <i class="fas fa-upload mr-2"></i>Upload
+            </button>
+        </form>
+    </div>
+
+    <!-- My Documents -->
+    <div class="luxury-glass-card rounded-3xl p-8">
+        <h2 class="text-lg font-black text-white mb-4 uppercase tracking-wide">My Documents</h2>
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left">
+                <thead>
+                    <tr class="text-xs font-black uppercase tracking-widest text-slate-400 border-b border-slate-800">
+                        <th class="py-2 pr-4">Type</th>
+                        <th class="py-2 pr-4">File</th>
+                        <th class="py-2 pr-4">Status</th>
+                        <th class="py-2 pr-4">Remarks</th>
+                        <th class="py-2 pr-4">Uploaded</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for doc in documents %}
+                    <tr class="border-b border-slate-900">
+                        <td class="py-2 pr-4 font-semibold text-white">{{ doc.get_doc_type_display }}</td>
+                        <td class="py-2 pr-4">
+                            <a href="{{ doc.file.url }}" target="_blank" class="text-blue-400 hover:text-blue-300 underline text-xs">View</a>
+                        </td>
+                        <td class="py-2 pr-4">
+                            {% if doc.status == 'APPROVED' %}
+                                <span class="text-xs font-bold text-emerald-400 bg-emerald-900/40 px-2 py-1 rounded-lg">Approved</span>
+                            {% elif doc.status == 'REJECTED' %}
+                                <span class="text-xs font-bold text-red-400 bg-red-900/40 px-2 py-1 rounded-lg">Rejected</span>
+                            {% else %}
+                                <span class="text-xs font-bold text-yellow-400 bg-yellow-900/40 px-2 py-1 rounded-lg">Pending</span>
+                            {% endif %}
+                        </td>
+                        <td class="py-2 pr-4 text-slate-400">{{ doc.remarks|default:"—" }}</td>
+                        <td class="py-2 pr-4 text-slate-400">{{ doc.created_at|date:"M d, Y" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="5" class="py-4 text-center text-slate-500">No documents uploaded yet.</td></tr>
                     {% endfor %}
                 </tbody>
             </table>
