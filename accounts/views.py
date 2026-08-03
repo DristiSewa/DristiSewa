@@ -18,6 +18,70 @@ from .permissions import role_required
 User = get_user_model()
 
 
+def _application_status_completes_tracker(status):
+    from applications.models import Application
+
+    return status in (Application.Status.VISA_GRANTED, Application.Status.REJECTED)
+
+
+def _student_latest_application(student):
+    applications = list(student.applications.all())
+    return applications[0] if applications else None
+
+
+def _student_tracker_is_completed(student):
+    latest_application = _student_latest_application(student)
+    if latest_application and _application_status_completes_tracker(latest_application.status):
+        return True
+
+    followups = list(student.followups.all())
+    return bool(followups) and all(followup.is_done for followup in followups)
+
+
+def _tracker_counts_for_students(students):
+    completed = sum(1 for student in students if _student_tracker_is_completed(student))
+    return len(students) - completed, completed
+
+
+def _manager_branch_students_queryset(manager, Student):
+    return Student.objects.select_related("user", "user__branch", "assigned_to", "assigned_by").prefetch_related(
+        "applications", "documents", "followups"
+    ).filter(is_archived=False, user__branch=manager.branch)
+
+
+def _manager_followup_students_queryset(manager, Student):
+    return Student.objects.select_related("user", "assigned_to", "assigned_by").prefetch_related(
+        "applications", "followups"
+    ).filter(
+        is_archived=False,
+        user__branch=manager.branch,
+        assigned_to=manager,
+        assigned_by__role=User.Role.FRONTDESK,
+    )
+
+
+def _followup_student_row(student, followup_display, date_label="normal"):
+    latest_application = _student_latest_application(student)
+    return {
+        "id": student.id,
+        "name": student.user.get_full_name() or student.user.email,
+        "email": student.user.email,
+        "phone": student.user.phone or "—",
+        "country": student.preferred_country or "N/A",
+        "followup": followup_display,
+        "date_label": date_label,
+        "assigned_by": student.assigned_by.get_full_name() if student.assigned_by else "Unassigned",
+        "status": latest_application.get_status_display() if latest_application else "New",
+    }
+
+
+def _clear_pending_messages(request):
+    storage = messages.get_messages(request)
+    for _ in storage:
+        pass
+    storage.used = True
+
+
 def home(request):
     """Public landing page.
 
@@ -247,6 +311,7 @@ def staff_login_view(request):
         else:
             messages.error(request, "Please fill in all fields correctly.")
     else:
+        _clear_pending_messages(request)
         form = StaffLoginForm()
 
     return render(request, "registration/staff_login.html", {"form": form})
@@ -258,9 +323,8 @@ def logout_view(request):
         User.Role.MANAGER,
         User.Role.FRONTDESK,
     )
-    # Clear any pending messages so they don't appear on the login page
-    storage = messages.get_messages(request)
-    storage.used = True
+    # Clear any pending work-session messages so they don't appear on the login page.
+    _clear_pending_messages(request)
     logout(request)
     if is_staff_user:
         return redirect("accounts:staff_login")
@@ -1471,18 +1535,10 @@ def branch_monitoring(request):
     from students.models import Student
 
     user_branch = request.user.branch
-    students = Student.objects.select_related(
-        "user", "user__branch", "assigned_to", "assigned_by"
-    ).prefetch_related(
-        "applications", "documents"
-    ).filter(is_archived=False, user__branch=user_branch)
-
-    pending_trackers = FollowUp.objects.filter(
-        student__user__branch=user_branch, is_done=False
-    ).count()
-    completed_trackers = FollowUp.objects.filter(
-        student__user__branch=user_branch, is_done=True
-    ).count()
+    branch_student_list = list(
+        _manager_branch_students_queryset(request.user, Student).order_by("user__first_name", "user__last_name")
+    )
+    pending_trackers, completed_trackers = _tracker_counts_for_students(branch_student_list)
 
     front_desk_staff = []
     if user_branch is not None:
@@ -1530,8 +1586,8 @@ def branch_monitoring(request):
             )
 
     branch_students = []
-    for student in students.order_by("user__first_name", "user__last_name"):
-        tracking_status = "completed" if student.is_verified else "pending"
+    for student in branch_student_list:
+        tracking_status = "completed" if _student_tracker_is_completed(student) else "pending"
         documents = list(student.documents.all())
         latest_document = documents[0] if documents else None
         if latest_document:
@@ -1553,8 +1609,12 @@ def branch_monitoring(request):
             }
         )
 
-    total_students_count = students.count()
-    assigned_students_count = students.filter(assigned_to__isnull=False).count()
+    total_students_count = len(branch_student_list)
+    assigned_students_count = sum(
+        1
+        for student in branch_student_list
+        if student.assigned_by and student.assigned_by.role == User.Role.FRONTDESK
+    )
 
     return render(
         request,
@@ -1579,17 +1639,12 @@ def followup_management(request):
     from django.utils import timezone
 
     from applications.models import Application
-    from followups.models import FollowUp
     from students.models import Student
 
     user_branch = request.user.branch
     today = timezone.localdate()
 
-    students_qs = (
-        Student.objects.select_related("user", "assigned_to")
-        .prefetch_related("applications", "followups")
-        .filter(is_archived=False, user__branch=user_branch, assigned_to__isnull=False)
-    )
+    students_qs = _manager_followup_students_queryset(request.user, Student)
 
     if request.method == "POST":
         student = get_object_or_404(students_qs, pk=request.POST.get("student_id"))
@@ -1602,8 +1657,27 @@ def followup_management(request):
                 application.save(update_fields=["status"])
             else:
                 Application.objects.create(student=student, status=status_value)
+            if _application_status_completes_tracker(status_value):
+                student.followups.filter(is_done=False).update(is_done=True)
             messages.success(request, f"Application status updated for {student.user.get_full_name() or student.user.email}.")
         return redirect("accounts:followup_management")
+
+    q = request.GET.get("q", "").strip()
+    date_filter = request.GET.get("filter", "all")
+
+    # Apply text search — split into words so "Sun Surpa" matches first+last name
+    if q:
+        from django.db.models import Q as DQ
+        combined = DQ()
+        for word in q.split():
+            combined &= (
+                DQ(user__first_name__icontains=word) |
+                DQ(user__last_name__icontains=word) |
+                DQ(user__email__icontains=word) |
+                DQ(user__phone__icontains=word) |
+                DQ(preferred_country__icontains=word)
+            )
+        students_qs = students_qs.filter(combined)
 
     status_options = [label for _, label in Application.Status.choices]
 
@@ -1639,17 +1713,25 @@ def followup_management(request):
                 "country": student.preferred_country or "N/A",
                 "followup": followup_display,
                 "date_label": date_label,
-                "assigned_by": student.assigned_to.get_full_name() if student.assigned_to else "Unassigned",
+                "assigned_by": student.assigned_by.get_full_name() if student.assigned_by else "Unassigned",
                 "status": status_display,
             }
         )
 
-    pending_trackers = FollowUp.objects.filter(
-        student__user__branch=user_branch, is_done=False
-    ).count()
-    completed_trackers = FollowUp.objects.filter(
-        student__user__branch=user_branch, is_done=True
-    ).count()
+    # Sort: names starting with query appear first, then alphabetical
+    if q:
+        q_lower = q.lower()
+        students_data.sort(key=lambda s: (
+            0 if s["name"].lower().startswith(q_lower) else 1,
+            s["name"].lower()
+        ))
+
+    # Apply date filter in Python (labels computed above)
+    if date_filter in ("today", "upcoming", "overdue"):
+        students_data = [s for s in students_data if s["date_label"] == date_filter]
+
+    tracker_students = list(_manager_branch_students_queryset(request.user, Student))
+    pending_trackers, completed_trackers = _tracker_counts_for_students(tracker_students)
 
     return render(
         request,
@@ -1658,9 +1740,10 @@ def followup_management(request):
             "students": students_data,
             "status_options": status_options,
             "total": len(students_data),
-            "total_branch_students": students_qs.count(),
             "pending_trackers": pending_trackers,
             "completed_trackers": completed_trackers,
+            "q": q,
+            "date_filter": date_filter,
         },
     )
 
@@ -2059,26 +2142,31 @@ def download_report(request):
 
 @role_required("MANAGER")
 def pending_followups(request):
-    from followups.models import FollowUp
+    from students.models import Student
 
-    user_branch = request.user.branch
-
-    followups = (
-        FollowUp.objects.select_related("student__user")
-        .filter(student__user__branch=user_branch, is_done=False)
-        .order_by("scheduled_date")
+    branch_students = _manager_branch_students_queryset(request.user, Student).order_by(
+        "user__first_name", "user__last_name"
     )
 
     students = []
-    for f in followups:
-        student = f.student
+    for student in branch_students:
+        if _student_tracker_is_completed(student):
+            continue
+        next_followup = (
+            student.followups.filter(is_done=False).order_by("scheduled_date").first()
+        )
+        followup_display = (
+            next_followup.scheduled_date.strftime("%b %d, %Y")
+            if next_followup and next_followup.scheduled_date
+            else "—"
+        )
         students.append(
             {
                 "id": student.id,
                 "name": student.user.get_full_name() or student.user.email,
                 "email": student.user.email,
                 "phone": student.user.phone or "—",
-                "followup": f.scheduled_date.strftime("%b %d, %Y") if f.scheduled_date else "—",
+                "followup": followup_display,
             }
         )
 
@@ -2087,26 +2175,31 @@ def pending_followups(request):
 
 @role_required("MANAGER")
 def complete_followups(request):
-    from followups.models import FollowUp
+    from students.models import Student
 
-    user_branch = request.user.branch
-
-    followups = (
-        FollowUp.objects.select_related("student__user")
-        .filter(student__user__branch=user_branch, is_done=True)
-        .order_by("-scheduled_date")
+    branch_students = _manager_branch_students_queryset(request.user, Student).order_by(
+        "user__first_name", "user__last_name"
     )
 
     students = []
-    for f in followups:
-        student = f.student
+    for student in branch_students:
+        if not _student_tracker_is_completed(student):
+            continue
+        latest_followup = (
+            student.followups.filter(is_done=True).order_by("-scheduled_date").first()
+        )
+        followup_display = (
+            latest_followup.scheduled_date.strftime("%b %d, %Y")
+            if latest_followup and latest_followup.scheduled_date
+            else "—"
+        )
         students.append(
             {
                 "id": student.id,
                 "name": student.user.get_full_name() or student.user.email,
                 "email": student.user.email,
                 "phone": student.user.phone or "—",
-                "followup": f.scheduled_date.strftime("%b %d, %Y") if f.scheduled_date else "—",
+                "followup": followup_display,
             }
         )
 

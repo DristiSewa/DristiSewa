@@ -8,15 +8,7 @@
 
 {% block content %}
 <!-- Stats cards -->
-<div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">
-
-    <!-- Total Students -->
-    <div class="bg-white border border-slate-100 rounded-2xl p-4 shadow-sm">
-        <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">
-            <i class="fas fa-users mr-1"></i> Total Students
-        </p>
-        <p class="text-3xl font-black text-slate-800">{{ total_branch_students }}</p>
-    </div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
 
     <!-- Pending Followups -->
     <a href="{% url 'accounts:pending_followups' %}" class="bg-white border border-slate-100 rounded-2xl p-4 shadow-sm hover:shadow-md transition">
@@ -41,21 +33,27 @@
 <div class="data-table-container">
     <div class="table-header-bar fm-header">
         <h2 class="table-title">Followup Management</h2>
-        <div class="table-actions">
+        <form method="get" action="{% url 'accounts:followup_management' %}" class="table-actions">
             <div class="search-input-wrapper">
                 <i class="fas fa-search"></i>
-                <input type="text" id="studentSearch" placeholder="Search name or phone..." class="search-bar">
+                <input type="text" name="q" id="studentSearch" value="{{ q }}" placeholder="Search name, email, phone, country..." class="search-bar" autocomplete="off">
             </div>
             <div class="filter-wrapper">
                 <label class="filter-label">Filter:</label>
-                <select id="sortFilter" class="filter-dropdown">
-                    <option value="all">All Records</option>
-                    <option value="today">Today's Followup</option>
-                    <option value="upcoming">Upcoming (Tomorrow)</option>
-                    <option value="overdue">Overdue</option>
+                <select name="filter" id="sortFilter" class="filter-dropdown" onchange="this.form.submit()">
+                    <option value="all" {% if date_filter == 'all' %}selected{% endif %}>All Records</option>
+                    <option value="today" {% if date_filter == 'today' %}selected{% endif %}>Today's Followup</option>
+                    <option value="upcoming" {% if date_filter == 'upcoming' %}selected{% endif %}>Upcoming (Tomorrow)</option>
+                    <option value="overdue" {% if date_filter == 'overdue' %}selected{% endif %}>Overdue</option>
                 </select>
             </div>
-        </div>
+            {% if q or date_filter != 'all' %}
+            <a href="{% url 'accounts:followup_management' %}" class="reset-btn">
+                <i class="fas fa-times"></i> Reset
+            </a>
+            {% endif %}
+            <button type="submit" class="search-submit-btn" style="display:none"></button>
+        </form>
     </div>
 
     <div class="responsive-table-holder">
@@ -114,4 +112,7 @@
 </div>
 
 {% endblock %}
+
+{% block extra_js %}
     <script src="{% static 'js/pages/manager/followup_management.js' %}"></script>
+{% endblock %}

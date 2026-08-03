@@ -50,33 +50,27 @@
                     <i class="fa-solid fa-trash-can text-sm"></i>
                 </button>
             </div>
-            <div class="flex items-center justify-between gap-3">
-                <div class="flex items-center gap-2.5">
-                    <div class="bg-indigo-50 text-indigo-600 p-2.5 rounded-xl">
+            <div class="grid grid-cols-3 gap-2">
+                <div class="flex flex-col items-center gap-1 bg-slate-50 rounded-xl py-3">
+                    <div class="bg-indigo-50 text-indigo-600 p-2 rounded-lg">
                         <i class="fa-solid fa-id-badge text-sm"></i>
                     </div>
-                    <div>
-                        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Managers</p>
-                        <div class="text-xl font-bold text-slate-800">{{ item.manager_count }}</div>
-                    </div>
+                    <div class="text-xl font-bold text-slate-800">{{ item.manager_count }}</div>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wide text-center">Managers</p>
                 </div>
-                <div class="flex items-center gap-2.5">
-                    <div class="bg-teal-50 text-teal-600 p-2.5 rounded-xl">
+                <div class="flex flex-col items-center gap-1 bg-slate-50 rounded-xl py-3">
+                    <div class="bg-teal-50 text-teal-600 p-2 rounded-lg">
                         <i class="fa-solid fa-headset text-sm"></i>
                     </div>
-                    <div>
-                        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Front Desk</p>
-                        <div class="text-xl font-bold text-slate-800">{{ item.frontdesk_count }}</div>
-                    </div>
+                    <div class="text-xl font-bold text-slate-800">{{ item.frontdesk_count }}</div>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wide text-center">Front Desk</p>
                 </div>
-                <div class="flex items-center gap-2.5">
-                    <div class="bg-blue-50 text-blue-600 p-2.5 rounded-xl">
+                <div class="flex flex-col items-center gap-1 bg-slate-50 rounded-xl py-3">
+                    <div class="bg-blue-50 text-blue-600 p-2 rounded-lg">
                         <i class="fa-solid fa-graduation-cap text-sm"></i>
                     </div>
-                    <div>
-                        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Students</p>
-                        <div class="text-xl font-bold text-slate-800">{{ item.student_count }}</div>
-                    </div>
+                    <div class="text-xl font-bold text-slate-800">{{ item.student_count }}</div>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wide text-center">Students</p>
                 </div>
             </div>
         </div>

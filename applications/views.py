@@ -31,7 +31,12 @@ def app_status(request):
     return render(
         request,
         "applications/app_status.html",
-        {"applications": applications, "documents": documents, "doc_form": doc_form},
+        {
+            "applications": applications,
+            "documents": documents,
+            "doc_form": doc_form,
+            "status_choices": Application.Status.choices,
+        },
     )
 
 

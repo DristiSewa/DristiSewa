@@ -18,6 +18,16 @@
         </a>
     </div>
 
+    {% if messages %}
+    <div class="w-full px-6 mb-4 space-y-2">
+        {% for message in messages %}
+        <div class="rounded-md border px-4 py-3 text-sm font-semibold {% if message.tags == 'success' %}border-green-200 bg-green-50 text-green-700{% else %}border-red-200 bg-red-50 text-red-700{% endif %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
     <div class="w-full px-6 flex flex-col md:flex-row gap-6 pb-8 items-stretch">
 
         <div class="w-full md:w-1/4 bg-white p-5 rounded-lg border border-gray-200 shadow-sm text-center flex flex-col justify-between min-h-[580px]">
@@ -81,30 +91,44 @@
                     <div id="fileList" class="space-y-3 mb-6">
                         {% for doc in documents %}
                         <div class="flex items-center justify-between border border-gray-200 p-3 rounded bg-white hover:bg-gray-50 transition">
-                            <div class="flex items-center gap-3">
+                            <div class="flex items-center gap-3 min-w-0">
                                 {% if doc.file.name|slice:"-4:" == ".pdf" %}
                                     <i class="fas fa-file-pdf text-red-500 text-lg"></i>
                                 {% else %}
                                     <i class="fas fa-file-image text-blue-500 text-lg"></i>
                                 {% endif %}
-                                <span class="text-xs text-gray-700 font-medium">
+                                <span class="text-xs text-gray-700 font-medium truncate">
                                     {% if doc.file %}
-                                        <button type="button" onclick="openDocModal('{{ doc.file.url }}', '{{ doc.file.name|default:doc.get_doc_type_display }}')" class="hover:underline text-blue-600">{{ doc.file.name|default:doc.get_doc_type_display }}</button>
+                                        {% url 'documents:document_preview' doc.pk as preview_url %}
+                                        {% url 'documents:document_download' doc.pk as download_url %}
+                                        <span class="text-gray-700 truncate">{{ doc.file.name|default:doc.get_doc_type_display }}</span>
                                     {% else %}{{ doc.get_doc_type_display }}{% endif %}
                                 </span>
                             </div>
-                            <form method="post" class="inline">
-                                {% csrf_token %}
-                                <input type="hidden" name="document_id" value="{{ doc.pk }}">
-                                <input type="hidden" name="update_doc_status" value="1">
-                                <select name="status" onchange="this.form.submit()"
-                                        class="text-[11px] border border-gray-300 rounded p-1.5 font-bold cursor-pointer
-                                        {% if doc.status == 'APPROVED' %}text-green-600 bg-green-50{% elif doc.status == 'REJECTED' %}text-red-600 bg-red-50{% else %}text-orange-600 bg-orange-50{% endif %}">
-                                    {% for value, label in doc_statuses %}
-                                        <option value="{{ value }}" {% if doc.status == value %}selected{% endif %}>{{ label }}</option>
-                                    {% endfor %}
-                                </select>
-                            </form>
+                            <div class="flex items-center gap-2 ml-3 shrink-0">
+                                {% if doc.file %}
+                                    {% url 'documents:document_preview' doc.pk as preview_url %}
+                                    {% url 'documents:document_download' doc.pk as download_url %}
+                                    <button type="button" onclick="openDocModal('{{ preview_url }}', '{{ doc.file.name|default:doc.get_doc_type_display|escapejs }}')" class="w-8 h-8 inline-flex items-center justify-center rounded border border-blue-100 text-blue-600 hover:bg-blue-50 transition" title="Preview document">
+                                        <i class="fas fa-eye text-xs"></i>
+                                    </button>
+                                    <a href="{{ download_url }}" class="w-8 h-8 inline-flex items-center justify-center rounded border border-blue-100 text-blue-600 hover:bg-blue-50 transition" title="Download document">
+                                        <i class="fas fa-download text-xs"></i>
+                                    </a>
+                                {% endif %}
+                                <form method="post" class="inline">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="document_id" value="{{ doc.pk }}">
+                                    <input type="hidden" name="update_doc_status" value="1">
+                                    <select name="status" onchange="this.form.submit()"
+                                            class="text-[11px] border border-gray-300 rounded p-1.5 font-bold cursor-pointer
+                                            {% if doc.status == 'APPROVED' %}text-green-600 bg-green-50{% elif doc.status == 'REJECTED' %}text-red-600 bg-red-50{% else %}text-orange-600 bg-orange-50{% endif %}">
+                                        {% for value, label in doc_statuses %}
+                                            <option value="{{ value }}" {% if doc.status == value %}selected{% endif %}>{{ label }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </form>
+                            </div>
                         </div>
                         {% empty %}
                         <p class="text-xs text-gray-400 text-center py-6">No documents uploaded yet.</p>
@@ -190,63 +214,74 @@
 
     <div id="editProfileModal" class="fixed inset-0 z-50 flex items-center justify-center modal-overlay hidden">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-[850px] mx-4 overflow-hidden border border-gray-100 p-8">
-            <div class="text-[#94a3b8] font-bold text-xs uppercase tracking-wider mb-5">Personal Information</div>
+            <form method="post" class="space-y-0">
+                {% csrf_token %}
+                <input type="hidden" name="edit_profile_modal" value="1">
+                <div class="text-[#94a3b8] font-bold text-xs uppercase tracking-wider mb-5">Personal Information</div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-5">
-                <div class="flex flex-col">
-                    <label class="text-xs font-bold text-slate-700 mb-2">First Name</label>
-                    <input type="text" id="inputFirstName" class="w-full border border-gray-300 p-3 rounded-xl text-sm focus:border-blue-600 outline-none text-slate-700" value="{{ student.user.first_name }}">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-5">
+                    <div class="flex flex-col">
+                        <label class="text-xs font-bold text-slate-700 mb-2">First Name</label>
+                        <input type="text" name="first_name" id="inputFirstName" required minlength="2" maxlength="50" pattern="[A-Za-z][A-Za-z\s'-]{1,49}" title="Use 2 to 50 letters. Spaces, apostrophes, and hyphens are allowed." autocomplete="given-name" class="w-full border border-gray-300 p-3 rounded-xl text-sm focus:border-blue-600 outline-none text-slate-700" value="{{ student.user.first_name }}">
+                    </div>
+                    <div class="flex flex-col">
+                        <label class="text-xs font-bold text-slate-700 mb-2">Last Name</label>
+                        <input type="text" name="last_name" id="inputLastName" required minlength="2" maxlength="50" pattern="[A-Za-z][A-Za-z\s'-]{1,49}" title="Use 2 to 50 letters. Spaces, apostrophes, and hyphens are allowed." autocomplete="family-name" class="w-full border border-gray-300 p-3 rounded-xl text-sm focus:border-blue-600 outline-none text-slate-700" value="{{ student.user.last_name }}">
+                    </div>
                 </div>
-                <div class="flex flex-col">
-                    <label class="text-xs font-bold text-slate-700 mb-2">Middle Name</label>
-                    <input type="text" id="inputMiddleName" class="w-full border border-gray-300 p-3 rounded-xl text-sm focus:border-blue-600 outline-none text-slate-700" value="">
-                </div>
-                <div class="flex flex-col">
-                    <label class="text-xs font-bold text-slate-700 mb-2">Last Name</label>
-                    <input type="text" id="inputLastName" class="w-full border border-gray-300 p-3 rounded-xl text-sm focus:border-blue-600 outline-none text-slate-700" value="{{ student.user.last_name }}">
-                </div>
-            </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                <div class="flex flex-col">
-                    <label class="text-xs font-bold text-slate-700 mb-2">Phone Number</label>
-                    <input type="text" id="inputPhone" class="w-full border border-gray-300 p-3 rounded-xl text-sm focus:border-blue-600 outline-none text-slate-700" value="{{ student.user.phone }}">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="flex flex-col">
+                        <label class="text-xs font-bold text-slate-700 mb-2">Phone Number</label>
+                        <input type="tel" name="phone" id="inputPhone" required minlength="7" maxlength="15" pattern="[0-9]{7,15}" title="Enter 7 to 15 digits only." inputmode="numeric" autocomplete="tel" class="w-full border border-gray-300 p-3 rounded-xl text-sm focus:border-blue-600 outline-none text-slate-700" value="{{ student.user.phone }}">
+                    </div>
+                    <div class="flex flex-col">
+                        <label class="text-xs font-bold text-slate-700 mb-2">Email Address</label>
+                        <input type="email" name="email" id="inputEmail" required maxlength="254" autocomplete="email" class="w-full border border-gray-300 p-3 rounded-xl text-sm focus:border-blue-600 outline-none text-slate-700" value="{{ student.user.email }}">
+                    </div>
                 </div>
-                <div class="flex flex-col">
-                    <label class="text-xs font-bold text-slate-700 mb-2">Email Address</label>
-                    <input type="email" id="inputEmail" class="w-full border border-gray-300 p-3 rounded-xl text-sm focus:border-blue-600 outline-none text-slate-700" value="{{ student.user.email }}">
-                </div>
-            </div>
 
-            <div class="text-[#94a3b8] font-bold text-xs uppercase tracking-wider mb-5">Study Preferences & Target</div>
+                <div class="text-[#94a3b8] font-bold text-xs uppercase tracking-wider mb-5">Study Preferences & Target</div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div class="flex flex-col relative">
-                    <label class="text-xs font-bold text-slate-700 mb-2">Preferred Country</label>
-                    <input type="text" id="inputCountry" class="w-full border border-gray-300 p-3 rounded-xl text-sm focus:border-blue-600 outline-none text-slate-700" value="{{ student.preferred_country }}">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="flex flex-col relative">
+                        <label class="text-xs font-bold text-slate-700 mb-2">Preferred Country</label>
+                        <select name="preferred_country" id="inputCountry" required class="w-full border border-gray-300 p-3 rounded-xl text-sm focus:border-blue-600 outline-none text-slate-700 bg-white">
+                            <option value="">Choose country</option>
+                            <option value="Australia" {% if student.preferred_country == 'Australia' %}selected{% endif %}>Australia</option>
+                            <option value="Canada" {% if student.preferred_country == 'Canada' %}selected{% endif %}>Canada</option>
+                            <option value="New Zealand" {% if student.preferred_country == 'New Zealand' %}selected{% endif %}>New Zealand</option>
+                            <option value="United Kingdom" {% if student.preferred_country == 'United Kingdom' %}selected{% endif %}>United Kingdom</option>
+                            <option value="United States" {% if student.preferred_country == 'United States' %}selected{% endif %}>United States</option>
+                        </select>
+                    </div>
+                    <div class="flex flex-col relative">
+                        <label class="text-xs font-bold text-slate-700 mb-2">Test Type</label>
+                        <select name="test_type" id="inputTestType" required onchange="updateScoreCriteria()" class="w-full border border-gray-300 p-3 rounded-xl text-sm focus:border-blue-600 outline-none text-slate-700 bg-white">
+                            <option value="">Choose test</option>
+                            <option value="IELTS" {% if student.test_type == 'IELTS' %}selected{% endif %}>IELTS</option>
+                            <option value="PTE" {% if student.test_type == 'PTE' %}selected{% endif %}>PTE</option>
+                            <option value="TOEFL" {% if student.test_type == 'TOEFL' %}selected{% endif %}>TOEFL</option>
+                        </select>
+                    </div>
+                    <div class="flex flex-col">
+                        <label class="text-xs font-bold text-slate-700 mb-2">Score</label>
+                        <input type="number" name="test_score" id="inputScore" required min="0" max="120" step="0.01" oninput="validateScoreInput()" class="w-full border border-gray-300 p-3 rounded-xl text-sm focus:border-blue-600 outline-none text-slate-700" value="{{ student.test_score|default:'' }}">
+                        <span id="scoreHelp" class="mt-1 text-[11px] font-semibold text-slate-400">Choose a test type to see score range.</span>
+                    </div>
                 </div>
-                <div class="flex flex-col relative">
-                    <label class="text-xs font-bold text-slate-700 mb-2">Test Type</label>
-                    <input type="text" id="inputTestType" class="w-full border border-gray-300 p-3 rounded-xl text-sm focus:border-blue-600 outline-none text-slate-700" value="{{ student.get_test_type_display }}">
-                </div>
-                <div class="flex flex-col">
-                    <label class="text-xs font-bold text-slate-700 mb-2">Score</label>
-                    <input type="text" id="inputScore" class="w-full border border-gray-300 p-3 rounded-xl text-sm focus:border-blue-600 outline-none text-slate-700" value="{{ student.test_score|default:'' }}">
-                </div>
-            </div>
 
-            <p class="text-xs text-gray-400 mb-4">To save changes to these fields, use the full <a href="{% url 'students:student_edit' student.pk %}" class="text-blue-600 underline">Edit Record</a> form.</p>
-
-            <div class="flex justify-end items-center gap-6 pt-4">
-                <button type="button" onclick="toggleEditProfileModal(false)" class="text-sm font-semibold text-slate-500 hover:text-slate-800 transition">Close</button>
-                <a href="{% url 'students:student_edit' student.pk %}" class="bg-[#1e3a8a] text-white px-7 py-3 rounded-xl text-sm font-semibold hover:bg-blue-900 transition flex items-center gap-2 shadow-md">
-                    <i class="fas fa-edit text-xs"></i> Open Edit Form
-                </a>
-            </div>
+                <div class="flex justify-end items-center gap-6 pt-4">
+                    <button type="button" onclick="toggleEditProfileModal(false)" class="text-sm font-semibold text-slate-500 hover:text-slate-800 transition">Close</button>
+                    <button type="submit" class="bg-[#1e3a8a] text-white px-7 py-3 rounded-xl text-sm font-semibold hover:bg-blue-900 transition flex items-center gap-2 shadow-md">
+                        <i class="fas fa-save text-xs"></i> Save Changes
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
-    <script src="{% static 'js/pages/dashboards/student_profile.js' %}"></script>
+    <script src="{% static 'js/pages/dashboards/student_profile.js' %}?v=profile-validation-3"></script>
 
 <!-- Document Viewer Modal -->
 <div id="docModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm" onclick="closeDocModal()">
@@ -268,6 +303,8 @@ function openDocModal(url, name) {
     const img = document.getElementById('docModalImg');
     const pdf = document.getElementById('docModalPdf');
     const isPdf = url.toLowerCase().endsWith('.pdf') || name.toLowerCase().endsWith('.pdf');
+    img.src = '';
+    pdf.src = '';
     if (isPdf) {
         pdf.src = url;
         pdf.classList.remove('hidden');
@@ -282,6 +319,7 @@ function openDocModal(url, name) {
 function closeDocModal() {
     document.getElementById('docModal').classList.add('hidden');
     document.getElementById('docModalPdf').src = '';
+    document.getElementById('docModalImg').src = '';
 }
 </script>
 </body>

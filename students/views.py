@@ -1,5 +1,9 @@
+import re
+
 from django.contrib import messages
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -95,6 +99,94 @@ def student_profile_view(request, pk):
             student.assigned_by = None
             student.save(update_fields=["assigned_to", "assigned_by"])
             messages.success(request, "Removed user assignment.")
+        return redirect("students:student_profile", pk=student.pk)
+
+    if request.method == "POST" and "edit_profile_modal" in request.POST:
+        first_name = request.POST.get("first_name", "").strip()
+        last_name = request.POST.get("last_name", "").strip()
+        email = User.objects.normalize_email(request.POST.get("email", "").strip()).lower()
+        phone = request.POST.get("phone", "").strip()
+        preferred_country = request.POST.get("preferred_country", "").strip()
+        test_type = request.POST.get("test_type", "").strip()
+        test_score = request.POST.get("test_score", "").strip()
+
+        valid_countries = {
+            "Australia",
+            "Canada",
+            "New Zealand",
+            "United Kingdom",
+            "United States",
+        }
+        errors = []
+        name_pattern = re.compile(r"^[A-Za-z][A-Za-z\s'-]{1,49}$")
+
+        if not first_name:
+            errors.append("First name is required.")
+        elif not name_pattern.fullmatch(first_name):
+            errors.append("First name must be 2 to 50 letters and may only include spaces, apostrophes, or hyphens.")
+        if not last_name:
+            errors.append("Last name is required.")
+        elif not name_pattern.fullmatch(last_name):
+            errors.append("Last name must be 2 to 50 letters and may only include spaces, apostrophes, or hyphens.")
+        if not email:
+            errors.append("Email address is required.")
+        elif len(email) > 254 or any(char.isspace() for char in email):
+            errors.append("Enter a valid email address.")
+        else:
+            try:
+                validate_email(email)
+            except ValidationError:
+                errors.append("Enter a valid email address.")
+            if User.objects.exclude(pk=student.user_id).filter(email__iexact=email).exists():
+                errors.append("Another user already uses this email address.")
+        if not phone:
+            errors.append("Phone number is required.")
+        elif not phone.isdigit() or len(phone) < 7 or len(phone) > 15:
+            errors.append("Phone number must contain 7 to 15 digits.")
+        elif len(set(phone)) == 1:
+            errors.append("Phone number cannot use the same digit repeatedly.")
+        if preferred_country not in valid_countries:
+            errors.append("Please choose a valid preferred country.")
+        score_rules = {
+            Student.Test.IELTS: (0, 9, "IELTS score must be between 0 and 9."),
+            Student.Test.PTE: (10, 90, "PTE score must be between 10 and 90."),
+            Student.Test.TOEFL: (0, 120, "TOEFL score must be between 0 and 120."),
+        }
+
+        if test_type not in dict(Student.Test.choices):
+            errors.append("Please choose a valid test type.")
+        if not test_score:
+            errors.append("Score is required.")
+        else:
+            try:
+                score_value = float(test_score)
+                if test_type in score_rules:
+                    min_score, max_score, message = score_rules[test_type]
+                    if score_value < min_score or score_value > max_score:
+                        errors.append(message)
+                    elif test_type == Student.Test.IELTS and (score_value * 2) % 1 != 0:
+                        errors.append("IELTS score must use 0.5 bands, for example 6.5 or 7.")
+            except ValueError:
+                errors.append("Score must be a valid number.")
+
+        if errors:
+            for error in errors:
+                messages.error(request, error)
+            return redirect(f"{reverse('students:student_profile', kwargs={'pk': student.pk})}?edit=1")
+        else:
+            user = student.user
+            user.first_name = first_name
+            user.last_name = last_name
+            user.email = email
+            user.phone = phone
+            user.save(update_fields=["first_name", "last_name", "email", "phone"])
+
+            student.preferred_country = preferred_country
+            student.test_type = test_type
+            student.test_score = test_score
+            student.save(update_fields=["preferred_country", "test_type", "test_score"])
+            messages.success(request, "Student profile updated.")
+
         return redirect("students:student_profile", pk=student.pk)
 
     if request.method == "POST" and "update_doc_status" in request.POST:
