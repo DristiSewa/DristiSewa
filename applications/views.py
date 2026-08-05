@@ -16,6 +16,14 @@ def app_status(request):
     applications = student.applications.all()
     documents = student.documents.all()
 
+    application_rows = [
+        {
+            "application": application,
+            "country": application.destination_country or student.preferred_country,
+        }
+        for application in applications
+    ]
+
     if request.method == "POST":
         doc_form = DocumentUploadForm(request.POST, request.FILES)
         if doc_form.is_valid():
@@ -32,7 +40,7 @@ def app_status(request):
         request,
         "applications/app_status.html",
         {
-            "applications": applications,
+            "application_rows": application_rows,
             "documents": documents,
             "doc_form": doc_form,
             "status_choices": Application.Status.choices,

@@ -19,9 +19,10 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for application in applications %}
+                    {% for row in application_rows %}
+                    {% with application=row.application %}
                     <tr class="border-b border-slate-900">
-                        <td class="py-3 pr-4 font-semibold text-white">{{ application.destination_country|default:"—" }}</td>
+                        <td class="py-3 pr-4 font-semibold text-white">{{ row.country|default:"—" }}</td>
                         <td class="py-3 pr-4">
                             {% if application.status == 'VISA_GRANTED' %}
                                 <span class="text-xs font-bold text-emerald-400 bg-emerald-900/40 px-2 py-1 rounded-lg">{{ application.get_status_display }}</span>
@@ -36,6 +37,7 @@
                         <td class="py-3 pr-4 text-slate-400 text-xs">{{ application.remarks|default:"—" }}</td>
                         <td class="py-3 pr-4 text-slate-400">{{ application.updated_at|date:"M d, Y" }}</td>
                     </tr>
+                    {% endwith %}
                     {% empty %}
                     <tr><td colspan="4" class="py-6 text-center text-slate-500">No applications submitted yet.</td></tr>
                     {% endfor %}
