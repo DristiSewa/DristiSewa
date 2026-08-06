@@ -1,7 +1,7 @@
 {% extends 'admin/dristisewa_base.html' %}
 
 {% block content %}
-<!-- HEADER ROW WITH THE NEW BRANCH INVOCATION ACTION TRIGGER -->
+<!-- HEADER -->
 <div class="flex justify-between items-start mb-8">
     <div>
         <h2 class="text-3xl font-bold text-slate-900 tracking-tight">Overview</h2>
@@ -11,18 +11,13 @@
         <a href="{% url 'accounts:admin_view_report' %}" class="bg-white border border-slate-200 hover:bg-slate-50 text-blue-600 font-semibold py-3 px-5 rounded-xl transition shadow-sm flex items-center gap-2 text-sm">
             <i class="fa-solid fa-eye"></i> View Report
         </a>
-        <!-- 🌟 REDIRECTS TO BRANCH & STAFF WITH OPEN-SIDEBAR INSTRUCTION HASH -->
-        <a href="{% url 'accounts:branch_staff' %}#create-branch" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-xl transition shadow-md shadow-blue-600/10 flex items-center space-x-2 text-sm z-10">
-            <i class="fa-solid fa-plus"></i>
-            <span>Create New Branch</span>
-        </a>
     </div>
 </div>
 
-<!-- TOP ANALYSIS CARDS LAYER -->
+<!-- TOP SUMMARY CARDS -->
 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-12">
     <!-- Blue Card Component: Student Metrics -->
-    <div class="lg:col-span-6 bg-blue-600 rounded-3xl p-8 text-white relative overflow-hidden shadow-lg flex flex-col justify-between min-h-[220px]">
+    <div class="lg:col-span-8 bg-blue-600 rounded-3xl p-8 text-white relative overflow-hidden shadow-lg flex flex-col justify-between min-h-[220px]">
         <div>
             <p class="text-xs uppercase font-semibold tracking-widest text-blue-100/80">Consultancy Ecosystem</p>
             <h3 class="text-6xl font-black mt-2 tracking-tight">{{ student_count }}</h3>
@@ -42,7 +37,7 @@
     </div>
 
     <!-- Middle Card Component: Active Branches Counter -->
-    <div class="lg:col-span-3 bg-white border border-slate-200/80 rounded-3xl p-8 shadow-sm flex flex-col justify-between">
+    <div class="lg:col-span-4 bg-white border border-slate-200/80 rounded-3xl p-8 shadow-sm flex flex-col justify-between">
         <div class="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 text-xl">
             <i class="fa-solid fa-building-user"></i>
         </div>
@@ -52,22 +47,57 @@
         </div>
         <p class="text-xs text-slate-400 mt-4">Active branches →</p>
     </div>
+</div>
 
-    <!-- Right Card Component: Followups Pending Flag -->
-    <div class="lg:col-span-3 bg-white border border-slate-200/80 rounded-3xl p-8 shadow-sm flex flex-col justify-between">
-        <div class="w-12 h-12 bg-amber-50 rounded-2xl flex items-center justify-center text-amber-600 text-xl">
-            <i class="fa-regular fa-bell-toggle fa-shield-halved"></i>
+<!-- BRANCH STAFF SUMMARY -->
+<div id="branch-staff-overview">
+    <div class="flex items-center justify-between mb-4">
+        <h4 class="text-xl font-bold text-slate-900 tracking-tight">Branch Staff Overview</h4>
+        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+            {{ total_managers }} Manager{{ total_managers|pluralize }} &middot; {{ total_frontdesk }} Front Desk
+        </span>
+    </div>
+
+    <div class="bg-white border border-slate-200/80 rounded-3xl shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full min-w-[760px] text-left border-collapse">
+                <thead>
+                    <tr class="bg-slate-50 border-b border-slate-100 text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                        <th class="py-4 px-8">Branch</th>
+                        <th class="py-4 px-6 text-center">Managers</th>
+                        <th class="py-4 px-6 text-center">Front Desk Staff</th>
+                        <th class="py-4 px-8 text-center">Total Staff</th>
+                        <th class="py-4 px-6 text-center">Report</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-50">
+                    {% for branch in branch_staff_summary %}
+                    <tr class="hover:bg-slate-50/40 transition-colors">
+                        <td class="py-4 px-8 font-bold text-slate-800 text-sm">{{ branch.name }}</td>
+                        <td class="py-4 px-6 text-center text-sm font-semibold text-slate-700">{{ branch.manager_count }}</td>
+                        <td class="py-4 px-6 text-center text-sm font-semibold text-slate-700">{{ branch.frontdesk_count }}</td>
+                        <td class="py-4 px-8 text-center">
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-600 border border-blue-100">{{ branch.total_staff }}</span>
+                        </td>
+                        <td class="py-4 px-6 text-center">
+                            <a href="{% url 'accounts:admin_view_branch_report' branch.id %}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-blue-600 text-white hover:bg-blue-700 transition">
+                                <i class="fa-solid fa-eye text-xs"></i> View
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center py-10 text-slate-400 text-sm">No active branches found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
-        <div class="mt-4">
-            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Pending Follow-ups</p>
-            <h4 class="text-5xl font-black text-slate-800 mt-1">{{ pending_followups }}</h4>
-        </div>
-        <p class="text-xs text-amber-600 font-medium mt-4 bg-amber-50 border border-amber-100 px-2.5 py-1 rounded-lg w-fit">Requires Attention</p>
     </div>
 </div>
 
-<!-- LOWER INTERACTIVE ROW: PERFORMANCE BARS & TIMELINE NOTIFICATIONS -->
-<div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+<!-- BRANCH PERFORMANCE AND RECENT ACTIVITY -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-12 mt-12">
     <!-- Branch Performance Progress Column Blocks -->
     <div class="lg:col-span-7 space-y-6">
         <h4 class="text-xl font-bold text-slate-900 tracking-tight mb-4">Branch Performance</h4>
@@ -105,53 +135,8 @@
     </div>
 </div>
 
-<!-- BRANCH STAFF SUMMARY -->
-<div class="mt-12" id="branch-staff-overview">
-    <div class="flex items-center justify-between mb-4">
-        <h4 class="text-xl font-bold text-slate-900 tracking-tight">Branch Staff Overview</h4>
-        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-            {{ total_managers }} Manager{{ total_managers|pluralize }} &middot; {{ total_frontdesk }} Front Desk
-        </span>
-    </div>
-
-    <div class="bg-white border border-slate-200/80 rounded-3xl shadow-sm overflow-hidden">
-        <table class="w-full text-left border-collapse">
-            <thead>
-                <tr class="bg-slate-50 border-b border-slate-100 text-[10px] font-bold uppercase tracking-widest text-slate-400">
-                    <th class="py-4 px-8">Branch</th>
-                    <th class="py-4 px-6 text-center">Managers</th>
-                    <th class="py-4 px-6 text-center">Front Desk Staff</th>
-                    <th class="py-4 px-8 text-center">Total Staff</th>
-                    <th class="py-4 px-6 text-center">Report</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-50">
-                {% for branch in branch_staff_summary %}
-                <tr class="hover:bg-slate-50/40 transition-colors">
-                    <td class="py-4 px-8 font-bold text-slate-800 text-sm">{{ branch.name }}</td>
-                    <td class="py-4 px-6 text-center text-sm font-semibold text-slate-700">{{ branch.manager_count }}</td>
-                    <td class="py-4 px-6 text-center text-sm font-semibold text-slate-700">{{ branch.frontdesk_count }}</td>
-                    <td class="py-4 px-8 text-center">
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-600 border border-blue-100">{{ branch.total_staff }}</span>
-                    </td>
-                    <td class="py-4 px-6 text-center">
-                        <a href="{% url 'accounts:admin_view_branch_report' branch.id %}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-blue-600 text-white hover:bg-blue-700 transition">
-                            <i class="fa-solid fa-eye text-xs"></i> View
-                        </a>
-                    </td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="4" class="text-center py-10 text-slate-400 text-sm">No active branches found.</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-</div>
-
 <!-- ADVANCED ANALYTICS SECTION -->
-<div class="mt-12">
+<div class="mt-8 lg:-mt-32">
     <h4 class="text-xl font-bold text-slate-900 tracking-tight mb-4">Advanced Analytics & Audit Tools</h4>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">

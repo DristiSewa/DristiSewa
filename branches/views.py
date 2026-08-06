@@ -50,58 +50,6 @@ def create_branch_json(request):
 
 
 @role_required("ADMIN")
-def update_branch_json(request, branch_id):
-    """AJAX branch edit used by the admin Branch & Staff edit modal."""
-    if request.method != "POST":
-        return JsonResponse({"success": False, "error": "Invalid request method."}, status=405)
-
-    branch = get_object_or_404(Branch, pk=branch_id)
-
-    try:
-        payload = json.loads(request.body or "{}")
-    except (ValueError, TypeError):
-        return JsonResponse({"success": False, "error": "Invalid request payload."}, status=400)
-
-    name = (payload.get("name") or "").strip()
-    code = (payload.get("code") or "").strip().upper()
-    address = (payload.get("address") or "").strip()
-    phone = (payload.get("phone") or "").strip()
-    email = (payload.get("email") or "").strip()
-    is_active = bool(payload.get("is_active", branch.is_active))
-
-    if not name:
-        return JsonResponse({"success": False, "error": "Branch name is required."}, status=400)
-
-    if not code:
-        return JsonResponse({"success": False, "error": "Branch code is required."}, status=400)
-
-    if Branch.objects.filter(name__iexact=name).exclude(pk=branch.pk).exists():
-        return JsonResponse({"success": False, "error": "A branch with this name already exists."}, status=400)
-
-    if Branch.objects.filter(code__iexact=code).exclude(pk=branch.pk).exists():
-        return JsonResponse({"success": False, "error": "A branch with this code already exists."}, status=400)
-
-    branch.name = name
-    branch.code = code
-    branch.address = address
-    branch.phone = phone
-    branch.email = email
-    branch.is_active = is_active
-    branch.save()
-
-    return JsonResponse({
-        "success": True,
-        "branch_id": branch.id,
-        "name": branch.name,
-        "code": branch.code,
-        "address": branch.address,
-        "phone": branch.phone,
-        "email": branch.email,
-        "is_active": branch.is_active,
-    })
-
-
-@role_required("ADMIN")
 def delete_branch_json(request, branch_id):
     """AJAX branch deletion used by the admin Branch & Staff edit modal."""
     if request.method != "POST":

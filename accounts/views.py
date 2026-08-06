@@ -1294,18 +1294,30 @@ def delete_user(request, user_id):
 
 @role_required("ADMIN")
 def student_management(request):
-    from datetime import timedelta
-
     from django.db.models import Q
-    from django.utils import timezone
 
     from branches.models import Branch
     from students.models import Student
 
-    from django.db.models import Prefetch
-    from followups.models import FollowUp as _FollowUp
-    students_qs = Student.objects.select_related("user", "user__branch").prefetch_related(
-        Prefetch("followups", queryset=_FollowUp.objects.filter(is_done=False).order_by("scheduled_date"), to_attr="open_followups")
+    all_students = list(
+        Student.objects.select_related("assigned_by").prefetch_related("applications", "followups").filter(
+            is_archived=False
+        )
+    )
+    pending_trackers, completed_trackers = _tracker_counts_for_students(all_students)
+    card_counts = {
+        "all_students": len(all_students),
+        "pending_followups": pending_trackers,
+        "completed_followups": completed_trackers,
+        "unassigned_students": sum(
+            1
+            for student in all_students
+            if not (student.assigned_by and student.assigned_by.role == User.Role.FRONTDESK)
+        ),
+    }
+
+    students_qs = Student.objects.select_related("user", "user__branch", "assigned_by").prefetch_related(
+        "applications", "followups"
     ).filter(is_archived=False)
 
     query = request.GET.get("q", "").strip()
@@ -1329,21 +1341,16 @@ def student_management(request):
 
     status_filter = request.GET.get("status", "").strip()
 
-    today = timezone.localdate()
     students_data = []
-    counts = {"due": 0, "upcoming": 0, "completed": 0}
+    counts = {"pending": 0, "completed": 0, "unassigned": 0}
 
     for student in students_qs.order_by("user__first_name", "user__last_name").distinct():
-        next_followup = student.open_followups[0] if student.open_followups else None
-        if next_followup and next_followup.scheduled_date:
-            if next_followup.scheduled_date < today:
-                follow_up_status = "due"
-            elif next_followup.scheduled_date <= today + timedelta(days=7):
-                follow_up_status = "upcoming"
-            else:
-                follow_up_status = "completed"
-        else:
+        if _student_tracker_is_completed(student):
             follow_up_status = "completed"
+        elif not (student.assigned_by and student.assigned_by.role == User.Role.FRONTDESK):
+            follow_up_status = "unassigned"
+        else:
+            follow_up_status = "pending"
 
         counts[follow_up_status] += 1
 
@@ -1360,15 +1367,16 @@ def student_management(request):
             }
         )
 
-    total_filtered = counts["due"] + counts["upcoming"] + counts["completed"]
+    total_filtered = counts["pending"] + counts["completed"] + counts["unassigned"]
 
     return render(
         request,
         "admin/student_management.html",
         {
             "students": students_data,
-            "total_students": Student.objects.filter(is_archived=False).count(),
+            "total_students": card_counts["all_students"],
             "total_filtered": total_filtered,
+            "card_counts": card_counts,
             "branches": Branch.objects.filter(is_active=True),
             "selected_branch": branch_id,
             "query": query,

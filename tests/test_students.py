@@ -82,6 +82,72 @@ class StudentProfileModalValidationTests(TestCase):
         self.assertEqual(self.student.test_type, Student.Test.PTE)
 
 
+class AdminStudentManagementCardTests(TestCase):
+    def setUp(self):
+        self.admin = User.objects.create_user(
+            email="admin.card@example.com",
+            password="password123",
+            role=User.Role.ADMIN,
+        )
+        self.branch = Branch.objects.create(name="Kathmandu", code="KTM")
+        self.other_branch = Branch.objects.create(name="Pokhara", code="PKR")
+        self.frontdesk = User.objects.create_user(
+            email="frontdesk.card@example.com",
+            password="password123",
+            role=User.Role.FRONTDESK,
+            branch=self.branch,
+        )
+
+    def _create_student(self, email, branch, assigned_to=None, assigned_by=None):
+        user = User.objects.create_user(
+            email=email,
+            password="password123",
+            role=User.Role.STUDENT,
+            branch=branch,
+            first_name=email.split("@")[0],
+        )
+        return Student.objects.create(user=user, assigned_to=assigned_to, assigned_by=assigned_by)
+
+    def test_top_cards_count_all_branches_even_when_table_is_branch_filtered(self):
+        branch_student = self._create_student(
+            "branch.student@example.com",
+            self.branch,
+            assigned_to=self.frontdesk,
+            assigned_by=self.frontdesk,
+        )
+        other_student = self._create_student("other.student@example.com", self.other_branch)
+        terminal_student = self._create_student(
+            "terminal.student@example.com",
+            self.branch,
+            assigned_to=self.frontdesk,
+            assigned_by=self.frontdesk,
+        )
+        archived_student = self._create_student("archived.student@example.com", self.other_branch)
+        archived_student.is_archived = True
+        archived_student.save(update_fields=["is_archived"])
+        FollowUp.objects.create(student=branch_student, assigned_to=self.frontdesk, note="Pending", is_done=False)
+        FollowUp.objects.create(student=other_student, assigned_to=self.frontdesk, note="Done", is_done=True)
+        FollowUp.objects.create(student=archived_student, assigned_to=self.frontdesk, note="Archived", is_done=False)
+        Application.objects.create(student=terminal_student, status=Application.Status.VISA_GRANTED)
+        self.client.force_login(self.admin)
+
+        response = self.client.get(
+            reverse("accounts:student_management"),
+            {"branch": str(self.branch.id)},
+        )
+
+        self.assertEqual(response.context["card_counts"]["all_students"], 3)
+        self.assertEqual(response.context["card_counts"]["pending_followups"], 1)
+        self.assertEqual(response.context["card_counts"]["completed_followups"], 2)
+        self.assertEqual(response.context["card_counts"]["unassigned_students"], 1)
+        self.assertEqual(len(response.context["students"]), 2)
+        terminal_row = next(
+            student for student in response.context["students"]
+            if student["pk"] == terminal_student.pk
+        )
+        self.assertEqual(terminal_row["follow_up_status"], "completed")
+
+
 class BranchStudentTrackerStatusTests(TestCase):
     def setUp(self):
         self.branch = Branch.objects.create(name="Kathmandu", code="KTM")

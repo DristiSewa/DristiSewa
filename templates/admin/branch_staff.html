@@ -26,7 +26,7 @@
                 <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
             </form>
             <button onclick="resetDrawerToCreateMode(); toggleBranchDrawer()" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-base font-semibold px-5 py-2.5 rounded-xl shadow-sm transition">
-                <i class="fa-solid fa-plus"></i> Create New Branch
+                <i class="fa-solid fa-plus"></i> Create Staff Account
             </button>
         </div>
     </div>
@@ -39,11 +39,6 @@
                     {{ item.branch.name|slice:":2"|upper }}
                 </div>
                 <p class="text-base font-bold text-slate-800 truncate flex-1 branch-card-name">{{ item.branch.name }}</p>
-                <button type="button"
-                        onclick="openEditBranchModal({{ item.branch.id }}, '{{ item.branch.name|escapejs }}', '{{ item.branch.code|escapejs }}', '{{ item.branch.address|escapejs }}', '{{ item.branch.phone|escapejs }}', '{{ item.branch.email|escapejs }}', {{ item.branch.is_active|yesno:"true,false" }})"
-                        class="text-slate-400 hover:text-blue-600 transition shrink-0" title="Edit branch">
-                    <i class="fa-solid fa-pen-to-square text-sm"></i>
-                </button>
                 <button type="button"
                         onclick="openDeleteBranchModal({{ item.branch.id }}, '{{ item.branch.name|escapejs }}')"
                         class="text-slate-400 hover:text-red-600 transition shrink-0" title="Delete branch">
@@ -116,11 +111,6 @@
                                     {{ item.branch.name }}
                                 </div>
                                 <button type="button"
-                                        onclick="openEditBranchModal({{ item.branch.id }}, '{{ item.branch.name|escapejs }}', '{{ item.branch.code|escapejs }}', '{{ item.branch.address|escapejs }}', '{{ item.branch.phone|escapejs }}', '{{ item.branch.email|escapejs }}', {{ item.branch.is_active|yesno:"true,false" }})"
-                                        class="text-slate-400 hover:text-blue-600 transition shrink-0" title="Edit branch">
-                                    <i class="fa-solid fa-pen-to-square text-xs"></i>
-                                </button>
-                                <button type="button"
                                         onclick="openDeleteBranchModal({{ item.branch.id }}, '{{ item.branch.name|escapejs }}')"
                                         class="text-slate-400 hover:text-red-600 transition shrink-0" title="Delete branch">
                                     <i class="fa-solid fa-trash-can text-xs"></i>
@@ -172,11 +162,6 @@
                                 <div class="font-semibold text-slate-900 text-base branch-row-name">
                                     {{ item.branch.name }}
                                 </div>
-                                <button type="button"
-                                        onclick="openEditBranchModal({{ item.branch.id }}, '{{ item.branch.name|escapejs }}', '{{ item.branch.code|escapejs }}', '{{ item.branch.address|escapejs }}', '{{ item.branch.phone|escapejs }}', '{{ item.branch.email|escapejs }}', {{ item.branch.is_active|yesno:"true,false" }})"
-                                        class="text-slate-400 hover:text-blue-600 transition shrink-0" title="Edit branch">
-                                    <i class="fa-solid fa-pen-to-square text-xs"></i>
-                                </button>
                                 <button type="button"
                                         onclick="openDeleteBranchModal({{ item.branch.id }}, '{{ item.branch.name|escapejs }}')"
                                         class="text-slate-400 hover:text-red-600 transition shrink-0" title="Delete branch">
@@ -277,50 +262,6 @@
             <a id="deleteModalConfirmButton" href="#" class="px-5 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded-xl shadow-sm transition text-center" style="text-decoration: none;">
                 Yes
             </a>
-        </div>
-    </div>
-</div>
-
-<div id="editBranchModalWrapper" class="fixed inset-0 z-[2000] hidden items-center justify-center p-4"
-     data-update-action-template="{% url 'branches:update_branch_json' 0 %}">
-    <div onclick="closeEditBranchModal()" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity"></div>
-    <div class="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all border border-slate-100">
-        <div class="flex items-center gap-4 mb-4">
-            <div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
-                <i class="fa-solid fa-building text-blue-600 text-lg"></i>
-            </div>
-            <div>
-                <h3 class="text-lg font-bold text-slate-900">Edit Branch</h3>
-            </div>
-        </div>
-
-        <p id="editBranchError" class="hidden text-xs font-semibold text-red-600 bg-red-50 border border-red-100 rounded-xl px-3 py-2 mb-4"></p>
-
-        <div class="space-y-3 mb-6">
-            <div>
-                <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Branch Name</label>
-                <input type="text" id="editBranchName" class="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-2.5 text-sm font-medium focus:outline-none focus:border-blue-500">
-            </div>
-            <input type="hidden" id="editBranchCode">
-            <input type="hidden" id="editBranchPhone">
-            <input type="hidden" id="editBranchEmail">
-            <div>
-                <label class="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Address / Location</label>
-                <input type="text" id="editBranchAddress" class="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-2.5 text-sm font-medium focus:outline-none focus:border-blue-500">
-            </div>
-            <label class="flex items-center gap-2 cursor-pointer pt-1">
-                <input type="checkbox" id="editBranchActive" class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
-                <span class="text-sm font-semibold text-slate-700">Branch is active</span>
-            </label>
-        </div>
-
-        <div class="flex justify-end gap-3 border-t border-slate-50 pt-4">
-            <button type="button" onclick="closeEditBranchModal()" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-slate-700 text-sm font-semibold rounded-xl transition">
-                Cancel
-            </button>
-            <button type="button" id="editBranchSaveBtn" onclick="submitEditBranch()" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl shadow-sm transition">
-                Save Changes
-            </button>
         </div>
     </div>
 </div>

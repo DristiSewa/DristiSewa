@@ -104,9 +104,6 @@ function openDeletePrompt(deleteUrl, targetName) {
                 <div class="flex items-center gap-3 mb-3.5">
                     <div class="w-9 h-9 bg-blue-50 text-blue-700 rounded-xl flex items-center justify-center font-bold text-xs uppercase shrink-0 branch-card-initials">${initials}</div>
                     <p class="text-base font-bold text-slate-800 truncate flex-1 branch-card-name">${branchName}</p>
-                    <button type="button" onclick="openEditBranchModal(${branchId}, '${branchName.replace(/'/g, "\\'")}', '${(code || '').replace(/'/g, "\\'")}', '${(address || '').replace(/'/g, "\\'")}', '', '', true)" class="text-slate-400 hover:text-blue-600 transition shrink-0" title="Edit branch">
-                        <i class="fa-solid fa-pen-to-square text-sm"></i>
-                    </button>
                     <button type="button" onclick="openDeleteBranchModal(${branchId}, '${branchName.replace(/'/g, "\\'")}')" class="text-slate-400 hover:text-red-600 transition shrink-0" title="Delete branch">
                         <i class="fa-solid fa-trash-can text-sm"></i>
                     </button>
@@ -159,9 +156,6 @@ function openDeletePrompt(deleteUrl, targetName) {
                     <div class="flex items-center gap-3">
                         <div class="w-9 h-9 bg-blue-50 text-blue-700 rounded-xl flex items-center justify-center font-bold text-xs uppercase branch-row-initials">${initials}</div>
                         <div class="font-semibold text-slate-900 text-base branch-row-name">${branchName}</div>
-                        <button type="button" onclick="openEditBranchModal(${branchId}, '${branchName.replace(/'/g, "\\'")}', '${(code || '').replace(/'/g, "\\'")}', '${(address || '').replace(/'/g, "\\'")}', '', '', true)" class="text-slate-400 hover:text-blue-600 transition shrink-0" title="Edit branch">
-                            <i class="fa-solid fa-pen-to-square text-xs"></i>
-                        </button>
                         <button type="button" onclick="openDeleteBranchModal(${branchId}, '${branchName.replace(/'/g, "\\'")}')" class="text-slate-400 hover:text-red-600 transition shrink-0" title="Delete branch">
                             <i class="fa-solid fa-trash-can text-xs"></i>
                         </button>
@@ -182,142 +176,6 @@ function openDeletePrompt(deleteUrl, targetName) {
                 countEl.textContent = `Showing ${shown} of ${total} registered branches.`;
             }
         }
-    }
-
-    let currentEditBranchId = null;
-
-    function openEditBranchModal(branchId, name, code, address, phone, email, isActive) {
-        currentEditBranchId = branchId;
-        document.getElementById('editBranchName').value = name || '';
-        document.getElementById('editBranchCode').value = code || '';
-        document.getElementById('editBranchAddress').value = address || '';
-        document.getElementById('editBranchPhone').value = phone || '';
-        document.getElementById('editBranchEmail').value = email || '';
-        document.getElementById('editBranchActive').checked = !!isActive;
-
-        const errorEl = document.getElementById('editBranchError');
-        errorEl.classList.add('hidden');
-        errorEl.textContent = '';
-
-        const modal = document.getElementById('editBranchModalWrapper');
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-    }
-
-    function closeEditBranchModal() {
-        const modal = document.getElementById('editBranchModalWrapper');
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-        currentEditBranchId = null;
-    }
-
-    function submitEditBranch() {
-        if (!currentEditBranchId) return;
-
-        const name = document.getElementById('editBranchName').value.trim();
-        let code = document.getElementById('editBranchCode').value.trim();
-        const address = document.getElementById('editBranchAddress').value.trim();
-        const phone = document.getElementById('editBranchPhone').value.trim();
-        const email = document.getElementById('editBranchEmail').value.trim();
-        const isActive = document.getElementById('editBranchActive').checked;
-        const errorEl = document.getElementById('editBranchError');
-
-        if (!name) {
-            errorEl.textContent = 'Branch name is required.';
-            errorEl.classList.remove('hidden');
-            return;
-        }
-
-        // Auto-generate a code from the name if it's missing
-        if (!code) {
-            code = name.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8) || 'BR';
-        }
-
-        const modal = document.getElementById('editBranchModalWrapper');
-        const urlTemplate = modal.dataset.updateActionTemplate;
-        const url = urlTemplate.replace(/0\/?$/, currentEditBranchId + '/');
-
-        const saveBtn = document.getElementById('editBranchSaveBtn');
-        saveBtn.disabled = true;
-        saveBtn.textContent = 'Saving...';
-
-        fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-            },
-            body: JSON.stringify({ name, code, address, phone, email, is_active: isActive })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                updateBranchOnPage(data);
-                closeEditBranchModal();
-            } else {
-                errorEl.textContent = data.error || 'Failed to update branch.';
-                errorEl.classList.remove('hidden');
-            }
-        })
-        .catch(err => {
-            console.error(err);
-            errorEl.textContent = 'Failed to save branch changes.';
-            errorEl.classList.remove('hidden');
-        })
-        .finally(() => {
-            saveBtn.disabled = false;
-            saveBtn.textContent = 'Save Changes';
-        });
-    }
-
-    function updateBranchOnPage(data) {
-        const initials = data.name.slice(0, 2).toUpperCase();
-
-        // Update card
-        const card = document.querySelector(`[data-branch-card="${data.branch_id}"]`);
-        if (card) {
-            const nameEl = card.querySelector('.branch-card-name');
-            const initialsEl = card.querySelector('.branch-card-initials');
-            if (nameEl) nameEl.textContent = data.name;
-            if (initialsEl) initialsEl.textContent = initials;
-        }
-
-        // Update filter dropdown option
-        const filterSelect = document.getElementById('branchFilterSelect');
-        if (filterSelect) {
-            const opt = Array.from(filterSelect.options).find(o => o.value === String(data.branch_id));
-            if (opt) opt.text = data.name;
-        }
-
-        // Update table row(s)
-        document.querySelectorAll(`[data-branch-row="${data.branch_id}"]`).forEach(row => {
-            const nameEl = row.querySelector('.branch-row-name');
-            const initialsEl = row.querySelector('.branch-row-initials');
-            const addressEl = row.querySelector('.branch-row-address');
-            if (nameEl) nameEl.textContent = data.name;
-            if (initialsEl) initialsEl.textContent = initials;
-            if (addressEl) addressEl.innerHTML = data.address || '<span class="text-slate-300">—</span>';
-        });
-
-        // Sync card edit/delete buttons too
-        if (card) {
-            const editBtn = card.querySelector('button[onclick^="openEditBranchModal"]');
-            if (editBtn) {
-                editBtn.setAttribute('onclick', `openEditBranchModal(${data.branch_id}, '${data.name.replace(/'/g, "\\'")}', '${data.code.replace(/'/g, "\\'")}', '${(data.address || '').replace(/'/g, "\\'")}', '${(data.phone || '').replace(/'/g, "\\'")}', '${(data.email || '').replace(/'/g, "\\'")}', ${data.is_active})`);
-            }
-            const deleteBtn = card.querySelector('button[onclick^="openDeleteBranchModal"]');
-            if (deleteBtn) {
-                deleteBtn.setAttribute('onclick', `openDeleteBranchModal(${data.branch_id}, '${data.name.replace(/'/g, "\\'")}')`);
-            }
-        }
-
-        // Sync table row delete buttons too
-        document.querySelectorAll(`[data-branch-row="${data.branch_id}"]`).forEach(row => {
-            const deleteBtn = row.querySelector('button[onclick^="openDeleteBranchModal"]');
-            if (deleteBtn) {
-                deleteBtn.setAttribute('onclick', `openDeleteBranchModal(${data.branch_id}, '${data.name.replace(/'/g, "\\'")}')`);
-            }
-        });
     }
 
     let currentDeleteBranchId = null;
