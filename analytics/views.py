@@ -18,8 +18,6 @@ from students.models import Student
 from .models import (
     DetailedActivityLog,
     AggregatedAnalytics,
-    SystemHealthMetrics,
-    BranchPerformanceSnapshot,
     UserEngagementMetrics,
 )
 

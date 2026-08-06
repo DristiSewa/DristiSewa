@@ -50,6 +50,42 @@ def create_branch_json(request):
 
 
 @role_required("ADMIN")
+def update_branch_json(request, branch_id):
+    """Update the editable branch details from the Branch & Staff cards."""
+    if request.method != "POST":
+        return JsonResponse({"success": False, "error": "Invalid request method."}, status=405)
+
+    try:
+        payload = json.loads(request.body or "{}")
+    except (ValueError, TypeError):
+        return JsonResponse({"success": False, "error": "Invalid request payload."}, status=400)
+
+    branch = get_object_or_404(Branch, pk=branch_id)
+    name = (payload.get("branch_name") or "").strip()
+    address = (payload.get("location") or "").strip()
+    is_active = payload.get("is_active", branch.is_active)
+
+    if not name:
+        return JsonResponse({"success": False, "error": "Branch name is required."}, status=400)
+    if not isinstance(is_active, bool):
+        return JsonResponse({"success": False, "error": "Invalid branch status."}, status=400)
+    if Branch.objects.filter(name__iexact=name).exclude(pk=branch.pk).exists():
+        return JsonResponse({"success": False, "error": "A branch with this name already exists."}, status=400)
+
+    branch.name = name
+    branch.address = address
+    branch.is_active = is_active
+    branch.save(update_fields=["name", "address", "is_active", "updated_at"])
+    return JsonResponse({
+        "success": True,
+        "branch_id": branch.id,
+        "name": branch.name,
+        "address": branch.address,
+        "is_active": branch.is_active,
+    })
+
+
+@role_required("ADMIN")
 def delete_branch_json(request, branch_id):
     """AJAX branch deletion used by the admin Branch & Staff edit modal."""
     if request.method != "POST":
@@ -68,18 +104,6 @@ def delete_branch_json(request, branch_id):
     branch.delete()
 
     return JsonResponse({"success": True, "branch_id": branch_id_value})
-
-
-@role_required("ADMIN")
-def reactivate_branch(request, branch_id):
-    """Simple POST to set a branch back to active."""
-    branch = get_object_or_404(Branch, pk=branch_id)
-    branch.is_active = True
-    branch.save(update_fields=["is_active"])
-    from django.contrib import messages
-    messages.success(request, f"'{branch.name}' has been reactivated.")
-    from django.shortcuts import redirect
-    return redirect("accounts:branch_staff")
 
 
 @role_required("ADMIN")

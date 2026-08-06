@@ -2274,7 +2274,10 @@ def student_document(request, student_id):
         if "add_remark" in request.POST:
             note = request.POST.get("note", "").strip()
             if note:
-                FollowUp.objects.create(student=student, assigned_to=request.user, note=note)
+                FollowUp.objects.update_or_create(
+                    student=student,
+                    defaults={"assigned_to": request.user, "note": note, "is_done": False},
+                )
             return redirect(f"{reverse('accounts:student_document', kwargs={'student_id': student.pk})}#remarks")
 
         # Remove remark

@@ -179,6 +179,90 @@ function openDeletePrompt(deleteUrl, targetName) {
     }
 
     let currentDeleteBranchId = null;
+    let currentEditBranchId = null;
+    let currentEditBranchIsActive = null;
+
+    function openEditBranchModal(branchId, name, address, isActive) {
+        currentEditBranchId = branchId;
+        currentEditBranchIsActive = Boolean(isActive);
+        document.getElementById('editBranchName').value = name;
+        document.getElementById('editBranchLocation').value = address || '';
+        document.getElementById('editBranchIsActive').checked = Boolean(isActive);
+        const errorEl = document.getElementById('editBranchError');
+        errorEl.classList.add('hidden');
+        errorEl.textContent = '';
+        const modal = document.getElementById('editBranchModalWrapper');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        document.getElementById('editBranchName').focus();
+    }
+
+    function closeEditBranchModal() {
+        const modal = document.getElementById('editBranchModalWrapper');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        currentEditBranchId = null;
+        currentEditBranchIsActive = null;
+    }
+
+    function submitEditBranch() {
+        if (!currentEditBranchId) return;
+        const name = document.getElementById('editBranchName').value.trim();
+        const location = document.getElementById('editBranchLocation').value.trim();
+        const isActive = document.getElementById('editBranchIsActive').checked;
+        const errorEl = document.getElementById('editBranchError');
+        const saveBtn = document.getElementById('editBranchSaveBtn');
+        if (!name) {
+            errorEl.textContent = 'Branch name is required.';
+            errorEl.classList.remove('hidden');
+            return;
+        }
+
+        const template = document.getElementById('editBranchModalWrapper').dataset.updateActionTemplate;
+        const url = template.replace(/0\/?$/, currentEditBranchId + '/');
+        saveBtn.disabled = true;
+        saveBtn.textContent = 'Saving...';
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify({branch_name: name, location, is_active: isActive})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (!data.success) throw new Error(data.error || 'Failed to update branch.');
+            if (data.is_active !== isActive) throw new Error('The branch status could not be updated.');
+            // A status change moves the card between active/inactive sections.
+            // Reload so counts, filters, and both card collections stay correct.
+            if (data.is_active !== currentEditBranchIsActive) {
+                window.location.reload();
+                return;
+            }
+            updateBranchOnPage(data.branch_id, data.name, data.address);
+            closeEditBranchModal();
+        })
+        .catch(error => {
+            errorEl.textContent = error.message;
+            errorEl.classList.remove('hidden');
+        })
+        .finally(() => {
+            saveBtn.disabled = false;
+            saveBtn.textContent = 'Save changes';
+        });
+    }
+
+    function updateBranchOnPage(branchId, name, address) {
+        const initials = name.slice(0, 2).toUpperCase();
+        document.querySelectorAll(`[data-branch-card="${branchId}"] .branch-card-name`).forEach(el => el.textContent = name);
+        document.querySelectorAll(`[data-branch-card="${branchId}"] .branch-card-initials`).forEach(el => el.textContent = initials);
+        document.querySelectorAll(`[data-branch-row="${branchId}"] .branch-row-name`).forEach(el => el.textContent = name);
+        document.querySelectorAll(`[data-branch-row="${branchId}"] .branch-row-initials`).forEach(el => el.textContent = initials);
+        document.querySelectorAll(`[data-branch-row="${branchId}"] .branch-row-address`).forEach(el => el.textContent = address || '—');
+        const option = Array.from(document.getElementById('branchFilterSelect').options).find(item => item.value === String(branchId));
+        if (option) option.textContent = name;
+    }
 
     function openDeleteBranchModal(branchId, name) {
         currentDeleteBranchId = branchId;

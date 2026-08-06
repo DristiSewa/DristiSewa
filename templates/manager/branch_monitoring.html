@@ -80,7 +80,7 @@
                     <tbody>
                         {% for student in branch_students %}
                         <tr>
-                            <td><a href="{% url 'accounts:student_document' student.id %}" class="student-link">{{ student.name }}</a></td>
+                            <td>{{ student.name }}</a></td>
                             <td>{{ student.phone }}</td>
                             <td>{{ student.email }}</td>
                             <td>{{ student.assigned_by }}</td>

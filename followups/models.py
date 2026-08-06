@@ -16,6 +16,12 @@ class FollowUp(TimeStampedModel):
 
     class Meta:
         ordering = ["-created_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["student"],
+                name="one_followup_per_student",
+            ),
+        ]
 
     def __str__(self):
         return f"{self.student} - {self.scheduled_date or 'unscheduled'}"

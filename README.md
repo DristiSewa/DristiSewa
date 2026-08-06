@@ -76,3 +76,6 @@ Visit http://127.0.0.1:8000/
 ## Project notes
 See `claude.md` for architecture notes and the locked-template rules
 followed during development.
+
+The database model is available as a [Mermaid ER diagram](docs/ER_DIAGRAM.md)
+and an editable [draw.io diagram](docs/DristiSewa_ER_Diagram.drawio).

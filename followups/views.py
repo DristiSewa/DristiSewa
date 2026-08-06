@@ -15,8 +15,18 @@ def followup_list(request):
     if request.method == "POST":
         form = FollowUpForm(request.POST)
         if form.is_valid():
-            form.save()
-            messages.success(request, "Follow-up saved.")
+            # A follow-up is the student's current tracker, not a history row.
+            # Re-scheduling or changing its status updates the same tracker.
+            followup, created = FollowUp.objects.update_or_create(
+                student=form.cleaned_data["student"],
+                defaults={
+                    "assigned_to": form.cleaned_data["assigned_to"],
+                    "note": form.cleaned_data["note"],
+                    "scheduled_date": form.cleaned_data["scheduled_date"],
+                    "is_done": form.cleaned_data["is_done"],
+                },
+            )
+            messages.success(request, "Follow-up saved." if created else "Existing follow-up updated.")
             return redirect("followups:followup_list")
         messages.error(request, "Please correct the errors below.")
     else:

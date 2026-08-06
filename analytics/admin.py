@@ -4,8 +4,6 @@ from django.utils.html import format_html
 from .models import (
     DetailedActivityLog,
     AggregatedAnalytics,
-    SystemHealthMetrics,
-    BranchPerformanceSnapshot,
     UserEngagementMetrics,
 )
 
@@ -120,46 +118,6 @@ class AggregatedAnalyticsAdmin(admin.ModelAdmin):
             'fields': ('updated_at',)
         }),
     )
-
-
-@admin.register(SystemHealthMetrics)
-class SystemHealthMetricsAdmin(admin.ModelAdmin):
-    list_display = [
-        'timestamp',
-        'status_colored',
-        'database_size_mb',
-        'query_time_ms',
-        'error_count_hourly'
-    ]
-    list_filter = ['status', 'timestamp']
-    readonly_fields = ['timestamp']
-
-    def status_colored(self, obj):
-        colors = {
-            'HEALTHY': '#28a745',
-            'DEGRADED': '#ffc107',
-            'CRITICAL': '#dc3545',
-        }
-        color = colors.get(obj.status, '#6c757d')
-        return format_html(
-            '<span style="color: {}; font-weight: bold;">{}</span>',
-            color,
-            obj.get_status_display()
-        )
-    status_colored.short_description = 'Status'
-
-
-@admin.register(BranchPerformanceSnapshot)
-class BranchPerformanceSnapshotAdmin(admin.ModelAdmin):
-    list_display = [
-        'branch',
-        'month',
-        'total_students_month_end',
-        'visa_success_rate',
-        'rank_among_branches'
-    ]
-    list_filter = ['branch', 'month']
-    readonly_fields = ['created_at', 'updated_at']
 
 
 @admin.register(UserEngagementMetrics)

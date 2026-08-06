@@ -211,13 +211,16 @@ def student_profile_view(request, pk):
                 if scheduled_date
                 else "Followup added successfully."
             )
-        FollowUp.objects.create(
+        FollowUp.objects.update_or_create(
             student=student,
-            assigned_to=request.user,
-            scheduled_date=scheduled_date,
-            note=note,
+            defaults={
+                "assigned_to": request.user,
+                "scheduled_date": scheduled_date,
+                "note": note,
+                "is_done": False,
+            },
         )
-        messages.success(request, "Remark added.")
+        messages.success(request, "Follow-up saved.")
         return redirect(f"{reverse('students:student_profile', kwargs={'pk': student.pk})}?tab=remarks")
 
     if request.method == "POST" and "remove_remark" in request.POST:
