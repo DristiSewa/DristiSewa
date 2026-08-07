@@ -10,9 +10,6 @@ erDiagram
         int id PK
         string name UK
         string code UK
-        string address
-        string phone
-        string email
         boolean is_active
     }
 
@@ -21,9 +18,6 @@ erDiagram
         string email UK
         string role
         int branch_id FK
-        string phone
-        string experience_details
-        datetime last_seen
     }
 
     STUDENT {
@@ -45,10 +39,7 @@ erDiagram
     APPLICATION {
         int id PK
         int student_id FK
-        string destination_country
-        string institution
         string status
-        text remarks
     }
 
     DOCUMENT {
@@ -57,7 +48,6 @@ erDiagram
         string doc_type
         string file
         string status
-        string remarks
     }
 
     FOLLOW_UP {
@@ -73,18 +63,15 @@ erDiagram
         int id PK
         int student_id FK
         int staff_id FK
-        string purpose
         date appointment_date
         time appointment_time
         string status
-        text notes
     }
 
     ACTIVITY_LOG {
         int id PK
         int user_id FK
         string action
-        text description
         datetime created_at
     }
 
@@ -96,7 +83,6 @@ erDiagram
         string entity_type
         string entity_id
         string status
-        json changes
         datetime created_at
     }
 
@@ -134,8 +120,6 @@ erDiagram
         int id PK
         int user_id FK_UK
         boolean is_active
-        datetime last_login
-        int login_count
     }
 
     DATABASE_BACKUP {
@@ -152,7 +136,6 @@ erDiagram
         int created_by_id FK
         string export_file
         string export_type
-        text tables_included
         datetime created_at
     }
 
@@ -171,7 +154,6 @@ erDiagram
         int superadmin_id FK
         string action
         string status
-        int affected_records
         datetime created_at
     }
 

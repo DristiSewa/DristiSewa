@@ -46,6 +46,7 @@ function openDeletePrompt(deleteUrl, targetName) {
         const submitBtn = document.getElementById('drawerSubmitBtn');
 
         form.reset();
+        form.action = CREATE_BRANCH_URL;
         drawer.classList.remove('h-full', 'bg-slate-50');
         drawer.classList.add('h-auto', 'rounded-bl-3xl', 'bg-white');
         form.classList.remove('h-full');
@@ -59,6 +60,14 @@ function openDeletePrompt(deleteUrl, targetName) {
         document.getElementById('createBranchError').classList.add('hidden');
         submitBtn.type = 'button';
         submitBtn.onclick = submitNewBranch;
+        if (!form.dataset.branchCreateListenerAttached) {
+            form.addEventListener('submit', event => {
+                if (!document.getElementById('branchCreateFields').classList.contains('hidden')) {
+                    submitNewBranch(event);
+                }
+            });
+            form.dataset.branchCreateListenerAttached = '1';
+        }
         submitBtn.textContent = 'Save Branch';
 
         if (drawer.classList.contains('translate-x-full')) {
@@ -67,11 +76,15 @@ function openDeletePrompt(deleteUrl, targetName) {
         document.getElementById('createBranchName').focus();
     }
 
-    function submitNewBranch() {
+    function submitNewBranch(event) {
+        if (event && typeof event.preventDefault === 'function') {
+            event.preventDefault();
+        }
+
         const nameInput = document.getElementById('createBranchName');
         const locationInput = document.getElementById('createBranchLocation');
         const errorEl = document.getElementById('createBranchError');
-        const submitBtn = document.getElementById('createBranchSubmitBtn');
+        const submitBtn = document.getElementById('drawerSubmitBtn');
         const branchName = nameInput.value.trim();
 
         if (!branchName) {
@@ -85,11 +98,22 @@ function openDeletePrompt(deleteUrl, targetName) {
         submitBtn.disabled = true;
         submitBtn.textContent = 'Saving...';
 
+        const csrfTokenElement = document.querySelector('[name=csrfmiddlewaretoken]');
+        if (!csrfTokenElement) {
+            errorEl.textContent = 'CSRF token missing. Please refresh the page and try again.';
+            errorEl.classList.remove('hidden');
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Save Branch';
+            return;
+        }
+
         fetch(CREATE_BRANCH_URL, {
             method: 'POST',
+            credentials: 'same-origin',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                'X-CSRFToken': csrfTokenElement.value,
+                'X-Requested-With': 'XMLHttpRequest'
             },
             body: JSON.stringify({
                 branch_name: branchName,
@@ -97,10 +121,21 @@ function openDeletePrompt(deleteUrl, targetName) {
                 is_active: document.getElementById('createBranchIsActive').checked
             })
         })
-        .then(response => response.json())
-        .then(data => {
-            if (!data.success) throw new Error(data.error || 'Could not create branch.');
-            window.location.reload();
+        .then(async response => {
+            const text = await response.text();
+            let data;
+            try {
+                data = JSON.parse(text);
+            } catch {
+                throw new Error(text || `Server error: ${response.status}`);
+            }
+            if (!response.ok) {
+                throw new Error(data.error || `Request failed with status ${response.status}`);
+            }
+            if (!data.success) {
+                throw new Error(data.error || 'Could not create branch.');
+            }
+            window.location.href = window.location.pathname;
         })
         .catch(error => {
             errorEl.textContent = error.message || 'Could not create branch.';

@@ -1,5 +1,6 @@
 import json
 
+from django.core.exceptions import FieldDoesNotExist
 from django.test import TestCase
 from django.urls import reverse
 
@@ -16,6 +17,12 @@ class UpdateBranchTests(TestCase):
         )
         self.branch = Branch.objects.create(name="Kaski DristiSewa", code="KSK")
         self.client.force_login(self.admin)
+
+    def test_branch_model_does_not_have_phone_or_email_fields(self):
+        with self.assertRaises(FieldDoesNotExist):
+            Branch._meta.get_field("phone")
+        with self.assertRaises(FieldDoesNotExist):
+            Branch._meta.get_field("email")
 
     def test_admin_can_update_a_branch_from_the_card_endpoint(self):
         response = self.client.post(

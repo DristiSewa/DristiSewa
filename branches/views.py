@@ -18,19 +18,32 @@ def create_branch_json(request):
     if request.method != "POST":
         return JsonResponse({"success": False, "error": "Invalid request method."}, status=405)
 
-    try:
-        payload = json.loads(request.body or "{}")
-    except (ValueError, TypeError):
-        return JsonResponse({"success": False, "error": "Invalid request payload."}, status=400)
+    form_fallback = False
+    if request.body:
+        try:
+            payload = json.loads(request.body or "{}")
+        except (ValueError, TypeError):
+            return JsonResponse({"success": False, "error": "Invalid request payload."}, status=400)
+    else:
+        payload = request.POST.dict()
+        form_fallback = True
 
-    name = (payload.get("branch_name") or "").strip()
-    location = (payload.get("location") or "").strip()
-    is_active = payload.get("is_active", True)
+    name = (payload.get("branch_name") or payload.get("name") or "").strip()
+    location = (payload.get("location") or payload.get("address") or "").strip()
+    if "is_active" in payload:
+        is_active = payload.get("is_active")
+    else:
+        is_active = False if form_fallback else True
+    if isinstance(is_active, str):
+        is_active = is_active.lower() in ["true", "1", "yes", "on"]
 
     if not name:
         return JsonResponse({"success": False, "error": "Branch name is required."}, status=400)
     if not isinstance(is_active, bool):
-        return JsonResponse({"success": False, "error": "Invalid branch status."}, status=400)
+        try:
+            is_active = bool(is_active)
+        except (ValueError, TypeError):
+            return JsonResponse({"success": False, "error": "Invalid branch status."}, status=400)
 
     if Branch.objects.filter(name__iexact=name).exists():
         return JsonResponse({"success": False, "error": "Branch already exists."}, status=400)

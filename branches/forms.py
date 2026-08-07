@@ -6,13 +6,11 @@ from .models import Branch
 class BranchForm(forms.ModelForm):
     class Meta:
         model = Branch
-        fields = ["name", "code", "address", "phone", "email", "is_active"]
+        fields = ["name", "code", "address", "is_active"]
         widgets = {
             "name": forms.TextInput(attrs={"class": "form-input"}),
             "code": forms.TextInput(attrs={"class": "form-input"}),
             "address": forms.TextInput(attrs={"class": "form-input"}),
-            "phone": forms.TextInput(attrs={"class": "form-input"}),
-            "email": forms.EmailInput(attrs={"class": "form-input"}),
             "is_active": forms.CheckboxInput(attrs={"class": "form-checkbox"}),
         }
 

@@ -6,12 +6,12 @@ from .models import Branch
 @admin.register(Branch)
 class BranchAdmin(admin.ModelAdmin):
     list_display = [
-        "name", "code", "address", "phone", "email",
+        "name", "code", "address",
         "manager_count", "frontdesk_count", "student_count",
         "is_active", "created_at",
     ]
     list_filter = ["is_active", "created_at"]
-    search_fields = ["name", "code", "address", "email", "phone"]
+    search_fields = ["name", "code", "address"]
     list_editable = ["is_active"]
     date_hierarchy = "created_at"
     list_per_page = 50
