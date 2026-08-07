@@ -82,6 +82,62 @@ class StudentProfileModalValidationTests(TestCase):
         self.assertEqual(self.student.test_type, Student.Test.PTE)
 
 
+class StudentApplicationStatusRemarksTests(TestCase):
+    def setUp(self):
+        self.branch = Branch.objects.create(name="Kathmandu", code="KTM")
+        self.manager = User.objects.create_user(
+            email="manager.remarks@example.com",
+            password="password123",
+            role=User.Role.MANAGER,
+            branch=self.branch,
+        )
+        self.student_user = User.objects.create_user(
+            email="student.remarks@example.com",
+            password="password123",
+            role=User.Role.STUDENT,
+            branch=self.branch,
+        )
+        self.student = Student.objects.create(user=self.student_user)
+        Application.objects.create(
+            student=self.student,
+            destination_country="Canada",
+            remarks="Application received.",
+        )
+        FollowUp.objects.create(
+            student=self.student,
+            assigned_to=self.manager,
+            note="Please upload your bank statement.",
+        )
+
+    def test_manager_remark_is_shown_in_student_application_status(self):
+        self.client.force_login(self.student_user)
+
+        response = self.client.get(reverse("applications:app_status"))
+
+        self.assertContains(response, "Please upload your bank statement.")
+        self.assertContains(response, "Application received.")
+
+
+class FrontDeskRemarkHistoryTests(TestCase):
+    def test_a_student_can_have_multiple_frontdesk_remarks(self):
+        frontdesk = User.objects.create_user(
+            email="frontdesk.remarks@example.com",
+            password="password123",
+            role=User.Role.FRONTDESK,
+        )
+        student_user = User.objects.create_user(
+            email="remark.history.student@example.com",
+            password="password123",
+            role=User.Role.STUDENT,
+        )
+        student = Student.objects.create(user=student_user)
+
+        FollowUp.objects.create(student=student, assigned_to=frontdesk, note="First remark")
+        FollowUp.objects.create(student=student, assigned_to=frontdesk, note="Second remark")
+
+        self.assertEqual(student.followups.count(), 2)
+
+
 class AdminStudentManagementCardTests(TestCase):
     def setUp(self):
         self.admin = User.objects.create_user(

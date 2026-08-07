@@ -40,24 +40,50 @@ function openDeletePrompt(deleteUrl, targetName) {
         }
     }
 
-    function toggleQuickBranchForm() {
-        const container = document.getElementById('quickBranchContainer');
-        container.classList.toggle('hidden');
-        if (!container.classList.contains('hidden')) {
-            document.getElementById('quickBranchName').focus();
+    function openCreateBranchDrawer() {
+        const drawer = document.getElementById('branchDrawer');
+        const form = document.getElementById('staffDrawerForm');
+        const submitBtn = document.getElementById('drawerSubmitBtn');
+
+        form.reset();
+        drawer.classList.remove('h-full', 'bg-slate-50');
+        drawer.classList.add('h-auto', 'rounded-bl-3xl', 'bg-white');
+        form.classList.remove('h-full');
+        form.classList.add('h-auto');
+        document.getElementById('staffDrawerFields').classList.add('hidden');
+        document.getElementById('branchCreateFields').classList.remove('hidden');
+        document.getElementById('branchCreateFields').classList.add('flex');
+        document.getElementById('drawerTitle').textContent = 'Create New Branch';
+        document.getElementById('drawerHelpText').textContent = '';
+        document.getElementById('drawerHelpText').classList.add('hidden');
+        document.getElementById('createBranchError').classList.add('hidden');
+        submitBtn.type = 'button';
+        submitBtn.onclick = submitNewBranch;
+        submitBtn.textContent = 'Save Branch';
+
+        if (drawer.classList.contains('translate-x-full')) {
+            toggleBranchDrawer();
         }
+        document.getElementById('createBranchName').focus();
     }
 
-    function submitQuickBranch() {
-        const nameInput = document.getElementById('quickBranchName');
-        const locInput = document.getElementById('quickBranchLocation');
+    function submitNewBranch() {
+        const nameInput = document.getElementById('createBranchName');
+        const locationInput = document.getElementById('createBranchLocation');
+        const errorEl = document.getElementById('createBranchError');
+        const submitBtn = document.getElementById('createBranchSubmitBtn');
         const branchName = nameInput.value.trim();
-        const location = locInput.value.trim();
 
         if (!branchName) {
-            alert('Branch name is required.');
+            errorEl.textContent = 'Branch name is required.';
+            errorEl.classList.remove('hidden');
+            nameInput.focus();
             return;
         }
+
+        errorEl.classList.add('hidden');
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Saving...';
 
         fetch(CREATE_BRANCH_URL, {
             method: 'POST',
@@ -65,27 +91,24 @@ function openDeletePrompt(deleteUrl, targetName) {
                 'Content-Type': 'application/json',
                 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
             },
-            body: JSON.stringify({ 'branch_name': branchName, 'location': location })
+            body: JSON.stringify({
+                branch_name: branchName,
+                location: locationInput.value.trim(),
+                is_active: document.getElementById('createBranchIsActive').checked
+            })
         })
-        .then(response => {
-            const contentType = response.headers.get('content-type') || '';
-            if (contentType.includes('application/json')) {
-                return response.json();
-            }
-            return response.text().then(text => {
-                throw new Error('Server returned non-JSON response (status ' + response.status + '). Check console for details.\n\n' + text.slice(0, 200));
-            });
-        })
+        .then(response => response.json())
         .then(data => {
-            if (data.success) {
-                window.location.reload();
-            } else {
-                alert(data.error || 'Error creating branch.');
-            }
+            if (!data.success) throw new Error(data.error || 'Could not create branch.');
+            window.location.reload();
         })
-        .catch(err => {
-            console.error('Branch creation error:', err);
-            alert('Error: ' + err.message);
+        .catch(error => {
+            errorEl.textContent = error.message || 'Could not create branch.';
+            errorEl.classList.remove('hidden');
+        })
+        .finally(() => {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Save Branch';
         });
     }
 
@@ -374,9 +397,19 @@ function openDeletePrompt(deleteUrl, targetName) {
         const form = document.getElementById('staffDrawerForm');
 
         form.action = drawer.dataset.createAction;
+        drawer.classList.remove('h-auto', 'rounded-bl-3xl', 'bg-slate-50');
+        drawer.classList.add('h-full', 'bg-white');
+        form.classList.remove('h-auto');
+        form.classList.add('h-full');
         document.getElementById('drawerTitle').textContent = 'Create Staff Account';
         document.getElementById('drawerSubmitBtn').textContent = 'Save Account';
         document.getElementById('drawerHelpText').textContent = 'Configure access credentials to instantiate the branch manager profile layout.';
+        document.getElementById('drawerHelpText').classList.remove('hidden');
+        document.getElementById('branchCreateFields').classList.add('hidden');
+        document.getElementById('branchCreateFields').classList.remove('flex');
+        document.getElementById('staffDrawerFields').classList.remove('hidden');
+        document.getElementById('drawerSubmitBtn').type = 'submit';
+        document.getElementById('drawerSubmitBtn').onclick = null;
 
         form.reset();
 
@@ -449,6 +482,16 @@ function openDeletePrompt(deleteUrl, targetName) {
         const form = document.getElementById('staffDrawerForm');
 
         form.reset();
+        drawer.classList.remove('h-auto', 'rounded-bl-3xl', 'bg-slate-50');
+        drawer.classList.add('h-full', 'bg-white');
+        form.classList.remove('h-auto');
+        form.classList.add('h-full');
+        document.getElementById('branchCreateFields').classList.add('hidden');
+        document.getElementById('branchCreateFields').classList.remove('flex');
+        document.getElementById('staffDrawerFields').classList.remove('hidden');
+        document.getElementById('drawerHelpText').classList.remove('hidden');
+        document.getElementById('drawerSubmitBtn').type = 'submit';
+        document.getElementById('drawerSubmitBtn').onclick = null;
         form.action = drawer.dataset.updateActionTemplate.replace(/0\/update\/?$/, userId + '/update/');
 
         document.getElementById('drawerTitle').textContent = 'Edit Manager Account';
@@ -521,11 +564,6 @@ function openDeletePrompt(deleteUrl, targetName) {
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-        if (window.location.hash === "#create-branch") {
-            toggleBranchDrawer();
-            history.replaceState(null, null, ' ');
-        }
-
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('openDrawer') === 'true') { toggleBranchDrawer(); }
     });

@@ -25,9 +25,12 @@ def create_branch_json(request):
 
     name = (payload.get("branch_name") or "").strip()
     location = (payload.get("location") or "").strip()
+    is_active = payload.get("is_active", True)
 
     if not name:
         return JsonResponse({"success": False, "error": "Branch name is required."}, status=400)
+    if not isinstance(is_active, bool):
+        return JsonResponse({"success": False, "error": "Invalid branch status."}, status=400)
 
     if Branch.objects.filter(name__iexact=name).exists():
         return JsonResponse({"success": False, "error": "Branch already exists."}, status=400)
@@ -39,13 +42,14 @@ def create_branch_json(request):
         suffix += 1
         code = f"{base_code}{suffix}"
 
-    branch = Branch.objects.create(name=name, code=code, address=location)
+    branch = Branch.objects.create(name=name, code=code, address=location, is_active=is_active)
     return JsonResponse({
         "success": True,
         "branch_id": branch.id,
         "name": branch.name,
         "code": branch.code,
         "address": branch.address,
+        "is_active": branch.is_active,
     })
 
 

@@ -375,7 +375,8 @@ def admin_dashboard(request):
 
     try:
         from activity.models import ActivityLog
-        recent_activity = ActivityLog.objects.select_related("user")[:5]
+        # Show the complete activity history, with the most recent event first.
+        recent_activity = ActivityLog.objects.select_related("user").order_by("-created_at")
     except Exception:
         recent_activity = []
 
@@ -2322,8 +2323,11 @@ def student_remark(request, student_id):
     if request.method == "POST":
         note = request.POST.get("student_remark", "").strip()
         if note:
-            FollowUp.objects.create(student=student, assigned_to=request.user, note=note)
-            messages.success(request, "Remark added.")
+            FollowUp.objects.update_or_create(
+                student=student,
+                defaults={"assigned_to": request.user, "note": note, "is_done": False},
+            )
+            messages.success(request, "Remark saved.")
 
     return redirect(f"{reverse('accounts:student_document', kwargs={'student_id': student.pk})}#remarks")
 

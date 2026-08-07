@@ -34,7 +34,15 @@
                                 <span class="text-xs font-bold text-blue-400 bg-blue-900/40 px-2 py-1 rounded-lg">{{ application.get_status_display }}</span>
                             {% endif %}
                         </td>
-                        <td class="py-3 pr-4 text-slate-400 text-xs">{{ application.remarks|default:"—" }}</td>
+                        <td class="py-3 pr-4 text-slate-400 text-xs">
+                            {% if row.manager_remark %}
+                                <p>{{ row.manager_remark }}</p>
+                            {% endif %}
+                            {% if application.remarks %}
+                                <p{% if row.manager_remark %} class="mt-1 text-slate-500"{% endif %}>{{ application.remarks }}</p>
+                            {% endif %}
+                            {% if not row.manager_remark and not application.remarks %}—{% endif %}
+                        </td>
                         <td class="py-3 pr-4 text-slate-400">{{ application.updated_at|date:"M d, Y" }}</td>
                     </tr>
                     {% endwith %}

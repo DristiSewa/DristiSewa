@@ -32,7 +32,6 @@
                         <th class="py-2 pr-4">Type</th>
                         <th class="py-2 pr-4">File</th>
                         <th class="py-2 pr-4">Status</th>
-                        <th class="py-2 pr-4">Remarks</th>
                         <th class="py-2 pr-4">Uploaded</th>
                     </tr>
                 </thead>
@@ -46,11 +45,16 @@
                             {% elif document.status == "REJECTED" %}<span class="text-rose-400 font-bold">Rejected</span>
                             {% else %}<span class="text-amber-400 font-bold">Pending</span>{% endif %}
                         </td>
-                        <td class="py-2 pr-4 text-slate-400">{{ document.remarks|default:"—" }}</td>
+                        {% comment %}
+                        <td class="py-2 pr-4 text-slate-400">
+                            {% if document.remarks %}{{ document.remarks }}{% endif %}
+                            {% if not frontdesk_remark and not document.remarks %}—{% endif %}
+                        </td>
+                        {% endcomment %}
                         <td class="py-2 pr-4 text-slate-400">{{ document.created_at|date:"M d, Y" }}</td>
                     </tr>
                     {% empty %}
-                    <tr><td colspan="5" class="py-4 text-center text-slate-500">No documents uploaded yet.</td></tr>
+                    <tr><td colspan="4" class="py-4 text-center text-slate-500">No documents uploaded yet.</td></tr>
                     {% endfor %}
                 </tbody>
             </table>

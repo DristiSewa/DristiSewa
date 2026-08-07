@@ -43,3 +43,20 @@ class StaffLoginMessageTests(TestCase):
         )
 
         self.assertContains(response, "Invalid email or password.")
+
+
+class AdminReportDownloadTests(TestCase):
+    def test_admin_can_download_overall_report_as_pdf(self):
+        admin = User.objects.create_user(
+            email="admin.report@example.com",
+            password="password123",
+            role=User.Role.ADMIN,
+        )
+        self.client.force_login(admin)
+
+        response = self.client.get(reverse("accounts:admin_download_report"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"], "application/pdf")
+        self.assertIn("attachment; filename=", response["Content-Disposition"])
+        self.assertTrue(response.content.startswith(b"%PDF"))

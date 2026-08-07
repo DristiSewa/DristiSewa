@@ -15,11 +15,18 @@ def app_status(request):
     student, _ = Student.objects.get_or_create(user=request.user)
     applications = student.applications.all()
     documents = student.documents.all()
+    manager_remark = (
+        student.followups.filter(assigned_to__role="MANAGER")
+        .order_by("-updated_at")
+        .values_list("note", flat=True)
+        .first()
+    )
 
     application_rows = [
         {
             "application": application,
             "country": application.destination_country or student.preferred_country,
+            "manager_remark": manager_remark,
         }
         for application in applications
     ]

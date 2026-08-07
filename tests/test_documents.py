@@ -54,3 +54,13 @@ class DocumentFileViewsTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("attachment", response["Content-Disposition"])
+
+    def test_my_documents_does_not_show_a_remarks_column(self):
+        self.document.remarks = "Please submit a clearer transcript."
+        self.document.save(update_fields=["remarks"])
+        self.client.force_login(self.user)
+
+        response = self.client.get(reverse("documents:upload_docs"))
+
+        self.assertNotContains(response, "Remarks")
+        self.assertNotContains(response, "Please submit a clearer transcript.")

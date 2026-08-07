@@ -97,34 +97,37 @@
 </div>
 
 <!-- BRANCH PERFORMANCE AND RECENT ACTIVITY -->
-<div class="grid grid-cols-1 lg:grid-cols-12 gap-12 mt-12">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-12">
     <!-- Branch Performance Progress Column Blocks -->
-    <div class="lg:col-span-7 space-y-6">
-        <h4 class="text-xl font-bold text-slate-900 tracking-tight mb-4">Branch Performance</h4>
+    <section class="lg:col-span-7 bg-white border border-slate-200/80 rounded-3xl p-6 shadow-sm">
+        <h4 class="text-xl font-bold text-slate-900 tracking-tight mb-6">Branch Performance</h4>
 
-        {% for branch in branch_performance %}
-        <div class="space-y-2">
-            <div class="flex justify-between text-sm font-semibold">
-                <span class="text-slate-700">{{ branch.name }}</span>
-                <span class="text-blue-600">{{ branch.count }} student{{ branch.count|pluralize }}</span>
+        <div class="space-y-6">
+            {% for branch in branch_performance %}
+            <div class="space-y-2">
+                <div class="flex justify-between text-sm font-semibold">
+                    <span class="text-slate-700">{{ branch.name }}</span>
+                    <span class="text-blue-600">{{ branch.count }} student{{ branch.count|pluralize }}</span>
+                </div>
+                <div class="w-full bg-slate-200/80 h-2.5 rounded-full overflow-hidden">
+                    <div class="bg-blue-600 h-full rounded-full" style="width: {{ branch.percent }}%"></div>
+                </div>
             </div>
-            <div class="w-full bg-slate-200/80 h-2.5 rounded-full overflow-hidden">
-                <div class="bg-blue-600 h-full rounded-full" style="width: {{ branch.percent }}%"></div>
-            </div>
+            {% empty %}
+            <p class="text-sm text-slate-400">No branch data available yet.</p>
+            {% endfor %}
         </div>
-        {% empty %}
-        <p class="text-sm text-slate-400">No branch data available yet.</p>
-        {% endfor %}
-    </div>
+    </section>
 
-    <!-- Recent Activity Timeline Log Feed Column Components -->
-    <div class="lg:col-span-5 space-y-4">
-        <h4 class="text-lg font-bold text-slate-900 tracking-tight mb-4">RECENT ACTIVITY</h4>
+    <!-- Complete activity timeline, newest entries first -->
+    <section class="lg:col-span-5 bg-white border border-slate-200/80 rounded-3xl p-6 shadow-sm flex flex-col h-[340px]">
+        <h4 class="text-xl font-bold text-slate-900 tracking-tight mb-6">Activity History</h4>
 
+        <div class="flex-1 min-h-0 overflow-y-auto pr-3">
         <div class="relative pl-6 border-l-2 border-slate-200/80 space-y-6 text-sm">
             {% for activity in recent_activity %}
             <div class="relative">
-                <span class="absolute -left-[31px] top-1 bg-blue-600 w-3 h-3 rounded-full ring-4 ring-slate-50"></span>
+                <span class="absolute -left-[31px] top-1 bg-blue-600 w-3 h-3 rounded-full ring-4 ring-white"></span>
                 <p class="font-semibold text-slate-800">{{ activity.action }}{% if activity.description %} — {{ activity.description }}{% endif %}</p>
                 <span class="text-xs text-slate-400">{{ activity.created_at|timesince }} ago</span>
             </div>
@@ -132,11 +135,12 @@
             <p class="text-slate-400">No recent activity.</p>
             {% endfor %}
         </div>
-    </div>
+        </div>
+    </section>
 </div>
 
 <!-- ADVANCED ANALYTICS SECTION -->
-<div class="mt-8 lg:-mt-32">
+<div class="mt-12">
     <h4 class="text-xl font-bold text-slate-900 tracking-tight mb-4">Advanced Analytics & Audit Tools</h4>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">

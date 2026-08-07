@@ -4,3 +4,4 @@ Pillow>=10.0
 certifi>=2024.0.0
 psycopg2-binary>=2.9
 dj-database-url>=2.0
+reportlab>=4.0
