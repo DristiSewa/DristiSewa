@@ -24,11 +24,7 @@
         <div class="staff-profile-card">
             <div class="card-top-identity">
                 <div class="large-avatar">
-                    {% if staff.profile_pic %}
-                        <img src="{{ staff.profile_pic.url }}" alt="{{ staff.get_full_name }}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
-                    {% else %}
-                        {{ staff.first_name|slice:":1"|upper }}{{ staff.last_name|slice:":1"|upper }}
-                    {% endif %}
+                    {{ staff.first_name|slice:":1"|upper }}{{ staff.last_name|slice:":1"|upper }}
                 </div>
                 <div class="identity-text">
                     <h3>{{ staff.get_full_name|default:staff.email }}</h3>

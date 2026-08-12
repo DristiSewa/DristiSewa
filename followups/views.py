@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 from accounts.permissions import role_required
 from core.services import filter_by_branch
+from students.models import Student
 from .forms import AppointmentForm, FollowUpForm
 from .models import Appointment, FollowUp
 
@@ -11,13 +12,23 @@ from .models import Appointment, FollowUp
 def followup_list(request):
     followups = FollowUp.objects.select_related("student__user", "assigned_to")
     followups = filter_by_branch(request.user, followups, branch_field="student__user__branch")
+    if request.user.role == "FRONTDESK":
+        followups = followups.filter(student__assigned_to=request.user)
 
     if request.method == "POST":
         form = FollowUpForm(request.POST)
         if form.is_valid():
             if request.user.role == "FRONTDESK":
-                form.save()
-                messages.success(request, "Remark added.")
+                student = form.cleaned_data["student"]
+                if not Student.objects.filter(
+                    pk=student.pk, user__branch=request.user.branch, assigned_to=request.user
+                ).exists():
+                    messages.error(request, "You can only add follow-ups for your assigned students.")
+                else:
+                    followup = form.save(commit=False)
+                    followup.assigned_to = request.user
+                    followup.save()
+                    messages.success(request, "Remark added.")
             else:
                 # Manager follow-ups remain a single current tracker.
                 followup, created = FollowUp.objects.update_or_create(
@@ -53,7 +64,14 @@ def followup_list(request):
 
 @role_required("ADMIN", "MANAGER", "FRONTDESK")
 def followup_toggle(request, pk):
-    followup = get_object_or_404(FollowUp, pk=pk)
+    followups = filter_by_branch(
+        request.user,
+        FollowUp.objects.all(),
+        branch_field="student__user__branch",
+    )
+    if request.user.role == "FRONTDESK":
+        followups = followups.filter(student__assigned_to=request.user)
+    followup = get_object_or_404(followups, pk=pk)
     if request.method == "POST" and "status" in request.POST:
         followup.is_done = request.POST.get("status") == "completed"
     else:

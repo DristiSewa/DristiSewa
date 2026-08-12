@@ -14,23 +14,23 @@
         <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">All Students</p>
         <p class="text-3xl font-black text-slate-800">{{ card_counts.all_students }}</p>
     </a>
-    <a href="?{% if query %}q={{ query }}&{% endif %}{% if selected_branch %}branch={{ selected_branch }}&{% endif %}{% if phone_query %}phone={{ phone_query }}&{% endif %}status=pending"
-       class="bg-white border {% if status_filter == 'pending' %}border-rose-400 ring-1 ring-rose-200{% else %}border-slate-100{% endif %} rounded-2xl p-4 shadow-sm hover:shadow-md transition group">
-        <p class="text-[10px] font-bold uppercase tracking-widest text-rose-400 mb-1"><i class="fas fa-circle-exclamation mr-1"></i> Pending Followups</p>
-        <p class="text-3xl font-black text-rose-600">{{ card_counts.pending_followups }}</p>
-        <p class="text-[10px] text-slate-400 mt-1">Across all branches</p>
+    <a href="?{% if query %}q={{ query }}&{% endif %}{% if selected_branch %}branch={{ selected_branch }}&{% endif %}{% if phone_query %}phone={{ phone_query }}&{% endif %}status=due"
+       class="bg-white border {% if status_filter == 'due' %}border-rose-400 ring-1 ring-rose-200{% else %}border-slate-100{% endif %} rounded-2xl p-4 shadow-sm hover:shadow-md transition group">
+        <p class="text-[10px] font-bold uppercase tracking-widest text-rose-400 mb-1"><i class="fas fa-circle-exclamation mr-1"></i> Due</p>
+        <p class="text-3xl font-black text-rose-600">{{ card_counts.due_followups }}</p>
+        <p class="text-[10px] text-slate-400 mt-1">Follow-ups overdue</p>
+    </a>
+    <a href="?{% if query %}q={{ query }}&{% endif %}{% if selected_branch %}branch={{ selected_branch }}&{% endif %}{% if phone_query %}phone={{ phone_query }}&{% endif %}status=upcoming"
+       class="bg-white border {% if status_filter == 'upcoming' %}border-amber-400 ring-1 ring-amber-200{% else %}border-slate-100{% endif %} rounded-2xl p-4 shadow-sm hover:shadow-md transition group">
+        <p class="text-[10px] font-bold uppercase tracking-widest text-amber-500 mb-1"><i class="fas fa-clock mr-1"></i> Upcoming</p>
+        <p class="text-3xl font-black text-amber-600">{{ card_counts.upcoming_followups }}</p>
+        <p class="text-[10px] text-slate-400 mt-1">Within 7 days</p>
     </a>
     <a href="?{% if query %}q={{ query }}&{% endif %}{% if selected_branch %}branch={{ selected_branch }}&{% endif %}{% if phone_query %}phone={{ phone_query }}&{% endif %}status=completed"
        class="bg-white border {% if status_filter == 'completed' %}border-emerald-400 ring-1 ring-emerald-200{% else %}border-slate-100{% endif %} rounded-2xl p-4 shadow-sm hover:shadow-md transition group">
-        <p class="text-[10px] font-bold uppercase tracking-widest text-emerald-500 mb-1"><i class="fas fa-circle-check mr-1"></i> Completed Followups</p>
+        <p class="text-[10px] font-bold uppercase tracking-widest text-emerald-500 mb-1"><i class="fas fa-circle-check mr-1"></i> Completed</p>
         <p class="text-3xl font-black text-emerald-600">{{ card_counts.completed_followups }}</p>
-        <p class="text-[10px] text-slate-400 mt-1">Across all branches</p>
-    </a>
-    <a href="?{% if query %}q={{ query }}&{% endif %}{% if selected_branch %}branch={{ selected_branch }}&{% endif %}{% if phone_query %}phone={{ phone_query }}&{% endif %}status=unassigned"
-       class="bg-white border {% if status_filter == 'unassigned' %}border-amber-400 ring-1 ring-amber-200{% else %}border-slate-100{% endif %} rounded-2xl p-4 shadow-sm hover:shadow-md transition group">
-        <p class="text-[10px] font-bold uppercase tracking-widest text-amber-500 mb-1"><i class="fas fa-user-clock mr-1"></i> Unassigned Students</p>
-        <p class="text-3xl font-black text-amber-600">{{ card_counts.unassigned_students }}</p>
-        <p class="text-[10px] text-slate-400 mt-1">Across all branches</p>
+        <p class="text-[10px] text-slate-400 mt-1">No pending follow-up</p>
     </a>
 </div>
 
@@ -51,6 +51,7 @@
         <div class="relative min-w-[160px]">
             <select name="branch" onchange="this.form.submit()" class="appearance-none bg-white border border-slate-100 rounded-xl pl-4 pr-10 py-3 text-sm font-semibold text-slate-700 focus:outline-none focus:border-blue-500 shadow-sm transition-all cursor-pointer w-full">
                 <option value="">All Branches</option>
+                <option value="unassigned" {% if selected_branch == 'unassigned' %}selected{% endif %}>Unassigned</option>
                 {% for branch in branches %}
                 <option value="{{ branch.id }}" {% if selected_branch == branch.id|stringformat:"s" %}selected{% endif %}>{{ branch.name }}</option>
                 {% endfor %}
@@ -68,7 +69,11 @@
     {% if selected_branch or phone_query or status_filter %}
     <div class="flex flex-wrap items-center gap-2 text-xs">
         <span class="text-slate-400 font-semibold">Active filters:</span>
-        {% if selected_branch %}
+        {% if selected_branch == 'unassigned' %}
+        <span class="inline-flex items-center gap-1 bg-slate-100 text-slate-600 border border-slate-200 px-2.5 py-1 rounded-full font-semibold">
+            <i class="fas fa-building-slash text-[10px]"></i> Unassigned
+        </span>
+        {% elif selected_branch %}
             {% for branch in branches %}{% if branch.id|stringformat:"s" == selected_branch %}
             <span class="inline-flex items-center gap-1 bg-blue-50 text-blue-700 border border-blue-100 px-2.5 py-1 rounded-full font-semibold">
                 <i class="fas fa-building text-[10px]"></i> {{ branch.name }}
@@ -81,7 +86,7 @@
         </span>
         {% endif %}
         {% if status_filter %}
-        <span class="inline-flex items-center gap-1 {% if status_filter == 'pending' %}bg-rose-50 text-rose-600 border-rose-100{% elif status_filter == 'unassigned' %}bg-amber-50 text-amber-600 border-amber-100{% else %}bg-emerald-50 text-emerald-600 border-emerald-100{% endif %} border px-2.5 py-1 rounded-full font-semibold">
+        <span class="inline-flex items-center gap-1 {% if status_filter == 'due' or status_filter == 'pending' %}bg-rose-50 text-rose-600 border-rose-100{% elif status_filter == 'upcoming' or status_filter == 'unassigned' %}bg-amber-50 text-amber-600 border-amber-100{% else %}bg-emerald-50 text-emerald-600 border-emerald-100{% endif %} border px-2.5 py-1 rounded-full font-semibold">
             <i class="fas fa-filter text-[10px]"></i> {{ status_filter|capfirst }}
         </span>
         {% endif %}
@@ -110,7 +115,7 @@
                     </div>
                     <span class="font-bold text-slate-800 text-sm tracking-tight hover:text-blue-600 transition">{{ student.user.get_full_name }}</span>
                 </td>
-                <td class="py-5 px-6 text-sm text-slate-600">{{ student.user.branch.name|default:"—" }}</td>
+                <td class="py-5 px-6 text-sm text-slate-600">{{ student.branch_name }}</td>
                 <td class="py-5 px-6 font-bold text-slate-900 text-sm tracking-tight">{{ student.phone_number }}</td>
                 <td class="py-5 px-6">
                     {% if student.is_active %}
@@ -120,15 +125,15 @@
                     {% endif %}
                 </td>
                 <td class="py-5 px-8">
-                    {% if student.follow_up_status == 'pending' %}
+                    {% if student.follow_up_status == 'due' %}
                     <span class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold bg-rose-50 border border-rose-100 text-rose-600">
-                        <span class="w-1.5 h-1.5 rounded-full bg-rose-500 mr-1.5"></span> Pending
+                        <span class="w-1.5 h-1.5 rounded-full bg-rose-500 mr-1.5"></span> Due
                     </span>
-                    {% elif student.follow_up_status == 'unassigned' %}
+                    {% elif student.follow_up_status == 'upcoming' %}
                     <span class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold bg-amber-50 border border-amber-100 text-amber-600">
-                        <span class="w-1.5 h-1.5 rounded-full bg-amber-500 mr-1.5"></span> Unassigned
+                        <span class="w-1.5 h-1.5 rounded-full bg-amber-500 mr-1.5"></span> Upcoming
                     </span>
-                    {% else %}
+                    {% elif student.follow_up_status == 'completed' %}
                     <span class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold bg-emerald-50 border border-emerald-100 text-emerald-600">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5"></span> Completed
                     </span>

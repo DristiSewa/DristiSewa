@@ -81,6 +81,16 @@ class StudentProfileModalValidationTests(TestCase):
         self.assertEqual(self.student_user.phone, "9814151728")
         self.assertEqual(self.student.test_type, Student.Test.PTE)
 
+    def test_removing_missing_remark_is_idempotent(self):
+        self.client.force_login(self.admin)
+
+        response = self.client.post(
+            self.url,
+            {"remove_remark": "1", "followup_id": "999999"},
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response["Location"], f"{self.url}?tab=remarks")
 
 class StudentApplicationStatusRemarksTests(TestCase):
     def setUp(self):

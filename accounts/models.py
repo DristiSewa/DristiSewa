@@ -20,6 +20,8 @@ class User(AbstractUser):
         STUDENT = "STUDENT", "Student"
 
     username = None
+    groups = None
+    user_permissions = None
     email = models.EmailField("email address", unique=True)
     role = models.CharField(
         max_length=20, choices=Role.choices, default=Role.STUDENT)

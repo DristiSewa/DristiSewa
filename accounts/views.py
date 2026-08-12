@@ -1,5 +1,6 @@
 import logging
 import random
+from datetime import timedelta
 
 from django.conf import settings
 from django.contrib import messages
@@ -44,18 +45,23 @@ def _tracker_counts_for_students(students):
 
 
 def _manager_branch_students_queryset(manager, Student):
-    return Student.objects.select_related("user", "user__branch", "assigned_to", "assigned_by").prefetch_related(
+    return Student.objects.select_related("user", "user__branch", "assigned_to", "assigned_manager", "assigned_by").prefetch_related(
         "applications", "documents", "followups"
-    ).filter(is_archived=False, user__branch=manager.branch)
+    ).filter(is_archived=False, user__branch=manager.branch, user__role=User.Role.STUDENT)
 
 
 def _manager_followup_students_queryset(manager, Student):
-    return Student.objects.select_related("user", "assigned_to", "assigned_by").prefetch_related(
+    from django.db.models import Q
+
+    return Student.objects.select_related("user", "assigned_to", "assigned_manager", "assigned_by").prefetch_related(
         "applications", "followups"
     ).filter(
         is_archived=False,
         user__branch=manager.branch,
-        assigned_to=manager,
+        user__role=User.Role.STUDENT,
+    ).filter(
+        Q(assigned_manager=manager) | Q(assigned_to=manager),
+    ).filter(
         assigned_by__role=User.Role.FRONTDESK,
     )
 
@@ -227,7 +233,10 @@ def verify_otp(request):
                     if branch_frontdesk.count() == 1:
                         assigned_to = branch_frontdesk.first()
 
-                Student.objects.get_or_create(user=user, defaults={"assigned_to": assigned_to})
+                Student.objects.get_or_create(
+                    user=user,
+                    defaults={"assigned_to": assigned_to, "assigned_by": assigned_to},
+                )
 
                 request.session.pop("pending_registration", None)
                 request.session.pop("email", None)
@@ -1296,13 +1305,15 @@ def delete_user(request, user_id):
 @role_required("ADMIN")
 def student_management(request):
     from django.db.models import Q
+    from django.utils import timezone
 
     from branches.models import Branch
     from students.models import Student
 
     all_students = list(
         Student.objects.select_related("assigned_by").prefetch_related("applications", "followups").filter(
-            is_archived=False
+            user__role=User.Role.STUDENT,
+            is_archived=False,
         )
     )
     pending_trackers, completed_trackers = _tracker_counts_for_students(all_students)
@@ -1319,7 +1330,7 @@ def student_management(request):
 
     students_qs = Student.objects.select_related("user", "user__branch", "assigned_by").prefetch_related(
         "applications", "followups"
-    ).filter(is_archived=False)
+    ).filter(user__role=User.Role.STUDENT, is_archived=False)
 
     query = request.GET.get("q", "").strip()
     if query:
@@ -1334,7 +1345,10 @@ def student_management(request):
 
     branch_id = request.GET.get("branch", "").strip()
     if branch_id:
-        students_qs = students_qs.filter(user__branch_id=branch_id)
+        if branch_id == "unassigned":
+            students_qs = students_qs.filter(user__branch__isnull=True)
+        else:
+            students_qs = students_qs.filter(user__branch_id=branch_id)
 
     phone_query = request.GET.get("phone", "").strip()
     if phone_query:
@@ -1344,18 +1358,36 @@ def student_management(request):
 
     students_data = []
     counts = {"pending": 0, "completed": 0, "unassigned": 0}
+    display_counts = {"due": 0, "upcoming": 0, "completed": 0}
+    today = timezone.localdate()
+    upcoming_limit = today + timedelta(days=7)
 
     for student in students_qs.order_by("user__first_name", "user__last_name").distinct():
         if _student_tracker_is_completed(student):
             follow_up_status = "completed"
-        elif not (student.assigned_by and student.assigned_by.role == User.Role.FRONTDESK):
-            follow_up_status = "unassigned"
         else:
-            follow_up_status = "pending"
+            pending_followups = sorted(
+                (followup for followup in student.followups.all() if not followup.is_done),
+                key=lambda followup: followup.scheduled_date or today,
+            )
+            next_followup = pending_followups[0] if pending_followups else None
+            follow_up_status = (
+                "upcoming"
+                if next_followup
+                and next_followup.scheduled_date
+                and today < next_followup.scheduled_date <= upcoming_limit
+                else "due"
+            )
 
-        counts[follow_up_status] += 1
+        legacy_status = "completed" if follow_up_status == "completed" else (
+            "unassigned"
+            if not (student.assigned_by and student.assigned_by.role == User.Role.FRONTDESK)
+            else "pending"
+        )
+        counts[legacy_status] += 1
+        display_counts[follow_up_status] += 1
 
-        if status_filter and follow_up_status != status_filter:
+        if status_filter and status_filter not in (follow_up_status, legacy_status):
             continue
 
         students_data.append(
@@ -1363,12 +1395,19 @@ def student_management(request):
                 "pk": student.pk,
                 "user": student.user,
                 "phone_number": student.user.phone or "—",
+                "branch_name": student.user.branch.name if student.user.branch else "Unassigned",
                 "is_active": student.user.is_active,
                 "follow_up_status": follow_up_status,
             }
         )
 
-    total_filtered = counts["pending"] + counts["completed"] + counts["unassigned"]
+    card_counts.update(
+        {
+            "due_followups": display_counts["due"],
+            "upcoming_followups": display_counts["upcoming"],
+        }
+    )
+    total_filtered = len(students_data)
 
     return render(
         request,
@@ -1384,6 +1423,7 @@ def student_management(request):
             "phone_query": phone_query,
             "status_filter": status_filter,
             "counts": counts,
+            "display_counts": display_counts,
         },
     )
 
@@ -1447,8 +1487,12 @@ def frontdesk_dashboard(request):
     from reports.services import dashboard_summary
     from students.models import Student
 
-    base_students = Student.objects.select_related("user", "user__branch").filter(is_archived=False)
+    base_students = Student.objects.select_related("user", "user__branch").filter(
+        is_archived=False,
+        user__role=User.Role.STUDENT,
+    )
     base_students = filter_by_branch(request.user, base_students, branch_field="user__branch")
+    base_students = base_students.filter(assigned_to=request.user)
 
     # Counts for the summary cards are derived from the same active,
     # branch-scoped queryset that backs the table, so the numbers always
@@ -1540,7 +1584,6 @@ def manager_dashboard(request):
 
 @role_required("MANAGER")
 def branch_monitoring(request):
-    from followups.models import FollowUp
     from students.models import Student
 
     user_branch = request.user.branch
@@ -1549,53 +1592,66 @@ def branch_monitoring(request):
     )
     pending_trackers, completed_trackers = _tracker_counts_for_students(branch_student_list)
 
+    # Assignment ownership is stored on Student.assigned_to.  assigned_by
+    # records who made the assignment, which may be different after a transfer.
+    assigned_students_count = sum(
+        1 for student in branch_student_list if student.assigned_to_id is not None
+    )
+    unassigned_students_count = len(branch_student_list) - assigned_students_count
+    assignment_filter = request.GET.get("assignment", "all").lower()
+    if assignment_filter not in {"all", "assigned", "unassigned"}:
+        assignment_filter = "all"
+    if assignment_filter == "assigned":
+        displayed_students = [student for student in branch_student_list if student.assigned_to_id]
+    elif assignment_filter == "unassigned":
+        displayed_students = [student for student in branch_student_list if not student.assigned_to_id]
+    else:
+        displayed_students = branch_student_list
+
     front_desk_staff = []
     if user_branch is not None:
-        from django.db.models import Count, Q
         frontdesk_users = list(User.objects.filter(branch=user_branch, role=User.Role.FRONTDESK))
         fd_ids = [u.pk for u in frontdesk_users]
 
-        # Batch student counts per frontdesk user — 2 queries instead of 2N
-        assigned_counts = {
-            row["assigned_to_id"]: row["cnt"]
-            for row in Student.objects.filter(
-                assigned_to_id__in=fd_ids, user__branch=user_branch
-            ).values("assigned_to_id").annotate(cnt=Count("id"))
+        # Front Desk performance follows the selected owner stored in
+        # Student.assigned_to.
+        staff_counts = {
+            staff_id: {"students": 0, "verified": 0, "pending": 0, "completed": 0}
+            for staff_id in fd_ids
         }
-        verified_counts = {
-            row["assigned_to_id"]: row["cnt"]
-            for row in Student.objects.filter(
-                assigned_to_id__in=fd_ids, user__branch=user_branch, is_verified=True
-            ).values("assigned_to_id").annotate(cnt=Count("id"))
-        }
-        # Batch followup counts — 1 query with conditional aggregation
-        followup_counts = {
-            row["assigned_to_id"]: row
-            for row in FollowUp.objects.filter(
-                assigned_to_id__in=fd_ids, student__user__branch=user_branch
-            ).values("assigned_to_id").annotate(
-                pending=Count("id", filter=Q(is_done=False)),
-                completed=Count("id", filter=Q(is_done=True)),
-            )
-        }
+        for student in branch_student_list:
+            if student.assigned_to_id not in staff_counts:
+                continue
+            counts = staff_counts[student.assigned_to_id]
+            counts["students"] += 1
+            counts["verified"] += int(student.is_verified)
+            if _student_tracker_is_completed(student):
+                counts["completed"] += 1
+            else:
+                counts["pending"] += 1
 
         for staff_user in frontdesk_users:
-            fup = followup_counts.get(staff_user.pk, {})
+            counts = staff_counts[staff_user.pk]
+            initials = (
+                f"{staff_user.first_name[:1]}{staff_user.last_name[:1]}".upper()
+                if staff_user.first_name and staff_user.last_name
+                else (staff_user.first_name or staff_user.last_name or staff_user.email)[:2].upper()
+            )
             front_desk_staff.append(
                 {
                     "name": staff_user.get_full_name() or staff_user.email,
                     "email": staff_user.email,
-                    "profile_pic": staff_user.profile_pic.url if staff_user.profile_pic else "",
-                    "students": assigned_counts.get(staff_user.pk, 0),
-                    "verified": verified_counts.get(staff_user.pk, 0),
-                    "pending": fup.get("pending", 0),
-                    "completed": fup.get("completed", 0),
+                    "initials": initials,
+                    "students": counts["students"],
+                    "verified": counts["verified"],
+                    "pending": counts["pending"],
+                    "completed": counts["completed"],
                     "status": "Active" if staff_user.is_online else "Inactive",
                 }
             )
 
     branch_students = []
-    for student in branch_student_list:
+    for student in displayed_students:
         tracking_status = "completed" if _student_tracker_is_completed(student) else "pending"
         documents = list(student.documents.all())
         latest_document = documents[0] if documents else None
@@ -1611,7 +1667,8 @@ def branch_monitoring(request):
                 "name": student.user.get_full_name() or student.user.email,
                 "email": student.user.email,
                 "phone": student.user.phone or "—",
-                "assigned_by": student.assigned_by.get_full_name() if student.assigned_by else "—",
+                "assigned_to": student.assigned_to.get_full_name() if student.assigned_to else "Unassigned",
+                "is_assigned": student.assigned_to_id is not None,
                 "country": student.preferred_country or "N/A",
                 "tracking": tracking_status,
                 "document_label": document_label,
@@ -1619,19 +1676,14 @@ def branch_monitoring(request):
         )
 
     total_students_count = len(branch_student_list)
-    assigned_students_count = sum(
-        1
-        for student in branch_student_list
-        if student.assigned_by and student.assigned_by.role == User.Role.FRONTDESK
-    )
-
     return render(
         request,
         "manager/branch_monitoring.html",
         {
             "total_branch_students": total_students_count,
             "assigned_students_count": assigned_students_count,
-            "unassigned_students_count": total_students_count - assigned_students_count,
+            "unassigned_students_count": unassigned_students_count,
+            "assignment_filter": assignment_filter,
             "pending_trackers": pending_trackers,
             "completed_trackers": completed_trackers,
             "front_desk_staff": front_desk_staff,
@@ -2227,7 +2279,7 @@ def student_document(request, student_id):
     student = get_object_or_404(
         filter_by_branch(
             request.user,
-            Student.objects.select_related("user", "user__branch", "assigned_to", "assigned_by", "assigned_by__branch"),
+            Student.objects.select_related("user", "user__branch", "assigned_to", "assigned_manager", "assigned_by", "assigned_by__branch"),
             branch_field="user__branch",
         ),
         pk=student_id,
@@ -2262,13 +2314,13 @@ def student_document(request, student_id):
             if assignee_id:
                 try:
                     assignee = User.objects.get(pk=assignee_id)
-                    student.assigned_to = assignee
-                    student.save(update_fields=["assigned_to"])
+                    student.assigned_manager = assignee
+                    student.save(update_fields=["assigned_manager"])
                 except User.DoesNotExist:
                     pass
             else:
-                student.assigned_to = None
-                student.save(update_fields=["assigned_to"])
+                student.assigned_manager = None
+                student.save(update_fields=["assigned_manager"])
             return redirect("accounts:student_document", student_id=student.pk)
 
         # Add remark

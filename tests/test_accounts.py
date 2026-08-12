@@ -44,6 +44,23 @@ class StaffLoginMessageTests(TestCase):
 
         self.assertContains(response, "Invalid email or password.")
 
+    def test_front_desk_staff_without_photo_uses_name_initials(self):
+        frontdesk = User.objects.create_user(
+            email="nikita.rana@example.com",
+            password="password123",
+            first_name="Nikita",
+            last_name="Rana",
+            role=User.Role.FRONTDESK,
+            branch=self.branch,
+        )
+        self.client.force_login(self.manager)
+
+        response = self.client.get(reverse("accounts:front_desk"))
+
+        self.assertContains(response, "NR")
+        self.assertNotContains(response, "profile_pics/default.png")
+        self.assertEqual(frontdesk.profile_pic.name, "profile_pics/default.png")
+
 
 class AdminReportDownloadTests(TestCase):
     def test_admin_can_download_overall_report_as_pdf(self):

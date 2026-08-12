@@ -53,7 +53,12 @@
         <div class="monitor-panel-box">
             <div class="panel-header">
                 <h3 class="panel-title">Branch Student Tracker</h3>
-                <span class="branch-pill">{{ active_branch }} Hub</span>
+                <div class="flex items-center gap-2">
+                    <a href="{% url 'accounts:branch_monitoring' %}" class="text-[10px] font-bold px-2.5 py-1 rounded-full border {% if assignment_filter == 'all' %}bg-slate-800 border-slate-800 text-white{% else %}bg-white border-slate-200 text-slate-500 hover:border-slate-400{% endif %}">All {{ total_branch_students }}</a>
+                    <a href="{% url 'accounts:branch_monitoring' %}?assignment=assigned" class="text-[10px] font-bold px-2.5 py-1 rounded-full border {% if assignment_filter == 'assigned' %}bg-emerald-600 border-emerald-600 text-white{% else %}bg-emerald-50 border-emerald-100 text-emerald-700 hover:border-emerald-300{% endif %}">Assigned {{ assigned_students_count }}</a>
+                    <a href="{% url 'accounts:branch_monitoring' %}?assignment=unassigned" class="text-[10px] font-bold px-2.5 py-1 rounded-full border {% if assignment_filter == 'unassigned' %}bg-violet-600 border-violet-600 text-white{% else %}bg-violet-50 border-violet-100 text-violet-700 hover:border-violet-300{% endif %}">Unassigned {{ unassigned_students_count }}</a>
+                    <span class="branch-pill">{{ active_branch }} Hub</span>
+                </div>
             </div>
             <div class="responsive-table-holder">
                 <table class="ledger-matrix-table bst-fix">
@@ -61,17 +66,17 @@
                         <col class="bst-c1">
                         <col class="bst-c2">
                         <col class="bst-c3">
-                        <col class="bst-c2">
                         <col class="bst-c4">
                         <col class="bst-c5">
-                        <col class="bst-c4">
+                        <col class="bst-c6">
+                        <col class="bst-c6">
                     </colgroup>
                     <thead>
                         <tr>
                             <th>Student</th>
+                            <th>Assignment</th>
                             <th>Phone</th>
                             <th>Email</th>
-                            <th>Assigned By</th>
                             <th>Country</th>
                             <th>Document</th>
                             <th>Tracking</th>
@@ -80,16 +85,18 @@
                     <tbody>
                         {% for student in branch_students %}
                         <tr>
-                            <td>{{ student.name }}</a></td>
+                            <td>{{ student.name }}</td>
+                            <td>
+                                <span class="state-pill {% if student.is_assigned %}state-completed{% else %}state-pending{% endif %}">{{ student.assigned_to }}</span>
+                            </td>
                             <td>{{ student.phone }}</td>
                             <td>{{ student.email }}</td>
-                            <td>{{ student.assigned_by }}</td>
                             <td>{{ student.country }}</td>
                             <td>{{ student.document_label }}</td>
                             <td><span class="state-pill {% if student.tracking == 'completed' %}state-completed{% else %}state-pending{% endif %}">{{ student.tracking|title }}</span></td>
                         </tr>
                         {% empty %}
-                        <tr><td colspan="7" style="text-align:center;color:#9ca3af;padding:20px;">No students registered in this branch yet.</td></tr>
+                        <tr><td colspan="7" style="text-align:center;color:#9ca3af;padding:20px;">No {{ assignment_filter }} students found in this branch.</td></tr>
                         {% endfor %}
                     </tbody>
                 </table>
@@ -104,17 +111,17 @@
     <div class="responsive-table-holder">
         <table class="ledger-matrix-table" style="table-layout:fixed;">
             <colgroup>
-                <col style="width:35%">
-                <col style="width:13%">
-                <col style="width:13%">
-                <col style="width:13%">
-                <col style="width:13%">
-                <col style="width:13%">
+                <col style="width:34%">
+                <col style="width:16%">
+                <col style="width:12.5%">
+                <col style="width:12.5%">
+                <col style="width:12.5%">
+                <col style="width:12.5%">
             </colgroup>
             <thead>
                 <tr>
                     <th style="text-align:left;">Staff</th>
-                    <th style="text-align:center;">Students</th>
+                        <th class="assigned-students-heading">Assigned Students</th>
                     <th style="text-align:center;">Verified</th>
                     <th style="text-align:center;">Pending</th>
                     <th style="text-align:center;">Completed</th>
@@ -128,11 +135,7 @@
                     <td>
                         <div style="display:flex;align-items:center;gap:10px;">
                             <div style="width:36px;height:36px;border-radius:50%;overflow:hidden;background:#e0e7ff;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                {% if staff.profile_pic %}
-                                    <img src="{{ staff.profile_pic }}" alt="{{ staff.name }}" style="width:100%;height:100%;object-fit:cover;">
-                                {% else %}
-                                    <i class="fas fa-user" style="color:#6366f1;font-size:14px;"></i>
-                                {% endif %}
+                                <span style="color:#6366f1;font-size:12px;font-weight:800;">{{ staff.initials }}</span>
                             </div>
                             <div>
                                 <div style="font-weight:700;font-size:14px;color:#1e293b;">{{ staff.name }}</div>
@@ -141,7 +144,7 @@
                         </div>
                     </td>
 
-                    <td style="text-align:center;font-weight:700;color:#1e293b;">{{ staff.students }}</td>
+                    <td class="assigned-students-value">{{ staff.students }}</td>
 
                     <td style="text-align:center;">
                         <span class="state-pill state-completed">{{ staff.verified }}</span>

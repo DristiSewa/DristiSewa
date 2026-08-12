@@ -7,6 +7,7 @@ from .models import OTPVerification, User
 @admin.register(User)
 class UserAdmin(DjangoUserAdmin):
     ordering = ["email"]
+    filter_horizontal = ()
     list_display = [
         "email", "first_name", "last_name", "role", "branch",
         "phone", "is_staff", "is_active", "is_superuser",
@@ -30,8 +31,6 @@ class UserAdmin(DjangoUserAdmin):
                     "is_active",
                     "is_staff",
                     "is_superuser",
-                    "groups",
-                    "user_permissions",
                 )
             },
         ),

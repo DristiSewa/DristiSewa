@@ -20,6 +20,7 @@ def _get_branch_scoped_student(request, pk, prefetch=None):
     if prefetch:
         queryset = queryset.prefetch_related(*prefetch)
     queryset = filter_by_branch(request.user, queryset, branch_field="user__branch")
+    queryset = queryset.filter(user__role=User.Role.STUDENT, assigned_to=request.user)
     return get_object_or_404(queryset, pk=pk)
 
 
@@ -28,6 +29,7 @@ def student_list(request):
     """List/search/filter students (Front Desk)."""
     students = Student.objects.select_related("user", "user__branch").all()
     students = filter_by_branch(request.user, students, branch_field="user__branch")
+    students = students.filter(user__role=User.Role.STUDENT, assigned_to=request.user)
 
     query = request.GET.get("q", "").strip()
     if query:

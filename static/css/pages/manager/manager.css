@@ -808,9 +808,10 @@ body {
 .bst-fix { table-layout: fixed; width: 100%; }
 .bst-fix .bst-c1 { width: 20%; }
 .bst-fix .bst-c2 { width: 12%; }
-.bst-fix .bst-c3 { width: 22%; }
+.bst-fix .bst-c3 { width: 28%; }
 .bst-fix .bst-c4 { width: 12%; }
-.bst-fix .bst-c5 { width: 10%; }
+.bst-fix .bst-c5 { width: 16%; }
+.bst-fix .bst-c6 { width: 12%; }
 
 .bst-fix thead th:nth-child(1), .bst-fix tbody td:nth-child(1),
 .bst-fix thead th:nth-child(3), .bst-fix tbody td:nth-child(3) { text-align: left; }
@@ -824,6 +825,9 @@ body {
 .bst-fix tbody td { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; vertical-align: middle; }
 .bst-fix tbody td:nth-child(3) { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 13px; color: #475569; }
 .bst-fix tbody td:nth-child(2) { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 13px; font-weight: 600; color: #334155; }
+
+.assigned-students-heading { text-align: left !important; padding-left: 8px !important; white-space: nowrap; font-size: 11px; }
+.assigned-students-value { text-align: left; padding-left: 8px; font-weight: 700; color: #1e293b; }
 
 .rpt-fix { table-layout: fixed; width: 100%; }
 .rpt-fix .rpt-c1 { width: 26%; }

@@ -18,6 +18,13 @@ from .models import Student
 User = get_user_model()
 
 
+def _visible_students_for_user(user, queryset):
+    queryset = filter_by_branch(user, queryset, branch_field="user__branch")
+    if user.role == User.Role.FRONTDESK:
+        queryset = queryset.filter(assigned_to=user)
+    return queryset
+
+
 @role_required("STUDENT")
 def profile(request):
     student, _ = Student.objects.get_or_create(user=request.user)
@@ -37,8 +44,11 @@ def profile(request):
 
 @role_required("ADMIN", "MANAGER", "FRONTDESK")
 def student_management(request):
-    students = Student.objects.select_related("user", "user__branch").filter(is_archived=False)
-    students = filter_by_branch(request.user, students, branch_field="user__branch")
+    students = Student.objects.select_related("user", "user__branch").filter(
+        user__role=User.Role.STUDENT,
+        is_archived=False,
+    )
+    students = _visible_students_for_user(request.user, students)
 
     query = request.GET.get("q", "").strip()
     if query:
@@ -53,8 +63,11 @@ def student_management(request):
 
 @role_required("ADMIN", "MANAGER", "FRONTDESK")
 def archived_students(request):
-    students = Student.objects.select_related("user", "user__branch").filter(is_archived=True)
-    students = filter_by_branch(request.user, students, branch_field="user__branch")
+    students = Student.objects.select_related("user", "user__branch").filter(
+        user__role=User.Role.STUDENT,
+        is_archived=True,
+    )
+    students = _visible_students_for_user(request.user, students)
 
     query = request.GET.get("q", "").strip()
     if query:
@@ -76,12 +89,11 @@ def archived_students(request):
 @role_required("ADMIN", "MANAGER", "FRONTDESK")
 def student_profile_view(request, pk):
     student = get_object_or_404(
-        filter_by_branch(
+        _visible_students_for_user(
             request.user,
             Student.objects.select_related("user", "user__branch").prefetch_related(
                 "documents", "followups", "appointments"
             ),
-            branch_field="user__branch",
         ),
         pk=pk,
     )
@@ -90,14 +102,14 @@ def student_profile_view(request, pk):
         assignee_id = request.POST.get("assigned_to")
         if assignee_id:
             assignee = get_object_or_404(User, pk=assignee_id, branch=student.user.branch)
-            student.assigned_to = assignee
-            student.assigned_by = request.user  # record who made the assignment
-            student.save(update_fields=["assigned_to", "assigned_by"])
+            student.assigned_manager = assignee
+            student.assigned_by = request.user
+            student.save(update_fields=["assigned_manager", "assigned_by"])
             messages.success(request, f"Assigned {assignee.get_full_name() or assignee.email} to this student.")
         else:
-            student.assigned_to = None
+            student.assigned_manager = None
             student.assigned_by = None
-            student.save(update_fields=["assigned_to", "assigned_by"])
+            student.save(update_fields=["assigned_manager", "assigned_by"])
             messages.success(request, "Removed user assignment.")
         return redirect("students:student_profile", pk=student.pk)
 
@@ -123,8 +135,6 @@ def student_profile_view(request, pk):
         if not first_name:
             errors.append("First name is required.")
         elif not name_pattern.fullmatch(first_name):
-            errors.append("First name must be 2 to 50 letters and may only include spaces, apostrophes, or hyphens.")
-        if not last_name:
             errors.append("Last name is required.")
         elif not name_pattern.fullmatch(last_name):
             errors.append("Last name must be 2 to 50 letters and may only include spaces, apostrophes, or hyphens.")
@@ -236,8 +246,7 @@ def student_profile_view(request, pk):
     if request.method == "POST" and "remove_remark" in request.POST:
         from followups.models import FollowUp
 
-        followup = get_object_or_404(FollowUp, pk=request.POST.get("followup_id"), student=student)
-        followup.delete()
+        FollowUp.objects.filter(pk=request.POST.get("followup_id"), student=student).delete()
         messages.success(request, "Remark removed.")
         return redirect(f"{reverse('students:student_profile', kwargs={'pk': student.pk})}?tab=remarks")
 
@@ -285,7 +294,7 @@ def student_profile_view(request, pk):
 @role_required("ADMIN", "MANAGER", "FRONTDESK")
 def student_verify(request, pk):
     student = get_object_or_404(
-        filter_by_branch(request.user, Student.objects.select_related("user"), branch_field="user__branch"),
+        _visible_students_for_user(request.user, Student.objects.select_related("user")),
         pk=pk,
     )
     student.is_verified = True
@@ -299,7 +308,7 @@ def student_verify(request, pk):
 @role_required("ADMIN", "MANAGER", "FRONTDESK")
 def student_archive(request, pk):
     student = get_object_or_404(
-        filter_by_branch(request.user, Student.objects.select_related("user"), branch_field="user__branch"),
+        _visible_students_for_user(request.user, Student.objects.select_related("user")),
         pk=pk,
     )
     student.is_archived = True
@@ -313,7 +322,7 @@ def student_archive(request, pk):
 @role_required("ADMIN", "MANAGER", "FRONTDESK")
 def student_unarchive(request, pk):
     student = get_object_or_404(
-        filter_by_branch(request.user, Student.objects.select_related("user"), branch_field="user__branch"),
+        _visible_students_for_user(request.user, Student.objects.select_related("user")),
         pk=pk,
     )
     student.is_archived = False
@@ -328,7 +337,11 @@ def student_create(request):
         form = StudentRegistrationForm(request.POST)
         if form.is_valid():
             branch = request.user.branch if request.user.role == User.Role.FRONTDESK else None
-            form.save(branch=branch)
+            student = form.save(branch=branch)
+            if request.user.role == User.Role.FRONTDESK:
+                student.assigned_to = request.user
+                student.assigned_by = request.user
+                student.save(update_fields=["assigned_to", "assigned_by"])
             messages.success(request, "Student registered successfully.")
             if request.user.role == User.Role.FRONTDESK:
                 return redirect("accounts:frontdesk_dashboard")
@@ -343,7 +356,7 @@ def student_create(request):
 @role_required("ADMIN", "MANAGER", "FRONTDESK")
 def student_edit(request, pk):
     student = get_object_or_404(
-        filter_by_branch(request.user, Student.objects.select_related("user"), branch_field="user__branch"),
+        _visible_students_for_user(request.user, Student.objects.select_related("user")),
         pk=pk,
     )
 
