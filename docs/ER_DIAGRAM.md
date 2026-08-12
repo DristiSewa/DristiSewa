@@ -33,7 +33,7 @@ erDiagram
 
     STUDENT {
         int id PK
-        int user_id FK_UK
+        int user_id FK, UK
         int assigned_to_id FK
         int assigned_manager_id FK
         int assigned_by_id FK
@@ -123,7 +123,7 @@ erDiagram
     AGGREGATED_ANALYTICS {
         int id PK
         date date UK
-        int branch_id FK_UK
+        int branch_id FK, UK
         int total_students
         int new_students
         int active_students
@@ -151,7 +151,7 @@ erDiagram
     USER_ENGAGEMENT_METRICS {
         int id PK
         date date UK
-        int user_id FK_UK
+        int user_id FK, UK
         int branch_id FK
         int login_count
         int active_sessions
@@ -175,7 +175,7 @@ erDiagram
 
     SUPER_ADMIN {
         int id PK
-        int user_id FK_UK
+        int user_id FK, UK
         boolean can_manage_users
         boolean can_manage_branches
         boolean can_manage_students
