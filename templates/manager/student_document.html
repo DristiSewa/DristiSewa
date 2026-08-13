@@ -22,9 +22,13 @@
         <div>
             <div class="mb-3 flex justify-center">
                 <div class="w-24 h-24 bg-black rounded-full overflow-hidden flex items-center justify-center text-white shadow-sm">
+                    {% if student.profile_pic and student.profile_pic.name != "profile_pics/default.png" %}
+                        <img src="{{ student.profile_pic.url }}" alt="{{ student.user.get_full_name|default:student.user.email }}'s profile photo" class="w-full h-full object-cover">
+                    {% else %}
                     <span class="text-3xl font-bold">
                         {{ student.user.first_name|slice:":1"|upper }}{{ student.user.last_name|slice:":1"|upper }}
                     </span>
+                    {% endif %}
                 </div>
             </div>
             <h2 class="text-blue-600 text-lg font-bold mb-1.5">{{ student.user.get_full_name|default:student.user.email }}</h2>

@@ -73,7 +73,16 @@
                 {% for s in students %}
                 <tr data-name="{{ s.name|lower }}" data-phone="{{ s.phone }}" data-label="{{ s.date_label }}">
                     <td>
-                        <a href="{% url 'accounts:student_document' s.id %}" class="student-link">{{ s.name }}</a>
+                        <a href="{% url 'accounts:student_document' s.id %}" class="student-link inline-flex items-center gap-2">
+                            <span class="w-9 h-9 rounded-full overflow-hidden bg-slate-900 text-white flex items-center justify-center shrink-0">
+                                {% if s.profile_pic and s.profile_pic.name != "profile_pics/default.png" %}
+                                    <img src="{{ s.profile_pic.url }}" alt="{{ s.name }}'s profile photo" class="w-full h-full object-cover">
+                                {% else %}
+                                    <span class="text-xs font-bold">{{ s.name|slice:":2"|upper }}</span>
+                                {% endif %}
+                            </span>
+                            <span>{{ s.name }}</span>
+                        </a>
                     </td>
                     <td class="muted-cell">{{ s.email }}</td>
                     <td class="phone-cell">{{ s.phone }}</td>

@@ -1665,6 +1665,7 @@ def branch_monitoring(request):
             {
                 "id": student.id,
                 "name": student.user.get_full_name() or student.user.email,
+                "profile_pic": student.profile_pic,
                 "email": student.user.email,
                 "phone": student.user.phone or "—",
                 "assigned_to": student.assigned_to.get_full_name() if student.assigned_to else "Unassigned",
@@ -1769,6 +1770,7 @@ def followup_management(request):
             {
                 "id": student.id,
                 "name": student.user.get_full_name() or student.user.email,
+                "profile_pic": student.profile_pic,
                 "email": student.user.email,
                 "phone": student.user.phone or "—",
                 "country": student.preferred_country or "N/A",
