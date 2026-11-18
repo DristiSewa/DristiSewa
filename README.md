@@ -26,15 +26,15 @@ source venv/bin/activate
 ```
 
 Windows:
-```bash
+```powershell
 cd DristiSewa
-python -m venv venv
-venv\Scripts\activate
+py -m venv venv
+.\venv\Scripts\Activate.ps1
 ```
 
 ### 4. Install dependencies
 ```bash
-pip install -r requirements.txt
+python -m pip install -r requirements.txt
 ```
 
 ### 5. Configure environment variables
@@ -52,7 +52,21 @@ If you don't configure email credentials, leave
 `EMAIL_BACKEND=django.core.mail.backends.console.EmailBackend` — OTP emails
 will just print to the terminal instead of being sent.
 
-### 6. Database
+### 6. Prepare the log directory
+Django writes to `logs/django.log`, so create the directory before running
+management commands:
+
+macOS / Linux:
+```bash
+mkdir -p logs
+```
+
+Windows PowerShell:
+```powershell
+New-Item -ItemType Directory -Force logs | Out-Null
+```
+
+### 7. Database
 - If `db.sqlite3` was copied along with the project, your existing data
   (users, branches, students, etc.) is already there — just run migrations
   to make sure the schema is up to date:
@@ -66,7 +80,7 @@ will just print to the terminal instead of being sent.
   python manage.py createsuperuser
   ```
 
-### 7. Run the development server
+### 8. Run the development server
 ```bash
 python manage.py runserver
 ```
